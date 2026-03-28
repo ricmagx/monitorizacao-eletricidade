@@ -1,0 +1,27 @@
+# Sessoes e credenciais
+state/eredes_storage_state.json
+state/eredes_bootstrap_context.json
+
+# Dados brutos com CPE exposto
+data/raw/
+
+# Dados processados (gerados pelo pipeline)
+data/processed/
+
+# Relatorios gerados
+data/reports/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Ficheiros temporarios do pipeline
+config/_runtime_partial_override.json
+
+# Logs de estado do launchd
+state/launchd.process.stdout.log
+state/launchd.process.stderr.log
+state/launchd.stdout.log
+state/launchd.stderr.log
