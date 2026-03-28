@@ -7,10 +7,10 @@
 
 ### Correções Críticas (Bloqueadores)
 
-- [ ] **FIX-01**: Corrigir caminho Python no plist launchd (TCC permission error — watcher quebrado, 21 erros confirmados no log)
-- [ ] **FIX-02**: Corrigir `.gitignore` para excluir `state/eredes_storage_state.json` e outros ficheiros com credenciais/sessões
+- [x] **FIX-01**: Corrigir caminho Python no plist launchd (TCC permission error — watcher quebrado, 21 erros confirmados no log)
+- [x] **FIX-02**: Corrigir `.gitignore` para excluir `state/eredes_storage_state.json` e outros ficheiros com credenciais/sessões
 - [ ] **FIX-03**: Re-fazer bootstrap da sessão E-REDES (JWT expirado em `state/eredes_storage_state.json`)
-- [ ] **FIX-04**: Criar `requirements.txt` com todas as dependências do projecto
+- [x] **FIX-04**: Criar `requirements.txt` com todas as dependências do projecto
 
 ### Validação End-to-End
 
@@ -79,10 +79,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FIX-01 | Phase 1 | Pending |
-| FIX-02 | Phase 1 | Pending |
+| FIX-01 | Phase 1 | Complete |
+| FIX-02 | Phase 1 | Complete |
 | FIX-03 | Phase 1 | Pending |
-| FIX-04 | Phase 1 | Pending |
+| FIX-04 | Phase 1 | Complete |
 | VAL-01 | Phase 1 | Pending |
 | VAL-02 | Phase 1 | Pending |
 | RES-01 | Phase 2 | Pending |

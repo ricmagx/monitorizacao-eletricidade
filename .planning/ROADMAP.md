@@ -37,10 +37,10 @@
 - O parser XLSX usa detecção heurística de colunas (posicional, não por nome); se o formato dos ficheiros 2026 diferir do esperado, o parser pode produzir valores incorretos sem erro explícito — validar com os bounds check de 30-1000 kWh/mês
 - A sessão E-REDES expira em ~90 minutos após bootstrap; o bootstrap tem de ser executado imediatamente antes do primeiro teste end-to-end
 
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 01-01-PLAN.md — Corrigir .gitignore, requirements.txt e path Python nos plists launchd
+- [x] 01-01-PLAN.md — Corrigir .gitignore, requirements.txt e path Python nos plists launchd
 - [ ] 01-02-PLAN.md — Bootstrap sessao E-REDES, validar parser XLSX e pipeline end-to-end
 
 ---
@@ -132,7 +132,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Unblock & Validate | 0/2 | Planning complete | - |
+| 1. Unblock & Validate | 1/2 | In Progress|  |
 | 2. Resilience | 0/? | Not started | - |
 | 3. Multi-Location Refactor | 0/? | Not started | - |
 | 4. Web Dashboard MVP | 0/? | Not started | - |
