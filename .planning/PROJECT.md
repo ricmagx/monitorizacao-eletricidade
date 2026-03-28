@@ -29,11 +29,12 @@ Com o perfil mensal real de cada local, saber hoje qual seria o comercializador 
 - [ ] Validação end-to-end com XLSX real: correr o pipeline completo com os ficheiros XLSX já disponíveis e confirmar que tudo funciona
 - [ ] Suporte multi-local: refactorizar config/state/workflow para suportar N locais independentes (cada local com CPE, config e estado próprios)
 - [ ] Download multi-CPE: seleccionar o CPE correcto no portal E-REDES durante o download automático (mesma conta, múltiplos contadores)
-- [ ] Dashboard web: FastAPI + HTMX + Jinja + Chart.js com histórico mensal por local, ranking de comercializadores e recomendação actual
+- [ ] Dashboard web: FastAPI + HTMX + Jinja + Chart.js com histórico temporal de consumo (kWh) e custo (€), custo real da factura vs estimativa calculada, ranking de comercializadores, simulação retroactiva (quem teria sido mais barato historicamente) e recomendação actual
 - [ ] requirements.txt: formalizar dependências (playwright, openpyxl, fastapi, uvicorn, jinja2)
 
 ### Out of Scope
 
+- Leitura automática de PDF de factura / ligação ao portal do fornecedor — deferred para v2 (INT-03, INT-04)
 - Mudança automática de fornecedor — risco contratual, recomendação conservadora é suficiente
 - Captura ao minuto (integração Shelly granular) — agregados mensais chegam para decisão tarifária
 - Integração Home Assistant com sensores Lovelace — deferred para v2
@@ -89,4 +90,4 @@ Este documento evolui em cada transição de fase e milestone.
 4. Actualizar Context com estado actual
 
 ---
-*Last updated: 2026-03-28 after initialization*
+*Last updated: 2026-03-28 after requirements refinement (dashboard scope expanded)*

@@ -35,11 +35,14 @@
 ### Dashboard Web
 
 - [ ] **DASH-01**: Setup FastAPI + Jinja2 + HTMX (ficheiro estático local) + Chart.js (ficheiro estático local) — sem build step
-- [ ] **DASH-02**: Página por local: selector de local + gráfico de consumo mensal (vazio/fora_vazio)
-- [ ] **DASH-03**: Tabela de ranking de comercializadores por custo anual estimado
-- [ ] **DASH-04**: Recomendação de mudança com poupança estimada e indicador de confiança
-- [ ] **DASH-05**: Indicador de frescura dos dados (data do último relatório gerado)
-- [ ] **DASH-06**: Delta ano-a-ano por mês (comparação com período homólogo)
+- [ ] **DASH-02**: Gráfico de consumo mensal (kWh, barras empilhadas vazio/fora_vazio) ao longo do tempo, por local
+- [ ] **DASH-03**: Gráfico de custo €/mês: custo real da factura + estimativa calculada pelo contrato — sobrepostos no mesmo eixo temporal
+- [ ] **DASH-04**: Modelo de dados para custo real da factura: campo de entrada manual por mês (CSV ou formulário na dashboard)
+- [ ] **DASH-05**: Tabela de ranking de comercializadores por custo anual estimado (recomendação mensal actual)
+- [ ] **DASH-06**: Recomendação de mudança com poupança estimada e indicador de confiança
+- [ ] **DASH-07**: Vista histórica: simulação retroactiva de quem teria sido o mais barato em cada mês passado
+- [ ] **DASH-08**: Comparação com período homólogo (este mês vs mesmo mês do ano anterior) para consumo e custo
+- [ ] **DASH-09**: Indicador de frescura dos dados (data do último relatório gerado)
 
 ## v2 Requirements
 
@@ -52,6 +55,8 @@
 
 - **INT-01**: Sensores Home Assistant (melhor fornecedor, poupança potencial) via MQTT ou REST sensor
 - **INT-02**: Second comparison engine via `simulador.erse.pt` como alternativa ao tiagofelicia.pt
+- **INT-03**: Leitura de PDF de factura do fornecedor para extracção automática do custo real mensal
+- **INT-04**: Ligação ao portal do fornecedor para obter preços/facturas actualizados automaticamente
 
 ### Qualidade
 
@@ -95,10 +100,13 @@
 | DASH-04 | Phase 4 | Pending |
 | DASH-05 | Phase 4 | Pending |
 | DASH-06 | Phase 4 | Pending |
+| DASH-07 | Phase 4 | Pending |
+| DASH-08 | Phase 4 | Pending |
+| DASH-09 | Phase 4 | Pending |
 
 **Coverage:**
-- v1 requirements: 21 total
-- Mapped to phases: 21
+- v1 requirements: 24 total
+- Mapped to phases: 24
 - Unmapped: 0 ✓
 
 ---
