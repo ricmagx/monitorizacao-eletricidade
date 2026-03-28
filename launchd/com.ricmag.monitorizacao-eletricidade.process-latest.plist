@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.ricmag.monitorizacao-eletricidade.process-latest</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/opt/python@3.11/libexec/bin/python3</string>
+    <string>/Users/ricmag/Documents/AI/3-hobbies/Casa/energia/monitorizacao-eletricidade/src/backend/process_latest_download.py</string>
+    <string>--config</string>
+    <string>/Users/ricmag/Documents/AI/3-hobbies/Casa/energia/monitorizacao-eletricidade/config/system.json</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/ricmag/Documents/AI/3-hobbies/Casa/energia/monitorizacao-eletricidade</string>
+  <key>WatchPaths</key>
+  <array>
+    <string>/Users/ricmag/Downloads</string>
+  </array>
+  <key>StandardOutPath</key>
+  <string>/Users/ricmag/Documents/AI/3-hobbies/Casa/energia/monitorizacao-eletricidade/state/launchd.process.stdout.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/ricmag/Documents/AI/3-hobbies/Casa/energia/monitorizacao-eletricidade/state/launchd.process.stderr.log</string>
+  <key>RunAtLoad</key>
+  <false/>
+</dict>
+</plist>
