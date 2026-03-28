@@ -37,7 +37,11 @@
 - O parser XLSX usa detecção heurística de colunas (posicional, não por nome); se o formato dos ficheiros 2026 diferir do esperado, o parser pode produzir valores incorretos sem erro explícito — validar com os bounds check de 30-1000 kWh/mês
 - A sessão E-REDES expira em ~90 minutos após bootstrap; o bootstrap tem de ser executado imediatamente antes do primeiro teste end-to-end
 
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Corrigir .gitignore, requirements.txt e path Python nos plists launchd
+- [ ] 01-02-PLAN.md — Bootstrap sessao E-REDES, validar parser XLSX e pipeline end-to-end
 
 ---
 
@@ -58,7 +62,11 @@
 - A verificação do fallback requer simular falha de rede; nos testes locais pode ser necessário editar `/etc/hosts` ou usar `unittest.mock` para substituir a chamada Playwright — definir a abordagem de teste antes de implementar
 - O selector-based DOM wait para substituir `wait_for_timeout(4000)` depende de conhecer o sinal DOM exato de "tabela actualizada" no site; pode requerer inspeção da página ao vivo antes de codificar
 
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Corrigir .gitignore, requirements.txt e path Python nos plists launchd
+- [ ] 01-02-PLAN.md — Bootstrap sessao E-REDES, validar parser XLSX e pipeline end-to-end
 
 ---
 
@@ -82,7 +90,11 @@
 - O CPE do `apartamento` é um placeholder (`PT000200XXXXXXXXXX`) — deve ser confirmado no portal E-REDES antes de completar a configuração e os testes desta fase
 - A execução sequencial é obrigatória (sessão Playwright partilhada); não introduzir paralelismo nesta fase
 
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Corrigir .gitignore, requirements.txt e path Python nos plists launchd
+- [ ] 01-02-PLAN.md — Bootstrap sessao E-REDES, validar parser XLSX e pipeline end-to-end
 
 ---
 
@@ -108,7 +120,11 @@
 - HTMX e Chart.js devem ser descarregados e fixados como ficheiros estáticos locais antes de qualquer trabalho de UI — verificar versões disponíveis (HTMX 2.0.x, Chart.js 4.4.x) e confirmar que o UMD build do Chart.js não requer bundler
 - O ano-a-ano (DASH-06) depende de ter pelo menos 2 anos de dados para `casa`; para `apartamento` provavelmente não existe histórico suficiente na primeira iteração — a UI deve mostrar o estado "sem dados para comparação" de forma elegante e não como erro
 
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Corrigir .gitignore, requirements.txt e path Python nos plists launchd
+- [ ] 01-02-PLAN.md — Bootstrap sessao E-REDES, validar parser XLSX e pipeline end-to-end
 
 ---
 
@@ -116,7 +132,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Unblock & Validate | 0/? | Not started | - |
+| 1. Unblock & Validate | 0/2 | Planning complete | - |
 | 2. Resilience | 0/? | Not started | - |
 | 3. Multi-Location Refactor | 0/? | Not started | - |
 | 4. Web Dashboard MVP | 0/? | Not started | - |
