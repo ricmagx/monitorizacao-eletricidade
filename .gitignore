@@ -2,14 +2,21 @@
 state/eredes_storage_state.json
 state/eredes_bootstrap_context.json
 
-# Dados brutos com CPE exposto
+# Dados brutos com CPE exposto (flat e nested)
 data/raw/
+data/*/raw/
 
 # Dados processados (gerados pelo pipeline)
 data/processed/
+data/*/processed/
 
 # Relatorios gerados
 data/reports/
+data/*/reports/
+
+# Estado per-location
+state/*/monthly_status.json
+state/*/last_processed_download.json
 
 # Python
 __pycache__/
