@@ -1,5 +1,27 @@
+import json
 import shutil
+from pathlib import Path
+from unittest.mock import MagicMock, patch
+
 import pytest
+
+
+def _make_location_from_test_config(test_config: Path) -> tuple[dict, dict, Path]:
+    """Constroi config, location e project_root a partir do test_config (schema legado).
+
+    Retorna (config_dict, location_dict, project_root) para chamar run_workflow com a
+    nova assinatura multi-location.
+    """
+    config = json.loads(test_config.read_text(encoding="utf-8"))
+    project_root = test_config.resolve().parent.parent
+    location = {
+        "id": "test",
+        "name": "Test",
+        "cpe": "PT_TEST",
+        "current_contract": config["current_contract"],
+        "pipeline": config["pipeline"],
+    }
+    return config, location, project_root
 
 
 def test_compare_month_marks_supplier_not_found():
@@ -38,7 +60,8 @@ def test_compare_month_marks_supplier_not_found():
 def test_report_warns_when_supplier_not_found(test_config, sample_csv):
     """RES-03: Relatorio contem aviso quando fornecedor sem match no simulador."""
     from monthly_workflow import run_workflow
-    from unittest.mock import patch
+
+    config, location, project_root = _make_location_from_test_config(test_config)
 
     fake_analysis = {
         "generated_at": "2026-03-29",
@@ -103,7 +126,7 @@ def test_report_warns_when_supplier_not_found(test_config, sample_csv):
     with patch("monthly_workflow.convert_xlsx_to_monthly_csv") as mock_conv, \
          patch("monthly_workflow.analyse_with_tiago", return_value=fake_analysis):
         mock_conv.side_effect = lambda src, dst, **kw: shutil.copy(sample_csv, dst)
-        result = run_workflow(config_path=test_config, input_xlsx=sample_csv)
+        result = run_workflow(config=config, location=location, project_root=project_root, input_xlsx=sample_csv)
     report_text = open(result["report_path"], encoding="utf-8").read()
     assert "nao foi encontrado" in report_text.lower() or "não foi encontrado" in report_text.lower()
 
@@ -111,7 +134,8 @@ def test_report_warns_when_supplier_not_found(test_config, sample_csv):
 def test_pipeline_does_not_crash_on_missing_supplier(test_config, sample_csv):
     """RES-03: Pipeline termina sem excepcao quando fornecedor sem match."""
     from monthly_workflow import run_workflow
-    from unittest.mock import patch
+
+    config, location, project_root = _make_location_from_test_config(test_config)
 
     fake_analysis = {
         "generated_at": "2026-03-29",
@@ -176,5 +200,5 @@ def test_pipeline_does_not_crash_on_missing_supplier(test_config, sample_csv):
     with patch("monthly_workflow.convert_xlsx_to_monthly_csv") as mock_conv, \
          patch("monthly_workflow.analyse_with_tiago", return_value=fake_analysis):
         mock_conv.side_effect = lambda src, dst, **kw: shutil.copy(sample_csv, dst)
-        result = run_workflow(config_path=test_config, input_xlsx=sample_csv)
+        result = run_workflow(config=config, location=location, project_root=project_root, input_xlsx=sample_csv)
     assert result["status"] == "ok"

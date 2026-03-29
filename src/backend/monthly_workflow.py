@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
+import sys
 from collections import Counter
 from datetime import date, datetime
 from pathlib import Path
@@ -31,7 +32,7 @@ def latest_xlsx_in_dir(directory: Path) -> Path | None:
     return files[-1] if files else None
 
 
-def render_report(config: dict[str, Any], analysis: dict[str, Any], xlsx_path: Path, csv_path: Path) -> str:
+def render_report(location: dict[str, Any], analysis: dict[str, Any], xlsx_path: Path, csv_path: Path) -> str:
     seasonality = analysis["seasonality"]
     source = analysis.get("source", "tiagofelicia.pt")
     is_local_catalog = source == "local_catalog"
@@ -74,8 +75,8 @@ def render_report(config: dict[str, Any], analysis: dict[str, Any], xlsx_path: P
         recommended_cycle = period_rec.get("recommended_type", "N/A") if period_rec else "N/A"
         best_supplier = top_3[0]["supplier"] if top_3 else "N/A"
         lines.extend([
-            f"- Fornecedor atual: `{config['current_contract']['supplier']}`",
-            f"- Potência contratada: `{config['current_contract']['power_label']}`",
+            f"- Fornecedor atual: `{location['current_contract']['supplier']}`",
+            f"- Potência contratada: `{location['current_contract']['power_label']}`",
             f"- Melhor opção anual: `{best_supplier}`",
             f"- Melhor ciclo horário: `{recommended_cycle}`",
             f"- Mudança recomendada: `{change_display}`",
@@ -108,8 +109,8 @@ def render_report(config: dict[str, Any], analysis: dict[str, Any], xlsx_path: P
             saving_display = "N/A (fornecedor nao encontrado)"
 
         lines.extend([
-            f"- Fornecedor atual: `{config['current_contract']['supplier']}`",
-            f"- Potência contratada: `{config['current_contract']['power_label']}`",
+            f"- Fornecedor atual: `{location['current_contract']['supplier']}`",
+            f"- Potência contratada: `{location['current_contract']['power_label']}`",
             f"- Melhor opção no mês mais recente: `{latest['latest_top_3'][0]['supplier']}`",
             f"- Melhor ciclo horário: `{latest['latest_recommendation']}`",
             f"- Mudança recomendada: `{change_display}`",
@@ -120,7 +121,7 @@ def render_report(config: dict[str, Any], analysis: dict[str, Any], xlsx_path: P
         # Aviso de fornecedor sem correspondencia (RES-03)
         if analysis.get("history_summary", {}).get("supplier_not_found", False):
             lines.extend([
-                f"> **Aviso:** Fornecedor actual \"{config['current_contract']['supplier']}\" nao foi encontrado na tabela do simulador.",
+                f"> **Aviso:** Fornecedor actual \"{location['current_contract']['supplier']}\" nao foi encontrado na tabela do simulador.",
                 "> O ranking e apresentado sem comparacao com o contrato actual.",
                 "",
             ])
@@ -175,12 +176,10 @@ def notify_mac(title: str, message: str) -> None:
     )
 
 
-def run_workflow(config_path: Path, input_xlsx: Path | None = None) -> dict[str, Any]:
-    config = load_config(config_path)
-    project_root = project_root_from_config(config_path)
-    pipeline = config["pipeline"]
+def run_workflow(config: dict, location: dict, project_root: Path, input_xlsx: Path | None = None) -> dict[str, Any]:
+    pipeline = location["pipeline"]
 
-    raw_dir = resolve_path(project_root, config["eredes"]["download_dir"])
+    raw_dir = resolve_path(project_root, pipeline["raw_dir"])
     processed_csv_path = resolve_path(project_root, pipeline["processed_csv_path"])
     analysis_json_path = resolve_path(project_root, pipeline["analysis_json_path"])
     report_dir = resolve_path(project_root, pipeline["report_dir"])
@@ -191,7 +190,7 @@ def run_workflow(config_path: Path, input_xlsx: Path | None = None) -> dict[str,
         if input_xlsx is not None:
             xlsx_path = input_xlsx.resolve()
         else:
-            xlsx_path = download_latest_xlsx(config_path)
+            xlsx_path = download_latest_xlsx(config_path=project_root / "config" / "system.json")
         if not xlsx_path.exists():
             raise RuntimeError("O ficheiro XLSX de entrada nao existe.")
 
@@ -204,10 +203,10 @@ def run_workflow(config_path: Path, input_xlsx: Path | None = None) -> dict[str,
         try:
             analysis = analyse_with_tiago(
                 consumption_path=processed_csv_path,
-                power_label=config["current_contract"]["power_label"],
-                current_supplier=config["current_contract"]["supplier"],
-                current_plan_contains=config["current_contract"].get("current_plan_contains"),
-                months_limit=config["pipeline"].get("months_limit"),
+                power_label=location["current_contract"]["power_label"],
+                current_supplier=location["current_contract"]["supplier"],
+                current_plan_contains=location["current_contract"].get("current_plan_contains"),
+                months_limit=pipeline.get("months_limit"),
             )
             if "source" not in analysis:
                 analysis["source"] = "tiagofelicia.pt"
@@ -221,11 +220,12 @@ def run_workflow(config_path: Path, input_xlsx: Path | None = None) -> dict[str,
             )
             analysis["source"] = "local_catalog"
             analysis["fallback_reason"] = str(exc)
+        analysis_json_path.parent.mkdir(parents=True, exist_ok=True)
         analysis_json_path.write_text(json.dumps(analysis, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
 
         report_name = f"relatorio_eletricidade_{date.today().isoformat()}.md"
         report_path = report_dir / report_name
-        report_path.write_text(render_report(config, analysis, xlsx_path, processed_csv_path), encoding="utf-8")
+        report_path.write_text(render_report(location, analysis, xlsx_path, processed_csv_path), encoding="utf-8")
 
         is_local_catalog = analysis.get("source") == "local_catalog"
         if is_local_catalog:
@@ -257,7 +257,7 @@ def run_workflow(config_path: Path, input_xlsx: Path | None = None) -> dict[str,
         if pipeline.get("notify_on_completion", False):
             notify_mac(
                 "Eletricidade",
-                f"Relatório pronto. Melhor ciclo: {status_latest_recommendation}",
+                f"[{location['name']}] Relatorio pronto. Melhor ciclo: {status_latest_recommendation}",
             )
         return status
     except Exception as exc:
@@ -268,7 +268,7 @@ def run_workflow(config_path: Path, input_xlsx: Path | None = None) -> dict[str,
         }
         write_status(status_path, status)
         if pipeline.get("notify_on_completion", False):
-            notify_mac("Eletricidade", f"Falha no job mensal: {exc}")
+            notify_mac("Eletricidade", f"[{location['name']}] Falha no job mensal: {exc}")
         raise
 
 
@@ -281,6 +281,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Permite processar um ficheiro manual mesmo que o ultimo mes esteja incompleto.",
     )
+    parser.add_argument(
+        "--location",
+        default=None,
+        help="ID do local a processar (omitir = todos os locais).",
+    )
     return parser
 
 
@@ -288,24 +293,32 @@ def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
     config_path = Path(args.config)
+    config = load_config(config_path)
+    project_root = project_root_from_config(config_path)
+    locations = config["locations"]
+
+    if args.location:
+        locations = [loc for loc in locations if loc["id"] == args.location]
+        if not locations:
+            print(f"Local '{args.location}' nao encontrado em config.", file=sys.stderr)
+            return 1
+
     if args.allow_partial_last_month:
-        config = load_config(config_path)
-        config["pipeline"]["drop_partial_last_month"] = False
-        tmp_path = config_path.parent / "_runtime_partial_override.json"
-        tmp_path.write_text(json.dumps(config, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
-        try:
-            result = run_workflow(
-                config_path=tmp_path,
-                input_xlsx=Path(args.input_xlsx) if args.input_xlsx else None,
-            )
-        finally:
-            tmp_path.unlink(missing_ok=True)
-    else:
+        # Override drop_partial_last_month for all locations
+        for loc in locations:
+            loc["pipeline"]["drop_partial_last_month"] = False
+
+    results = []
+    for loc in locations:
         result = run_workflow(
-            config_path=config_path,
+            config=config,
+            location=loc,
+            project_root=project_root,
             input_xlsx=Path(args.input_xlsx) if args.input_xlsx else None,
         )
-    print(json.dumps(result, indent=2, ensure_ascii=True))
+        results.append({"location": loc["id"], **result})
+
+    print(json.dumps(results, indent=2, ensure_ascii=True))
     return 0
 
 
