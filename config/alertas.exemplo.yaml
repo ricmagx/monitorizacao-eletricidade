@@ -1,0 +1,5 @@
+alerts:
+  min_monthly_saving_eur: 8.0
+  min_annual_saving_eur: 96.0
+  require_current_prices: true
+  require_manual_review: true

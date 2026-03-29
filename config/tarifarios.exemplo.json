@@ -1,0 +1,102 @@
+{
+  "metadata": {
+    "currency": "EUR",
+    "country": "PT",
+    "updated_at": "2026-03-26"
+  },
+  "tariffs": [
+    {
+      "id": "luzboa-mono-base",
+      "supplier": "Luzboa",
+      "plan": "Mono Base",
+      "type": "simples",
+      "valid_from": "2026-03-01",
+      "valid_to": null,
+      "energy": {
+        "simples": 0.1619
+      },
+      "fixed_daily": {
+        "power_contract": 0.305
+      },
+      "source_url": "https://example.com/luzboa-mono"
+    },
+    {
+      "id": "luzboa-bi-base",
+      "supplier": "Luzboa",
+      "plan": "Bi Base",
+      "type": "bihorario",
+      "valid_from": "2026-03-01",
+      "valid_to": null,
+      "energy": {
+        "vazio": 0.108,
+        "fora_vazio": 0.1905
+      },
+      "fixed_daily": {
+        "power_contract": 0.305
+      },
+      "source_url": "https://example.com/luzboa-bi"
+    },
+    {
+      "id": "goldenergy-mono-base",
+      "supplier": "Goldenergy",
+      "plan": "Mono Base",
+      "type": "simples",
+      "valid_from": "2026-03-01",
+      "valid_to": null,
+      "energy": {
+        "simples": 0.1642
+      },
+      "fixed_daily": {
+        "power_contract": 0.296
+      },
+      "source_url": "https://example.com/goldenergy-mono"
+    },
+    {
+      "id": "goldenergy-bi-base",
+      "supplier": "Goldenergy",
+      "plan": "Bi Base",
+      "type": "bihorario",
+      "valid_from": "2026-03-01",
+      "valid_to": null,
+      "energy": {
+        "vazio": 0.112,
+        "fora_vazio": 0.1848
+      },
+      "fixed_daily": {
+        "power_contract": 0.296
+      },
+      "source_url": "https://example.com/goldenergy-bi"
+    },
+    {
+      "id": "endesa-mono-base",
+      "supplier": "Endesa",
+      "plan": "Mono Base",
+      "type": "simples",
+      "valid_from": "2026-03-01",
+      "valid_to": null,
+      "energy": {
+        "simples": 0.1687
+      },
+      "fixed_daily": {
+        "power_contract": 0.301
+      },
+      "source_url": "https://example.com/endesa-mono"
+    },
+    {
+      "id": "endesa-bi-base",
+      "supplier": "Endesa",
+      "plan": "Bi Base",
+      "type": "bihorario",
+      "valid_from": "2026-03-01",
+      "valid_to": null,
+      "energy": {
+        "vazio": 0.119,
+        "fora_vazio": 0.1918
+      },
+      "fixed_daily": {
+        "power_contract": 0.301
+      },
+      "source_url": "https://example.com/endesa-bi"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "current_contract": {
+    "supplier": "Meo Energia",
+    "current_plan_contains": "Tarifa Variável",
+    "power_label": "10.35 kVA"
+  },
+  "eredes": {
+    "home_url": "https://balcaodigital.e-redes.pt/home",
+    "storage_state_path": "state/eredes_storage_state.json",
+    "bootstrap_context_path": "state/eredes_bootstrap_context.json",
+    "download_dir": "data/raw/eredes",
+    "download_url": "https://balcaodigital.e-redes.pt/consumptions/history",
+    "download_mode": "external_firefox",
+    "browser_app": "Firefox",
+    "interactive_wait_seconds": 900,
+    "local_download_watch_dir": "/Users/ricmag/Downloads",
+    "local_download_glob": "Consumos_*.xlsx",
+    "navigation_click_texts": [],
+    "download_button_candidates": [
+      "Exportar excel",
+      "Descarregar Excel",
+      "Download Excel",
+      "Exportar Excel",
+      "Excel"
+    ],
+    "download_timeout_seconds": 60
+  },
+  "pipeline": {
+    "processed_csv_path": "data/processed/consumo_mensal_atual.csv",
+    "analysis_json_path": "data/processed/analise_tiagofelicia_atual.json",
+    "report_dir": "data/reports",
+    "status_path": "state/monthly_status.json",
+    "last_processed_tracker_path": "state/last_processed_download.json",
+    "drop_partial_last_month": true,
+    "notify_on_completion": true,
+    "months_limit": null
+  },
+  "schedule": {
+    "day": 1,
+    "hour": 9,
+    "minute": 0,
+    "timezone": "Europe/Lisbon"
+  },
+  "watcher": {
+    "enabled": true,
+    "watch_paths": [
+      "/Users/ricmag/Downloads"
+    ]
+  }
+}

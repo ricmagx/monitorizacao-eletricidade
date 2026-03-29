@@ -1,0 +1,34 @@
+metadata:
+  currency: EUR
+  country: PT
+  updated_at: 2026-03-26
+
+tariffs:
+  - supplier: Exemplo Energia
+    plan: Simples Base
+    type: simples
+    valid_from: 2026-03-01
+    valid_to:
+    energy:
+      simples: 0.1625
+    fixed_daily:
+      power_contract: 0.3050
+    discounts:
+      direct_debit: false
+      e_invoice: false
+    source_url: https://example.com/tarifario
+
+  - supplier: Exemplo Energia
+    plan: Bihorario Base
+    type: bihorario
+    valid_from: 2026-03-01
+    valid_to:
+    energy:
+      vazio: 0.1090
+      fora_vazio: 0.1870
+    fixed_daily:
+      power_contract: 0.3050
+    discounts:
+      direct_debit: false
+      e_invoice: false
+    source_url: https://example.com/tarifario

@@ -1,0 +1,11 @@
+{
+  "status": "ok",
+  "generated_at": "2026-03-29T22:40:59.508976",
+  "xlsx_path": "/Users/ricmag/Documents/AI/3-hobbies/Casa/energia/monitorizacao-eletricidade/data/raw/eredes/Consumos_PT0002000084968079SX_2025-01-01_2025-11-26_20251126115627.xlsx",
+  "processed_csv_path": "/Users/ricmag/Documents/AI/3-hobbies/Casa/energia/monitorizacao-eletricidade/data/processed/consumo_mensal_atual.csv",
+  "analysis_json_path": "/Users/ricmag/Documents/AI/3-hobbies/Casa/energia/monitorizacao-eletricidade/data/processed/analise_tiagofelicia_atual.json",
+  "report_path": "/Users/ricmag/Documents/AI/3-hobbies/Casa/energia/monitorizacao-eletricidade/data/reports/relatorio_eletricidade_2026-03-29.md",
+  "latest_change_needed": true,
+  "latest_recommendation": "bihorario",
+  "latest_saving_vs_current_eur": 46.54
+}
