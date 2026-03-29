@@ -94,7 +94,7 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md — Config schema locations array + CPE routing module + test infrastructure + .gitignore
-- [ ] 03-02-PLAN.md — Refactor monthly_workflow.py + process_latest_download.py + eredes_download.py para multi-location
+- [x] 03-02-PLAN.md — Refactor monthly_workflow.py + process_latest_download.py + eredes_download.py para multi-location
 - [ ] 03-03-PLAN.md — Refactor reminder_job.py para notificacoes per-location + verificacao launchd plists
 
 ---

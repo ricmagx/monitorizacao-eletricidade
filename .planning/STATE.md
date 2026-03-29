@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: "03"
+current_phase: 03
 status: Executing Phase 03
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-03-29T23:05:00.000Z"
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-03-29T23:05:42.849Z"
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 7
-  completed_plans: 5
+  completed_plans: 6
 ---
 
 # Project State
@@ -51,6 +51,8 @@ Phases: 1 → 2 → 3 → 4
 - `data/raw/`, `data/processed/` e `data/reports/` excluidos do git — CPE do imóvel exposto e ficheiros gerados pelo pipeline
 - [Phase 02-resilience]: render_report refactorizada com dual-path (tiagofelicia vs local_catalog) porque estruturas de analise sao incompativeis
 - [Phase 02-resilience]: Bounds check inserido antes de output_path.parent.mkdir para garantir validate-before-write no parser XLSX (RES-02)
+- [Phase 03]: location dict passed as explicit parameter to run_workflow — avoids config root access for contract/pipeline data
+- [Phase 03]: process_latest_download routing fully automatic by CPE in filename — no --location flag needed
 
 ## Notes
 
@@ -63,5 +65,5 @@ Phases: 1 → 2 → 3 → 4
 
 ## Last session
 
-**Stopped at:** Completed 02-02-PLAN.md
+**Stopped at:** Completed 03-02-PLAN.md
 **Session date:** 2026-03-28T23:05:00Z
