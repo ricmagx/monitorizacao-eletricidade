@@ -25,8 +25,8 @@
 
 ### Multi-Local
 
-- [ ] **MULTI-01**: Estender `config/system.json` com schema `"locations": [...]` (id, nome, CPE, potência, fornecedor actual, caminhos de dados)
-- [ ] **MULTI-02**: Migrar estrutura de directórios para nested (`data/casa/`, `data/apartamento/`, `state/casa/`, `state/apartamento/`)
+- [x] **MULTI-01**: Estender `config/system.json` com schema `"locations": [...]` (id, nome, CPE, potência, fornecedor actual, caminhos de dados)
+- [x] **MULTI-02**: Migrar estrutura de directórios para nested (`data/casa/`, `data/apartamento/`, `state/casa/`, `state/apartamento/`)
 - [ ] **MULTI-03**: Refactorizar `monthly_workflow.py` para iterar sobre locais (loop sequencial — sessão Playwright partilhada)
 - [ ] **MULTI-04**: Refactorizar `process_latest_download.py` para fazer routing de XLSX por CPE no nome do ficheiro
 - [ ] **MULTI-05**: Refactorizar `reminder_job.py` para enviar notificação por local
@@ -88,8 +88,8 @@
 | RES-01 | Phase 2 | Complete |
 | RES-02 | Phase 2 | Complete |
 | RES-03 | Phase 2 | Complete |
-| MULTI-01 | Phase 3 | Pending |
-| MULTI-02 | Phase 3 | Pending |
+| MULTI-01 | Phase 3 | Complete |
+| MULTI-02 | Phase 3 | Complete |
 | MULTI-03 | Phase 3 | Pending |
 | MULTI-04 | Phase 3 | Pending |
 | MULTI-05 | Phase 3 | Pending |

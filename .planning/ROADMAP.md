@@ -90,10 +90,10 @@ Plans:
 - O CPE do `apartamento` é um placeholder (`PT000200XXXXXXXXXX`) — deve ser confirmado no portal E-REDES antes de completar a configuração e os testes desta fase
 - A execução sequencial é obrigatória (sessão Playwright partilhada); não introduzir paralelismo nesta fase
 
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
-- [ ] 03-01-PLAN.md — Config schema locations array + CPE routing module + test infrastructure + .gitignore
+- [x] 03-01-PLAN.md — Config schema locations array + CPE routing module + test infrastructure + .gitignore
 - [ ] 03-02-PLAN.md — Refactor monthly_workflow.py + process_latest_download.py + eredes_download.py para multi-location
 - [ ] 03-03-PLAN.md — Refactor reminder_job.py para notificacoes per-location + verificacao launchd plists
 
@@ -131,7 +131,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Unblock & Validate | 1/2 | In Progress|  |
 | 2. Resilience | 2/2 | Complete | 2026-03-29 |
-| 3. Multi-Location Refactor | 0/3 | Planned | - |
+| 3. Multi-Location Refactor | 1/3 | In Progress|  |
 | 4. Web Dashboard MVP | 0/? | Not started | - |
 
 ---
