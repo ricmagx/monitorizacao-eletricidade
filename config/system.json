@@ -33,7 +33,9 @@
     "last_processed_tracker_path": "state/last_processed_download.json",
     "drop_partial_last_month": true,
     "notify_on_completion": true,
-    "months_limit": null
+    "months_limit": null,
+    "local_tariffs_path": "config/tarifarios.json",
+    "local_contract_path": "config/fornecedor_atual.exemplo.json"
   },
   "schedule": {
     "day": 1,
