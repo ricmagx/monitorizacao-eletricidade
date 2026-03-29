@@ -180,6 +180,8 @@ def multi_location_config(tmp_path, sample_tariffs, sample_contract):
         ],
         "eredes": {
             "download_dir_base": "data/{location_id}/raw/eredes",
+            "download_url": "https://balcaodigital.e-redes.pt/consumptions/history",
+            "browser_app": "Firefox",
         },
     }
     config_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
