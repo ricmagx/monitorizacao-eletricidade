@@ -65,7 +65,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Fallback tiagofelicia.pt para catalogo local (RES-01) + fornecedor sem match (RES-03) + infraestrutura pytest
+- [x] 02-01-PLAN.md — Fallback tiagofelicia.pt para catalogo local (RES-01) + fornecedor sem match (RES-03) + infraestrutura pytest
 - [ ] 02-02-PLAN.md — Bounds check no parser XLSX (RES-02)
 
 ---

@@ -19,9 +19,9 @@
 
 ### Resiliência
 
-- [ ] **RES-01**: Implementar fallback de `tiagofelicia_compare.py` para catálogo local quando o site estiver indisponível ou devolver erro
+- [x] **RES-01**: Implementar fallback de `tiagofelicia_compare.py` para catálogo local quando o site estiver indisponível ou devolver erro
 - [ ] **RES-02**: Adicionar verificação de sanidade ao parser XLSX (limites plausíveis de consumo, colunas esperadas)
-- [ ] **RES-03**: Tratar nome de fornecedor sem correspondência em `tiagofelicia_compare.py` (actualmente retorna `None` em silêncio)
+- [x] **RES-03**: Tratar nome de fornecedor sem correspondência em `tiagofelicia_compare.py` (actualmente retorna `None` em silêncio)
 
 ### Multi-Local
 
@@ -85,9 +85,9 @@
 | FIX-04 | Phase 1 | Complete |
 | VAL-01 | Phase 1 | Pending |
 | VAL-02 | Phase 1 | Pending |
-| RES-01 | Phase 2 | Pending |
+| RES-01 | Phase 2 | Complete |
 | RES-02 | Phase 2 | Pending |
-| RES-03 | Phase 2 | Pending |
+| RES-03 | Phase 2 | Complete |
 | MULTI-01 | Phase 3 | Pending |
 | MULTI-02 | Phase 3 | Pending |
 | MULTI-03 | Phase 3 | Pending |
