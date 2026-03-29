@@ -120,6 +120,7 @@ def compare_month(
     )
     combined = sorted(simple + bi, key=lambda item: item["total_eur"])
     current = pick_current_result(combined, current_supplier, current_plan_contains)
+    supplier_not_found = current is None
     best_simple = min(simple, key=lambda item: item["total_eur"])
     best_bi = min(bi, key=lambda item: item["total_eur"])
     recommended = best_simple if best_simple["total_eur"] < best_bi["total_eur"] else best_bi
@@ -132,6 +133,7 @@ def compare_month(
         "best_bihorario": best_bi,
         "recommended_option": recommendation_type,
         "difference_simple_vs_bi_eur": round(abs(best_simple["total_eur"] - best_bi["total_eur"]), 2),
+        "supplier_not_found": supplier_not_found,
         "needs_change": (
             current is not None and round(current["total_eur"] - combined[0]["total_eur"], 2) > 0.0
         ),
@@ -145,6 +147,7 @@ def summarise_history(history: list[dict[str, Any]]) -> dict[str, Any]:
     simple_wins = [item for item in history if item["recommended_option"] == "simples"]
     bi_wins = [item for item in history if item["recommended_option"] == "bihorario"]
     latest = history[-1]
+    any_supplier_not_found = any(item.get("supplier_not_found", False) for item in history)
     return {
         "months_analysed": len(history),
         "simple_wins": len(simple_wins),
@@ -155,6 +158,7 @@ def summarise_history(history: list[dict[str, Any]]) -> dict[str, Any]:
         "latest_current_supplier_result": latest["current_supplier_result"],
         "latest_change_needed": latest["needs_change"],
         "latest_saving_vs_current_eur": latest["saving_vs_current_eur"],
+        "supplier_not_found": any_supplier_not_found,
     }
 
 
