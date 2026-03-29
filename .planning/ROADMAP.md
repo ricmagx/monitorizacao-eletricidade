@@ -65,8 +65,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Corrigir .gitignore, requirements.txt e path Python nos plists launchd
-- [ ] 01-02-PLAN.md — Bootstrap sessao E-REDES, validar parser XLSX e pipeline end-to-end
+- [ ] 02-01-PLAN.md — Fallback tiagofelicia.pt para catalogo local (RES-01) + fornecedor sem match (RES-03) + infraestrutura pytest
+- [ ] 02-02-PLAN.md — Bounds check no parser XLSX (RES-02)
 
 ---
 
@@ -90,11 +90,7 @@ Plans:
 - O CPE do `apartamento` é um placeholder (`PT000200XXXXXXXXXX`) — deve ser confirmado no portal E-REDES antes de completar a configuração e os testes desta fase
 - A execução sequencial é obrigatória (sessão Playwright partilhada); não introduzir paralelismo nesta fase
 
-**Plans:** 2 plans
-
-Plans:
-- [ ] 01-01-PLAN.md — Corrigir .gitignore, requirements.txt e path Python nos plists launchd
-- [ ] 01-02-PLAN.md — Bootstrap sessao E-REDES, validar parser XLSX e pipeline end-to-end
+**Plans:** [To be planned]
 
 ---
 
@@ -120,11 +116,7 @@ Plans:
 - HTMX e Chart.js devem ser descarregados e fixados como ficheiros estáticos locais antes de qualquer trabalho de UI — verificar versões disponíveis (HTMX 2.0.x, Chart.js 4.4.x) e confirmar que o UMD build do Chart.js não requer bundler
 - O ano-a-ano (DASH-06) depende de ter pelo menos 2 anos de dados para `casa`; para `apartamento` provavelmente não existe histórico suficiente na primeira iteração — a UI deve mostrar o estado "sem dados para comparação" de forma elegante e não como erro
 
-**Plans:** 2 plans
-
-Plans:
-- [ ] 01-01-PLAN.md — Corrigir .gitignore, requirements.txt e path Python nos plists launchd
-- [ ] 01-02-PLAN.md — Bootstrap sessao E-REDES, validar parser XLSX e pipeline end-to-end
+**Plans:** [To be planned]
 
 ---
 
@@ -133,7 +125,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Unblock & Validate | 1/2 | In Progress|  |
-| 2. Resilience | 0/? | Not started | - |
+| 2. Resilience | 0/2 | Planned | - |
 | 3. Multi-Location Refactor | 0/? | Not started | - |
 | 4. Web Dashboard MVP | 0/? | Not started | - |
 
