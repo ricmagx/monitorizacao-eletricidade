@@ -13,6 +13,12 @@ from openpyxl import load_workbook
 
 LISBON = ZoneInfo("Europe/Lisbon")
 
+# Limites plausiveis de consumo mensal (kWh)
+# 30 kWh = minimo conservador (casa desocupada)
+# 5000 kWh = maximo conservador (consumo industrial nao esperado em residencial)
+MIN_MONTHLY_KWH = 30
+MAX_MONTHLY_KWH = 5000
+
 
 def is_daily_cycle_vazio(local_dt: datetime) -> bool:
     is_dst = bool(local_dt.dst())
@@ -127,6 +133,14 @@ def convert_xlsx_to_monthly_csv(
         last_year_month = max(monthly)
         if not is_complete_month(last_year_month, latest_date_by_month):
             del monthly[last_year_month]
+
+    # Bounds check: verificar limites plausiveis antes de escrever output (RES-02)
+    for ym, totals in monthly.items():
+        if not (MIN_MONTHLY_KWH <= totals["total_kwh"] <= MAX_MONTHLY_KWH):
+            raise ValueError(
+                f"Consumo fora dos limites plausiveis para {ym}: "
+                f"{totals['total_kwh']:.1f} kWh (esperado {MIN_MONTHLY_KWH}–{MAX_MONTHLY_KWH} kWh/mes)"
+            )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8", newline="") as handle:
