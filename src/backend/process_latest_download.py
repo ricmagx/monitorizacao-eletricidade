@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from cpe_routing import extract_cpe_from_filename, find_location_by_cpe
 from monthly_workflow import run_workflow
 
 
@@ -57,7 +58,25 @@ def process_latest_download(config_path: Path, allow_partial_last_month: bool = 
     if latest is None:
         raise RuntimeError(f"Nao encontrei nenhum XLSX em {watch_dir}")
 
-    tracker_path = resolve_path(project_root, config["pipeline"]["last_processed_tracker_path"])
+    # Route by CPE extracted from filename
+    cpe = extract_cpe_from_filename(latest.name)
+    location = find_location_by_cpe(config["locations"], cpe) if cpe else None
+
+    if location is None:
+        return {
+            "status": "skipped",
+            "generated_at": datetime.now().isoformat(),
+            "reason": "unknown_cpe",
+            "cpe": cpe,
+            "xlsx_path": str(latest.resolve()),
+        }
+
+    if allow_partial_last_month:
+        location = dict(location)
+        location["pipeline"] = dict(location["pipeline"])
+        location["pipeline"]["drop_partial_last_month"] = False
+
+    tracker_path = resolve_path(project_root, location["pipeline"]["last_processed_tracker_path"])
     latest_signature = file_signature(latest)
     previous = load_tracker(tracker_path)
     if previous == latest_signature:
@@ -68,16 +87,7 @@ def process_latest_download(config_path: Path, allow_partial_last_month: bool = 
             "xlsx_path": latest_signature["path"],
         }
 
-    if allow_partial_last_month:
-        config["pipeline"]["drop_partial_last_month"] = False
-        tmp_path = config_path.parent / "_runtime_partial_override.json"
-        tmp_path.write_text(json.dumps(config, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
-        try:
-            result = run_workflow(config_path=tmp_path, input_xlsx=latest)
-        finally:
-            tmp_path.unlink(missing_ok=True)
-    else:
-        result = run_workflow(config_path=config_path, input_xlsx=latest)
+    result = run_workflow(config=config, location=location, project_root=project_root, input_xlsx=latest)
 
     if result.get("status") == "ok":
         save_tracker(tracker_path, latest_signature)

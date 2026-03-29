@@ -274,6 +274,7 @@ def test_process_tracker_per_location(multi_location_config, tmp_path):
 def test_eredes_cpe_hint_in_notification(tmp_path):
     """MULTI-06: download_latest_xlsx external_firefox path calls notify_mac with CPE hint."""
     from eredes_download import download_latest_xlsx
+    import eredes_download
 
     config_path = tmp_path / "config" / "system.json"
     config_path.parent.mkdir(parents=True, exist_ok=True)
@@ -288,7 +289,7 @@ def test_eredes_cpe_hint_in_notification(tmp_path):
             "download_url": "https://balcaodigital.e-redes.pt/consumptions/history",
             "download_mode": "external_firefox",
             "browser_app": "Firefox",
-            "interactive_wait_seconds": 5,
+            "interactive_wait_seconds": 30,
             "local_download_watch_dir": str(watch_dir),
             "local_download_glob": "Consumos_*.xlsx",
         },
@@ -311,18 +312,26 @@ def test_eredes_cpe_hint_in_notification(tmp_path):
     def fake_notify(title, message):
         notify_calls.append((title, message))
 
-    def fake_open(*args, **kwargs):
-        pass
-
-    # Place a new XLSX in watch_dir so the watcher finds it immediately
-    import time
-    before_time = time.time()
     new_xlsx = watch_dir / "Consumos_PT0002000084968079SX_20260326042940.xlsx"
+
+    # Intercept snapshot_matching_files so the pre-download snapshot shows empty,
+    # then place the file so changed_file_since_snapshot detects it on first poll.
+    original_snapshot = eredes_download.snapshot_matching_files
+    snapshot_call_count = [0]
+
+    def fake_snapshot(directory, pattern):
+        snapshot_call_count[0] += 1
+        if snapshot_call_count[0] == 1:
+            # First call: before-snapshot returns empty (file doesn't exist yet)
+            return {}
+        return original_snapshot(directory, pattern)
+
+    # Place the XLSX file now (will be detected as new since snapshot is empty)
     new_xlsx.write_bytes(b"fake")
 
     with patch("eredes_download.notify_mac", side_effect=fake_notify), \
-         patch("subprocess.run", side_effect=fake_open):
-        # The function will scan and find the file immediately and return
+         patch("subprocess.run"), \
+         patch.object(eredes_download, "snapshot_matching_files", side_effect=fake_snapshot):
         result = download_latest_xlsx(config_path=config_path, cpe_hint="PT0002000084968079SX")
 
     # Check that a notification was sent with CPE in the message

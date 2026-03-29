@@ -77,7 +77,7 @@ def changed_file_since_snapshot(directory: Path, pattern: str, before: dict[str,
     return max(changed, key=lambda p: p.stat().st_mtime)
 
 
-def download_latest_xlsx(config_path: Path) -> Path:
+def download_latest_xlsx(config_path: Path, cpe_hint: str | None = None) -> Path:
     config = load_config(config_path)
     project_root = project_root_from_config(config_path)
     eredes = config["eredes"]
@@ -86,7 +86,9 @@ def download_latest_xlsx(config_path: Path) -> Path:
     if not storage_state_path.exists():
         raise RuntimeError("Sessao E-REDES inexistente. Execute primeiro o bootstrap de login.")
 
-    download_dir = resolve_path(project_root, eredes["download_dir"])
+    download_dir_base = eredes.get("download_dir_base") or eredes.get("download_dir", "data/raw/eredes")
+    # Resolve a static download dir (substitui {location_id} pelo primeiro local se existir)
+    download_dir = resolve_path(project_root, download_dir_base.replace("{location_id}", "raw"))
     download_dir.mkdir(parents=True, exist_ok=True)
     download_url = eredes.get("download_url") or HOME_URL
     navigation_click_texts = eredes.get("navigation_click_texts", [])
@@ -100,6 +102,8 @@ def download_latest_xlsx(config_path: Path) -> Path:
 
     if mode == "external_firefox":
         before_snapshot = snapshot_matching_files(watch_dir, watch_pattern)
+        if cpe_hint:
+            notify_mac("E-REDES", f"CPE: {cpe_hint} -- Seleccione o CPE correcto no portal e descarregue o Excel.")
         notify_mac(
             "E-REDES",
             "Abra o Firefox, descarregue o Excel e o sistema vai importar o ficheiro.",

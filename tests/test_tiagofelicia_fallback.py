@@ -14,12 +14,18 @@ def _make_location_from_test_config(test_config: Path) -> tuple[dict, dict, Path
     """
     config = json.loads(test_config.read_text(encoding="utf-8"))
     project_root = test_config.resolve().parent.parent
+    old_pipeline = config["pipeline"]
+    # Adaptar schema legado para schema multi-location: adicionar raw_dir
+    pipeline = {
+        "raw_dir": config.get("eredes", {}).get("download_dir", "data/raw/eredes"),
+        **old_pipeline,
+    }
     location = {
         "id": "test",
         "name": "Test",
         "cpe": "PT_TEST",
         "current_contract": config["current_contract"],
-        "pipeline": config["pipeline"],
+        "pipeline": pipeline,
     }
     return config, location, project_root
 
