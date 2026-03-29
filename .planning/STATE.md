@@ -5,7 +5,7 @@ milestone_name: milestone
 current_phase: "03"
 status: Executing Phase 03
 stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-03-29T23:00:00.000Z"
+last_updated: "2026-03-29T23:05:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 2
@@ -51,8 +51,6 @@ Phases: 1 → 2 → 3 → 4
 - `data/raw/`, `data/processed/` e `data/reports/` excluidos do git — CPE do imóvel exposto e ficheiros gerados pelo pipeline
 - [Phase 02-resilience]: render_report refactorizada com dual-path (tiagofelicia vs local_catalog) porque estruturas de analise sao incompativeis
 - [Phase 02-resilience]: Bounds check inserido antes de output_path.parent.mkdir para garantir validate-before-write no parser XLSX (RES-02)
-- [Phase 03]: config/system.json migrado para schema locations[] sem fallback legacy - projecto pessoal sem consumidores externos
-- [Phase 03]: CPE apartamento mantido como placeholder PT000200XXXXXXXXXX - CPE real requer confirmacao manual no portal E-REDES
 
 ## Notes
 
@@ -65,5 +63,5 @@ Phases: 1 → 2 → 3 → 4
 
 ## Last session
 
-**Stopped at:** Completed 03-01-PLAN.md
+**Stopped at:** Completed 02-02-PLAN.md
 **Session date:** 2026-03-28T23:05:00Z
