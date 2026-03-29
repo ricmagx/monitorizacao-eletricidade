@@ -10,7 +10,7 @@
 
 - [ ] **Phase 1: Unblock & Validate End-to-End** — Corrigir os dois bloqueadores confirmados e validar que o pipeline corre com dados reais
 - [ ] **Phase 2: Resilience** — Tornar o pipeline robusto antes de adicionar complexidade
-- [ ] **Phase 3: Multi-Location Refactor** — Estender o pipeline validado para suportar N locais independentes
+- [x] **Phase 3: Multi-Location Refactor** — Estender o pipeline validado para suportar N locais independentes (completed 2026-03-29)
 - [ ] **Phase 4: Web Dashboard MVP** — Dashboard web local em modo leitura sobre os ficheiros de output do pipeline
 
 ---
@@ -90,12 +90,12 @@ Plans:
 - O CPE do `apartamento` é um placeholder (`PT000200XXXXXXXXXX`) — deve ser confirmado no portal E-REDES antes de completar a configuração e os testes desta fase
 - A execução sequencial é obrigatória (sessão Playwright partilhada); não introduzir paralelismo nesta fase
 
-**Plans:** 1/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 03-01-PLAN.md — Config schema locations array + CPE routing module + test infrastructure + .gitignore
 - [x] 03-02-PLAN.md — Refactor monthly_workflow.py + process_latest_download.py + eredes_download.py para multi-location
-- [ ] 03-03-PLAN.md — Refactor reminder_job.py para notificacoes per-location + verificacao launchd plists
+- [x] 03-03-PLAN.md — Refactor reminder_job.py para notificacoes per-location + verificacao launchd plists
 
 ---
 
@@ -131,7 +131,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Unblock & Validate | 1/2 | In Progress|  |
 | 2. Resilience | 2/2 | Complete | 2026-03-29 |
-| 3. Multi-Location Refactor | 1/3 | In Progress|  |
+| 3. Multi-Location Refactor | 3/3 | Complete   | 2026-03-29 |
 | 4. Web Dashboard MVP | 0/? | Not started | - |
 
 ---

@@ -29,7 +29,7 @@
 - [x] **MULTI-02**: Migrar estrutura de directórios para nested (`data/casa/`, `data/apartamento/`, `state/casa/`, `state/apartamento/`)
 - [x] **MULTI-03**: Refactorizar `monthly_workflow.py` para iterar sobre locais (loop sequencial — sessão Playwright partilhada)
 - [x] **MULTI-04**: Refactorizar `process_latest_download.py` para fazer routing de XLSX por CPE no nome do ficheiro
-- [ ] **MULTI-05**: Refactorizar `reminder_job.py` para enviar notificação por local
+- [x] **MULTI-05**: Refactorizar `reminder_job.py` para enviar notificação por local
 - [x] **MULTI-06**: Estender `eredes_download.py` para seleccionar CPE correcto no portal (modo `external_firefox` — o utilizador selecciona manualmente)
 
 ### Dashboard Web
@@ -92,7 +92,7 @@
 | MULTI-02 | Phase 3 | Complete |
 | MULTI-03 | Phase 3 | Complete |
 | MULTI-04 | Phase 3 | Complete |
-| MULTI-05 | Phase 3 | Pending |
+| MULTI-05 | Phase 3 | Complete |
 | MULTI-06 | Phase 3 | Complete |
 | DASH-01 | Phase 4 | Pending |
 | DASH-02 | Phase 4 | Pending |
