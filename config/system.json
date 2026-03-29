@@ -1,14 +1,57 @@
 {
-  "current_contract": {
-    "supplier": "Meo Energia",
-    "current_plan_contains": "Tarifa Variável",
-    "power_label": "10.35 kVA"
-  },
+  "locations": [
+    {
+      "id": "casa",
+      "name": "Casa",
+      "cpe": "PT0002000084968079SX",
+      "current_contract": {
+        "supplier": "Meo Energia",
+        "current_plan_contains": "Tarifa Variável",
+        "power_label": "10.35 kVA"
+      },
+      "pipeline": {
+        "raw_dir": "data/casa/raw/eredes",
+        "processed_csv_path": "data/casa/processed/consumo_mensal_atual.csv",
+        "analysis_json_path": "data/casa/processed/analise_tiagofelicia_atual.json",
+        "report_dir": "data/casa/reports",
+        "status_path": "state/casa/monthly_status.json",
+        "last_processed_tracker_path": "state/casa/last_processed_download.json",
+        "drop_partial_last_month": true,
+        "notify_on_completion": true,
+        "months_limit": null,
+        "local_tariffs_path": "config/tarifarios.json",
+        "local_contract_path": "config/fornecedor_atual.exemplo.json"
+      }
+    },
+    {
+      "id": "apartamento",
+      "name": "Apartamento",
+      "cpe": "PT000200XXXXXXXXXX",
+      "current_contract": {
+        "supplier": "...",
+        "current_plan_contains": "...",
+        "power_label": "..."
+      },
+      "pipeline": {
+        "raw_dir": "data/apartamento/raw/eredes",
+        "processed_csv_path": "data/apartamento/processed/consumo_mensal_atual.csv",
+        "analysis_json_path": "data/apartamento/processed/analise_tiagofelicia_atual.json",
+        "report_dir": "data/apartamento/reports",
+        "status_path": "state/apartamento/monthly_status.json",
+        "last_processed_tracker_path": "state/apartamento/last_processed_download.json",
+        "drop_partial_last_month": true,
+        "notify_on_completion": true,
+        "months_limit": null,
+        "local_tariffs_path": "config/tarifarios.json",
+        "local_contract_path": "config/fornecedor_atual.exemplo.json"
+      }
+    }
+  ],
   "eredes": {
     "home_url": "https://balcaodigital.e-redes.pt/home",
     "storage_state_path": "state/eredes_storage_state.json",
     "bootstrap_context_path": "state/eredes_bootstrap_context.json",
-    "download_dir": "data/raw/eredes",
+    "download_dir_base": "data/{location_id}/raw/eredes",
     "download_url": "https://balcaodigital.e-redes.pt/consumptions/history",
     "download_mode": "external_firefox",
     "browser_app": "Firefox",
@@ -24,18 +67,6 @@
       "Excel"
     ],
     "download_timeout_seconds": 60
-  },
-  "pipeline": {
-    "processed_csv_path": "data/processed/consumo_mensal_atual.csv",
-    "analysis_json_path": "data/processed/analise_tiagofelicia_atual.json",
-    "report_dir": "data/reports",
-    "status_path": "state/monthly_status.json",
-    "last_processed_tracker_path": "state/last_processed_download.json",
-    "drop_partial_last_month": true,
-    "notify_on_completion": true,
-    "months_limit": null,
-    "local_tariffs_path": "config/tarifarios.json",
-    "local_contract_path": "config/fornecedor_atual.exemplo.json"
   },
   "schedule": {
     "day": 1,

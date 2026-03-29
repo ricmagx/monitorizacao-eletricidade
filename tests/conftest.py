@@ -110,3 +110,77 @@ def test_config(tmp_path, sample_csv, sample_tariffs, sample_contract):
     }
     config_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     return config_path
+
+
+@pytest.fixture
+def multi_location_config(tmp_path, sample_tariffs, sample_contract):
+    """Config system.json com schema multi-location para testes de fase 03.
+
+    Cria config/system.json em tmp_path com dois locations (casa + apartamento)
+    e todas as diretorias nested esperadas pelo pipeline.
+    """
+    config_path = tmp_path / "config" / "system.json"
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Criar estrutura de diretorias nested para cada local
+    for location_id in ("casa", "apartamento"):
+        (tmp_path / "data" / location_id / "raw" / "eredes").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "data" / location_id / "processed").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "data" / location_id / "reports").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "state" / location_id).mkdir(parents=True, exist_ok=True)
+
+    payload = {
+        "locations": [
+            {
+                "id": "casa",
+                "name": "Casa",
+                "cpe": "PT0002000084968079SX",
+                "current_contract": {
+                    "supplier": "Meo Energia",
+                    "current_plan_contains": "Tarifa Variavel",
+                    "power_label": "10.35 kVA",
+                },
+                "pipeline": {
+                    "raw_dir": "data/casa/raw/eredes",
+                    "processed_csv_path": "data/casa/processed/consumo_mensal_atual.csv",
+                    "analysis_json_path": "data/casa/processed/analise_tiagofelicia_atual.json",
+                    "report_dir": "data/casa/reports",
+                    "status_path": "state/casa/monthly_status.json",
+                    "last_processed_tracker_path": "state/casa/last_processed_download.json",
+                    "drop_partial_last_month": True,
+                    "notify_on_completion": False,
+                    "months_limit": None,
+                    "local_tariffs_path": str(sample_tariffs),
+                    "local_contract_path": str(sample_contract),
+                },
+            },
+            {
+                "id": "apartamento",
+                "name": "Apartamento",
+                "cpe": "PT000200XXXXXXXXXX",
+                "current_contract": {
+                    "supplier": "Fornecedor Mock",
+                    "current_plan_contains": "Tarifa Mock",
+                    "power_label": "6.9 kVA",
+                },
+                "pipeline": {
+                    "raw_dir": "data/apartamento/raw/eredes",
+                    "processed_csv_path": "data/apartamento/processed/consumo_mensal_atual.csv",
+                    "analysis_json_path": "data/apartamento/processed/analise_tiagofelicia_atual.json",
+                    "report_dir": "data/apartamento/reports",
+                    "status_path": "state/apartamento/monthly_status.json",
+                    "last_processed_tracker_path": "state/apartamento/last_processed_download.json",
+                    "drop_partial_last_month": True,
+                    "notify_on_completion": False,
+                    "months_limit": None,
+                    "local_tariffs_path": str(sample_tariffs),
+                    "local_contract_path": str(sample_contract),
+                },
+            },
+        ],
+        "eredes": {
+            "download_dir_base": "data/{location_id}/raw/eredes",
+        },
+    }
+    config_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    return config_path
