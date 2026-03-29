@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 02
 status: Executing Phase 02
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-29T22:19:23.819Z"
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-03-29T22:22:45.481Z"
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -50,6 +50,7 @@ Phases: 1 → 2 → 3 → 4
 - Homebrew Python (`/usr/local/opt/python@3.11/libexec/bin/python3`) usado nos plists launchd — confirmado como path correcto que já correu o pipeline com sucesso (2026-03-26)
 - `data/raw/`, `data/processed/` e `data/reports/` excluidos do git — CPE do imóvel exposto e ficheiros gerados pelo pipeline
 - [Phase 02-resilience]: render_report refactorizada com dual-path (tiagofelicia vs local_catalog) porque estruturas de analise sao incompativeis
+- [Phase 02-resilience]: Bounds check inserido antes de output_path.parent.mkdir para garantir validate-before-write no parser XLSX (RES-02)
 
 ## Notes
 
@@ -62,5 +63,5 @@ Phases: 1 → 2 → 3 → 4
 
 ## Last session
 
-**Stopped at:** Completed 02-01-PLAN.md
+**Stopped at:** Completed 02-02-PLAN.md
 **Session date:** 2026-03-28T23:05:00Z
