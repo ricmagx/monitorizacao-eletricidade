@@ -1,5 +1,11 @@
 """Alembic env.py — configura migracao SQLite."""
 import os
+import sys
+from pathlib import Path
+
+# Garante que /app (raiz do projecto) está no sys.path — necessário no Docker
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
