@@ -35,9 +35,9 @@
 ### Dashboard Web
 
 - [x] **DASH-01**: Setup FastAPI + Jinja2 + HTMX (ficheiro estático local) + Chart.js (ficheiro estático local) — sem build step
-- [ ] **DASH-02**: Gráfico de consumo mensal (kWh, barras empilhadas vazio/fora_vazio) ao longo do tempo, por local
-- [ ] **DASH-03**: Gráfico de custo €/mês: custo real da factura + estimativa calculada pelo contrato — sobrepostos no mesmo eixo temporal
-- [ ] **DASH-04**: Modelo de dados para custo real da factura: campo de entrada manual por mês (CSV ou formulário na dashboard)
+- [x] **DASH-02**: Gráfico de consumo mensal (kWh, barras empilhadas vazio/fora_vazio) ao longo do tempo, por local
+- [x] **DASH-03**: Gráfico de custo €/mês: custo real da factura + estimativa calculada pelo contrato — sobrepostos no mesmo eixo temporal
+- [x] **DASH-04**: Modelo de dados para custo real da factura: campo de entrada manual por mês (CSV ou formulário na dashboard)
 - [ ] **DASH-05**: Tabela de ranking de comercializadores por custo anual estimado (recomendação mensal actual)
 - [ ] **DASH-06**: Recomendação de mudança com poupança estimada e indicador de confiança
 - [ ] **DASH-07**: Vista histórica: simulação retroactiva de quem teria sido o mais barato em cada mês passado
@@ -95,9 +95,9 @@
 | MULTI-05 | Phase 3 | Complete |
 | MULTI-06 | Phase 3 | Complete |
 | DASH-01 | Phase 4 | Complete |
-| DASH-02 | Phase 4 | Pending |
-| DASH-03 | Phase 4 | Pending |
-| DASH-04 | Phase 4 | Pending |
+| DASH-02 | Phase 4 | Complete |
+| DASH-03 | Phase 4 | Complete |
+| DASH-04 | Phase 4 | Complete |
 | DASH-05 | Phase 4 | Pending |
 | DASH-06 | Phase 4 | Pending |
 | DASH-07 | Phase 4 | Pending |

@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 04
 status: Executing Phase 04
-stopped_at: Completed 04-01-PLAN.md (web dashboard foundation)
-last_updated: "2026-03-30T00:47:31.164Z"
+stopped_at: Completed 04-02-PLAN.md (graficos consumo/custo + formulario custo real)
+last_updated: "2026-03-30T00:53:05.290Z"
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 10
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -56,6 +56,8 @@ Phases: 1 → 2 → 3 → 4
 - [Phase 03]: Launchd plists require no content changes — reminder_job now handles multi-location internally via config['locations'] iteration
 - [Phase 04-web-dashboard-mvp]: FastAPI upgradeado para 0.135.2 para compatibilidade com Starlette 1.0.0; TemplateResponse usa API request= kwarg
 - [Phase 04-web-dashboard-mvp]: app.state.config_path permite override em testes sem monkeypatch complexo — padrao para todos os planos da fase 04
+- [Phase 04-web-dashboard-mvp]: custo_section.html como wrapper unico para swap HTMX — permite actualizar grafico + formulario num unico hx-swap
+- [Phase 04-web-dashboard-mvp]: custos_reais.json em data/{local_id}/ — input do utilizador, nao estado do pipeline; None para meses sem custo real serializa para null (Chart.js gap)
 
 ## Notes
 
@@ -68,5 +70,5 @@ Phases: 1 → 2 → 3 → 4
 
 ## Last session
 
-**Stopped at:** Completed 04-01-PLAN.md (web dashboard foundation)
+**Stopped at:** Completed 04-02-PLAN.md (graficos consumo/custo + formulario custo real)
 **Session date:** 2026-03-28T23:05:00Z
