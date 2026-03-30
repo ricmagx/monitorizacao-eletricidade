@@ -22,7 +22,7 @@
 
 ### Upload e Ingestão
 
-- [ ] **UPLD-01**: Utilizador faz upload de XLSX da E-REDES via browser
+- [x] **UPLD-01**: Utilizador faz upload de XLSX da E-REDES via browser
 - [x] **UPLD-02**: Sistema normaliza XLSX e armazena consumo em SQLite automaticamente
 - [ ] **UPLD-03**: Utilizador faz upload de PDF de fatura via browser
 - [ ] **UPLD-04**: Sistema extrai total pago e período do PDF (formatos Meo Energia + Endesa)
@@ -35,7 +35,7 @@
 
 ### Comparação de Tarifários
 
-- [ ] **COMP-01**: Sistema consulta tiagofelicia.pt após cada upload de XLSX
+- [x] **COMP-01**: Sistema consulta tiagofelicia.pt após cada upload de XLSX
 - [x] **COMP-02**: Resultado guardado em cache SQLite com data
 - [ ] **COMP-03**: Dashboard usa cache quando tiagofelicia.pt está indisponível
 - [ ] **COMP-04**: Badge indica se dados são frescos ou do cache (com data)
@@ -88,14 +88,14 @@
 | DADOS-02 | Phase 5 | Complete |
 | DADOS-03 | Phase 5 | Complete |
 | DADOS-04 | Phase 5 | Complete |
-| UPLD-01 | Phase 7 | Pending |
+| UPLD-01 | Phase 7 | Complete |
 | UPLD-02 | Phase 7 | Complete |
 | UPLD-03 | Phase 8 | Pending |
 | UPLD-04 | Phase 8 | Pending |
 | UPLD-05 | Phase 7 | Complete |
 | CONF-01 | Phase 7 | Complete |
 | CONF-02 | Phase 7 | Complete |
-| COMP-01 | Phase 7 | Pending |
+| COMP-01 | Phase 7 | Complete |
 | COMP-02 | Phase 7 | Complete |
 | COMP-03 | Phase 10 | Pending |
 | COMP-04 | Phase 10 | Pending |
