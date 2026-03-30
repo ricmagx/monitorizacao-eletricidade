@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 04
 status: Executing Phase 04
-stopped_at: Completed 04-02-PLAN.md (graficos consumo/custo + formulario custo real)
-last_updated: "2026-03-30T00:53:05.290Z"
+stopped_at: Completed 04-03-PLAN.md (ranking de fornecedores + LaunchAgent plist)
+last_updated: "2026-03-30T00:57:40.427Z"
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 10
-  completed_plans: 9
+  completed_plans: 10
 ---
 
 # Project State
@@ -58,6 +58,8 @@ Phases: 1 → 2 → 3 → 4
 - [Phase 04-web-dashboard-mvp]: app.state.config_path permite override em testes sem monkeypatch complexo — padrao para todos os planos da fase 04
 - [Phase 04-web-dashboard-mvp]: custo_section.html como wrapper unico para swap HTMX — permite actualizar grafico + formulario num unico hx-swap
 - [Phase 04-web-dashboard-mvp]: custos_reais.json em data/{local_id}/ — input do utilizador, nao estado do pipeline; None para meses sem custo real serializa para null (Chart.js gap)
+- [Phase 04]: SAVING_THRESHOLD_EUR = 50 como limiar anual — banner so aparece quando poupanca > 50 EUR/ano
+- [Phase 04]: LaunchAgent nao instalado automaticamente — utilizador instala manualmente com cp + launchctl load
 
 ## Notes
 
@@ -70,5 +72,5 @@ Phases: 1 → 2 → 3 → 4
 
 ## Last session
 
-**Stopped at:** Completed 04-02-PLAN.md (graficos consumo/custo + formulario custo real)
+**Stopped at:** Completed 04-03-PLAN.md (ranking de fornecedores + LaunchAgent plist)
 **Session date:** 2026-03-28T23:05:00Z

@@ -11,7 +11,7 @@
 - [ ] **Phase 1: Unblock & Validate End-to-End** — Corrigir os dois bloqueadores confirmados e validar que o pipeline corre com dados reais
 - [ ] **Phase 2: Resilience** — Tornar o pipeline robusto antes de adicionar complexidade
 - [x] **Phase 3: Multi-Location Refactor** — Estender o pipeline validado para suportar N locais independentes (completed 2026-03-29)
-- [ ] **Phase 4: Web Dashboard MVP** — Dashboard web local em modo leitura sobre os ficheiros de output do pipeline
+- [x] **Phase 4: Web Dashboard MVP** — Dashboard web local em modo leitura sobre os ficheiros de output do pipeline (completed 2026-03-30)
 
 ---
 
@@ -121,12 +121,12 @@ Plans:
 - HTMX e Chart.js devem ser descarregados e fixados como ficheiros estaticos locais antes de qualquer trabalho de UI — verificar versoes disponiveis (HTMX 2.0.x, Chart.js 4.4.x) e confirmar que o UMD build do Chart.js nao requer bundler
 - O ano-a-ano (DASH-06) depende de ter pelo menos 2 anos de dados para `casa`; para `apartamento` provavelmente nao existe historico suficiente na primeira iteracao — a UI deve mostrar o estado "sem dados para comparacao" de forma elegante e nao como erro
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 04-01-PLAN.md — FastAPI app + data loader + templates base + ficheiros estaticos (HTMX, Chart.js)
 - [x] 04-02-PLAN.md — Graficos de consumo e custo + formulario de custo real da factura
-- [ ] 04-03-PLAN.md — Ranking de fornecedores + banner de recomendacao + LaunchAgent plist
+- [x] 04-03-PLAN.md — Ranking de fornecedores + banner de recomendacao + LaunchAgent plist
 
 ---
 
@@ -137,7 +137,7 @@ Plans:
 | 1. Unblock & Validate | 1/2 | In Progress|  |
 | 2. Resilience | 2/2 | Complete | 2026-03-29 |
 | 3. Multi-Location Refactor | 3/3 | Complete   | 2026-03-29 |
-| 4. Web Dashboard MVP | 2/3 | In Progress|  |
+| 4. Web Dashboard MVP | 3/3 | Complete   | 2026-03-30 |
 
 ---
 

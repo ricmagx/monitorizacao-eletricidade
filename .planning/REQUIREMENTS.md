@@ -38,8 +38,8 @@
 - [x] **DASH-02**: Gráfico de consumo mensal (kWh, barras empilhadas vazio/fora_vazio) ao longo do tempo, por local
 - [x] **DASH-03**: Gráfico de custo €/mês: custo real da factura + estimativa calculada pelo contrato — sobrepostos no mesmo eixo temporal
 - [x] **DASH-04**: Modelo de dados para custo real da factura: campo de entrada manual por mês (CSV ou formulário na dashboard)
-- [ ] **DASH-05**: Tabela de ranking de comercializadores por custo anual estimado (recomendação mensal actual)
-- [ ] **DASH-06**: Recomendação de mudança com poupança estimada e indicador de confiança
+- [x] **DASH-05**: Tabela de ranking de comercializadores por custo anual estimado (recomendação mensal actual)
+- [x] **DASH-06**: Recomendação de mudança com poupança estimada e indicador de confiança
 - [ ] **DASH-07**: Vista histórica: simulação retroactiva de quem teria sido o mais barato em cada mês passado
 - [ ] **DASH-08**: Comparação com período homólogo (este mês vs mesmo mês do ano anterior) para consumo e custo
 - [ ] **DASH-09**: Indicador de frescura dos dados (data do último relatório gerado)
@@ -98,8 +98,8 @@
 | DASH-02 | Phase 4 | Complete |
 | DASH-03 | Phase 4 | Complete |
 | DASH-04 | Phase 4 | Complete |
-| DASH-05 | Phase 4 | Pending |
-| DASH-06 | Phase 4 | Pending |
+| DASH-05 | Phase 4 | Complete |
+| DASH-06 | Phase 4 | Complete |
 | DASH-07 | Phase 4 | Pending |
 | DASH-08 | Phase 4 | Pending |
 | DASH-09 | Phase 4 | Pending |
