@@ -97,7 +97,12 @@ Plans:
   3. Dados escritos na sessão anterior persistem após docker-compose down && docker-compose up (volume montado)
   4. O código não contém referências a launchd, osascript, open -a Firefox ou paths macOS
   5. O container aplica as migrações de schema sem intervenção manual ao arrancar
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Docker infrastructure (Dockerfile, compose, entrypoint) + remoção código macOS
+- [ ] 05-02-PLAN.md — SQLite schema (SQLAlchemy Core) + Alembic migrations + testes
+- [ ] 05-03-PLAN.md — Integração FastAPI+DB + health endpoint + Docker smoke test
 **UI hint**: no
 
 ### Phase 6: UI Design (ui-phase)
@@ -193,7 +198,7 @@ Plans:
 | 2. Resilience | v1.0 | 2/2 | Complete | 2026-03-29 |
 | 3. Multi-Location Refactor | v1.0 | 3/3 | Complete | 2026-03-29 |
 | 4. Web Dashboard MVP | v1.0 | 3/3 | Complete | 2026-03-30 |
-| 5. Docker + SQLite Foundation | v2.0 | 0/? | Not started | — |
+| 5. Docker + SQLite Foundation | v2.0 | 0/3 | Planned | — |
 | 6. UI Design (ui-phase) | v2.0 | 0/? | Not started | — |
 | 7. Upload XLSX + Ingestão | v2.0 | 0/? | Not started | — |
 | 8. Upload PDF + Extracção | v2.0 | 0/? | Not started | — |
