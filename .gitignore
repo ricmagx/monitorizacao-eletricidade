@@ -32,3 +32,9 @@ state/launchd.process.stdout.log
 state/launchd.process.stderr.log
 state/launchd.stdout.log
 state/launchd.stderr.log
+
+# Docker / ambiente
+.env
+data/energia.db
+data/*.db-wal
+data/*.db-shm
