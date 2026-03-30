@@ -53,10 +53,10 @@
     "bootstrap_context_path": "state/eredes_bootstrap_context.json",
     "download_dir_base": "data/{location_id}/raw/eredes",
     "download_url": "https://balcaodigital.e-redes.pt/consumptions/history",
-    "download_mode": "external_firefox",
-    "browser_app": "Firefox",
+    "download_mode": "disabled",
+    "browser_app": "none",
     "interactive_wait_seconds": 900,
-    "local_download_watch_dir": "/Users/ricmag/Downloads",
+    "local_download_watch_dir": "/app/data/uploads",
     "local_download_glob": "Consumos_*.xlsx",
     "navigation_click_texts": [],
     "download_button_candidates": [
@@ -75,9 +75,7 @@
     "timezone": "Europe/Lisbon"
   },
   "watcher": {
-    "enabled": true,
-    "watch_paths": [
-      "/Users/ricmag/Downloads"
-    ]
+    "enabled": false,
+    "watch_paths": []
   }
 }

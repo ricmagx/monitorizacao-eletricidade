@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
+import logging
 import sys
 from collections import Counter
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 import energy_compare
 from eredes_download import download_latest_xlsx
@@ -168,12 +170,8 @@ def write_status(status_path: Path, payload: dict[str, Any]) -> None:
 
 
 def notify_mac(title: str, message: str) -> None:
-    subprocess.run(
-        ["osascript", "-e", f'display notification "{message}" with title "{title}"'],
-        check=False,
-        capture_output=True,
-        text=True,
-    )
+    # TODO Phase 7: substituir por notificacao web
+    logger.info("Notificacao [%s]: %s", title, message)
 
 
 def run_workflow(config: dict, location: dict, project_root: Path, input_xlsx: Path | None = None) -> dict[str, Any]:

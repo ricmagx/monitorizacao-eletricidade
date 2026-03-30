@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 def load_config(path: Path) -> dict[str, Any]:
@@ -21,16 +23,13 @@ def resolve_path(project_root: Path, relative_path: str) -> Path:
 
 
 def notify_mac(title: str, message: str) -> None:
-    subprocess.run(
-        ["osascript", "-e", f'display notification "{message}" with title "{title}"'],
-        check=False,
-        capture_output=True,
-        text=True,
-    )
+    # TODO Phase 7: substituir por notificacao web
+    logger.info("Notificacao reminder [%s]: %s", title, message)
 
 
 def open_browser(browser_app: str, url: str) -> None:
-    subprocess.run(["open", "-a", browser_app, url], check=False)
+    # TODO Phase 7: substituir por notificacao web (browser nao disponivel no Docker)
+    logger.info("open_browser desactivado no Docker: browser_app=%s url=%s", browser_app, url)
 
 
 def run_reminder(config_path: Path) -> list[dict[str, Any]]:

@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
+import logging
 import time
 from shutil import copy2
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from playwright.sync_api import sync_playwright
@@ -44,12 +46,8 @@ def assert_logged_in(page) -> None:
 
 
 def notify_mac(title: str, message: str) -> None:
-    subprocess.run(
-        ["osascript", "-e", f'display notification "{message}" with title "{title}"'],
-        check=False,
-        capture_output=True,
-        text=True,
-    )
+    # TODO Phase 7: substituir por notificacao web
+    logger.info("Notificacao [%s]: %s", title, message)
 
 
 def latest_matching_file(directory: Path, pattern: str, min_mtime: float) -> Path | None:
@@ -96,7 +94,7 @@ def download_latest_xlsx(config_path: Path, cpe_hint: str | None = None) -> Path
     timeout_ms = int(eredes.get("download_timeout_seconds", 60) * 1000)
     mode = eredes.get("download_mode", "assisted")
     interactive_wait_seconds = int(eredes.get("interactive_wait_seconds", 900))
-    watch_dir = Path(eredes.get("local_download_watch_dir", str(Path.home() / "Downloads"))).expanduser()
+    watch_dir = Path(eredes.get("local_download_watch_dir", "/app/data/uploads")).expanduser()
     watch_pattern = eredes.get("local_download_glob", "*.xlsx")
     browser_app = eredes.get("browser_app", "Firefox")
 
@@ -108,8 +106,9 @@ def download_latest_xlsx(config_path: Path, cpe_hint: str | None = None) -> Path
             "E-REDES",
             "Abra o Firefox, descarregue o Excel e o sistema vai importar o ficheiro.",
         )
-        subprocess.run(["open", "-a", browser_app, download_url], check=False)
-        print(f"Aberto {browser_app}. Conclua o download do Excel nesse browser.")
+        # TODO Phase 7: substituir por notificacao web (open -a nao disponivel no Docker)
+        logger.info("external_firefox mode: URL=%s browser_app=%s", download_url, browser_app)
+        print(f"Modo external_firefox: aceda a {download_url} e descarregue o Excel.")
         deadline = time.time() + interactive_wait_seconds
         while time.time() < deadline:
             found = changed_file_since_snapshot(watch_dir, watch_pattern, before_snapshot)

@@ -52,7 +52,8 @@ def save_tracker(path: Path, payload: dict[str, Any]) -> None:
 def process_latest_download(config_path: Path, allow_partial_last_month: bool = False) -> dict[str, Any]:
     config = load_config(config_path)
     project_root = project_root_from_config(config_path)
-    watch_dir = Path(config["eredes"].get("local_download_watch_dir", str(Path.home() / "Downloads"))).expanduser()
+    import os
+    watch_dir = Path(config["eredes"].get("local_download_watch_dir", os.environ.get("UPLOAD_DIR", "data/uploads"))).expanduser()
     watch_pattern = config["eredes"].get("local_download_glob", "*.xlsx")
     latest = latest_matching_file(watch_dir, watch_pattern)
     if latest is None:
