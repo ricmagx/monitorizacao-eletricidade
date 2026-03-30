@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="header">
+  <h1>Monitorizacao Eletricidade</h1>
+  <div class="form-inline">
+    {% include "partials/frescura_badge.html" %}
+  </div>
+</div>
+
+<div class="header">
+  <div class="form-inline">
+    <label for="local-selector">Local:</label>
+    <select class="selector" id="local-selector"
+            hx-get="/local/placeholder/dashboard"
+            hx-target="#dashboard-content"
+            hx-swap="innerHTML"
+            hx-trigger="change">
+      {% for loc in locations %}
+      <option value="{{ loc.id }}" {% if loc.id == selected_location.id %}selected{% endif %}>{{ loc.name }}</option>
+      {% endfor %}
+    </select>
+    <script>
+    document.getElementById('local-selector').addEventListener('htmx:configRequest', function(evt) {
+      evt.detail.path = '/local/' + this.value + '/dashboard';
+    });
+    </script>
+  </div>
+</div>
+
+<div id="dashboard-content">
+  {% include "partials/dashboard_content.html" %}
+</div>
+{% endblock %}

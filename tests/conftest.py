@@ -1,5 +1,6 @@
 import csv
 import json
+from datetime import datetime, timedelta, timezone
 import pytest
 from pathlib import Path
 
@@ -186,3 +187,147 @@ def multi_location_config(tmp_path, sample_tariffs, sample_contract):
     }
     config_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     return config_path
+
+
+# ---------------------------------------------------------------------------
+# Fixtures para Phase 04 — Web Dashboard MVP
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def sample_analysis_json(tmp_path):
+    """JSON mock de analise tiagofelicia com estrutura completa."""
+    json_path = tmp_path / "analise.json"
+    payload = {
+        "generated_at": "2026-03-29",
+        "current_supplier": "Meo Energia",
+        "history_summary": {
+            "months_analysed": 11,
+            "latest_recommendation": "bihorario",
+            "latest_top_3": [
+                {"rank": 1, "supplier": "Luzboa", "plan": "Bi Base", "total_eur": 120.0},
+                {"rank": 2, "supplier": "EDP", "plan": "Bi Eco", "total_eur": 125.0},
+                {"rank": 3, "supplier": "Meo Energia", "plan": "Variavel", "total_eur": 166.54},
+            ],
+            "latest_current_supplier_result": {
+                "supplier": "Meo Energia",
+                "plan": "Variavel",
+                "total_eur": 166.54,
+            },
+            "latest_saving_vs_current_eur": 46.54,
+        },
+        "history": [
+            {
+                "year_month": "2026-02",
+                "total_kwh": 1200.0,
+                "recommendation": "bihorario",
+                "top_3": [],
+            },
+            {
+                "year_month": "2026-01",
+                "total_kwh": 1350.0,
+                "recommendation": "bihorario",
+                "top_3": [],
+            },
+        ],
+    }
+    json_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    return json_path
+
+
+@pytest.fixture
+def sample_status_json():
+    """monthly_status mock com generated_at de ontem."""
+    yesterday = (datetime.now(timezone.utc) - timedelta(days=1)).strftime(
+        "%Y-%m-%dT%H:%M:%S.%f"
+    )
+    return {
+        "status": "ok",
+        "generated_at": yesterday,
+        "report_path": "data/casa/reports/relatorio_eletricidade_2026-03-29.md",
+        "latest_recommendation": "bihorario",
+        "latest_saving_vs_current_eur": 46.54,
+    }
+
+
+@pytest.fixture
+def sample_config_json(tmp_path, sample_tariffs, sample_contract):
+    """system.json mock com 2 locations (casa, apartamento), paths relativos ao tmp_path."""
+    config_path = tmp_path / "config" / "system.json"
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Criar estrutura de diretorias para cada local
+    for location_id in ("casa", "apartamento"):
+        (tmp_path / "data" / location_id / "raw" / "eredes").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "data" / location_id / "processed").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "data" / location_id / "reports").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "state" / location_id).mkdir(parents=True, exist_ok=True)
+
+    payload = {
+        "locations": [
+            {
+                "id": "casa",
+                "name": "Casa",
+                "cpe": "PT0002000084968079SX",
+                "current_contract": {
+                    "supplier": "Meo Energia",
+                    "current_plan_contains": "Tarifa Variavel",
+                    "power_label": "10.35 kVA",
+                },
+                "pipeline": {
+                    "raw_dir": "data/casa/raw/eredes",
+                    "processed_csv_path": "data/casa/processed/consumo_mensal_atual.csv",
+                    "analysis_json_path": "data/casa/processed/analise_tiagofelicia_atual.json",
+                    "report_dir": "data/casa/reports",
+                    "status_path": "state/casa/monthly_status.json",
+                    "last_processed_tracker_path": "state/casa/last_processed_download.json",
+                    "drop_partial_last_month": True,
+                    "notify_on_completion": False,
+                    "months_limit": None,
+                    "local_tariffs_path": str(sample_tariffs),
+                    "local_contract_path": str(sample_contract),
+                },
+            },
+            {
+                "id": "apartamento",
+                "name": "Apartamento",
+                "cpe": "PT000200XXXXXXXXXX",
+                "current_contract": {
+                    "supplier": "Fornecedor Mock",
+                    "current_plan_contains": "Tarifa Mock",
+                    "power_label": "6.9 kVA",
+                },
+                "pipeline": {
+                    "raw_dir": "data/apartamento/raw/eredes",
+                    "processed_csv_path": "data/apartamento/processed/consumo_mensal_atual.csv",
+                    "analysis_json_path": "data/apartamento/processed/analise_tiagofelicia_atual.json",
+                    "report_dir": "data/apartamento/reports",
+                    "status_path": "state/apartamento/monthly_status.json",
+                    "last_processed_tracker_path": "state/apartamento/last_processed_download.json",
+                    "drop_partial_last_month": True,
+                    "notify_on_completion": False,
+                    "months_limit": None,
+                    "local_tariffs_path": str(sample_tariffs),
+                    "local_contract_path": str(sample_contract),
+                },
+            },
+        ],
+        "eredes": {
+            "download_dir_base": "data/{location_id}/raw/eredes",
+        },
+    }
+    config_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    return config_path
+
+
+@pytest.fixture
+def web_client(sample_config_json):
+    """FastAPI TestClient com config mock via override de app.state.config_path."""
+    from fastapi.testclient import TestClient
+    from src.web.app import app
+
+    # Override config path to use the test config
+    app.state.config_path = sample_config_json
+
+    client = TestClient(app)
+    return client

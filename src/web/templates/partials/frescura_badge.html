@@ -1,0 +1,9 @@
+{% if freshness.generated_at %}
+<span class="badge {% if freshness.is_stale %}badge-stale{% else %}badge-ok{% endif %}">
+  Ultimo relatorio: {{ freshness.generated_at[:10] }}
+  {% if freshness.days_ago is not none %} (ha {{ freshness.days_ago }} dias){% endif %}
+  {% if freshness.is_stale %} — Dados desactualizados{% endif %}
+</span>
+{% else %}
+<span class="badge badge-stale">Sem dados — Dados desactualizados</span>
+{% endif %}
