@@ -80,7 +80,7 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | INFRA-01 | Phase 5 | Pending |
-| INFRA-02 | Phase 5 | Pending |
+| INFRA-02 | Phase 12 | Pending |
 | INFRA-03 | Phase 5 | Pending |
 | INFRA-04 | Phase 12 | Pending |
 | INFRA-05 | Phase 12 | Pending |
@@ -111,8 +111,8 @@
 **Coverage:**
 - v2 requirements: 28 total
 - Mapped to phases: 28
-- Unmapped: 0 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-30*
-*Last updated: 2026-03-30 — traceability preenchida após roadmap v2.0*
+*Last updated: 2026-03-30 — INFRA-02 moved from Phase 5 to Phase 12 (nginx reverse proxy belongs to deploy phase)*

@@ -90,7 +90,7 @@ Plans:
 ### Phase 5: Docker + SQLite Foundation
 **Goal**: A aplicação corre como container Docker no Unraid com dados persistentes em SQLite, eliminando toda dependência macOS (launchd, osascript, open -a Firefox).
 **Depends on**: Phase 4
-**Requirements**: INFRA-01, INFRA-02, INFRA-03, DADOS-01, DADOS-02, DADOS-03, DADOS-04
+**Requirements**: INFRA-01, INFRA-03, DADOS-01, DADOS-02, DADOS-03, DADOS-04
 **Success Criteria** (what must be TRUE):
   1. docker-compose up arranca a aplicação sem erros e a app responde em http://localhost:8000 dentro do container
   2. A base SQLite é criada automaticamente no arranque com as tabelas de consumo, comparações e custos de fatura
@@ -179,7 +179,7 @@ Plans:
 ### Phase 12: Deploy Unraid + Homepage + Tailscale
 **Goal**: A aplicação está em produção no Unraid, acessível via Homepage tile e via Tailscale fora da rede local, com deploy documentado via rsync/SSH.
 **Depends on**: Phase 11
-**Requirements**: INFRA-04, INFRA-05
+**Requirements**: INFRA-02, INFRA-04, INFRA-05
 **Success Criteria** (what must be TRUE):
   1. A aplicação está acessível em http://192.168.122.110:8090/hobbies/casa/energia/ a partir da rede local
   2. Um tile "Energia" aparece no Homepage do Unraid e abre a aplicação ao clicar
@@ -242,7 +242,7 @@ Plans:
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | INFRA-01 | Phase 5 | Pending |
-| INFRA-02 | Phase 5 | Pending |
+| INFRA-02 | Phase 12 | Pending |
 | INFRA-03 | Phase 5 | Pending |
 | DADOS-01 | Phase 5 | Pending |
 | DADOS-02 | Phase 5 | Pending |
