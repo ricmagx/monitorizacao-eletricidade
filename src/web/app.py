@@ -93,6 +93,10 @@ def health():
 # Registar routers
 from src.web.routes.dashboard import router as dashboard_router  # noqa: E402
 from src.web.routes.custos_reais import router as custos_router  # noqa: E402
+from src.web.routes.upload import router as upload_router  # noqa: E402
+from src.web.routes.locais import router as locais_router  # noqa: E402
 
 app.include_router(dashboard_router)
 app.include_router(custos_router)
+app.include_router(upload_router)
+app.include_router(locais_router)
