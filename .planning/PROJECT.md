@@ -103,4 +103,4 @@ Este documento evolui em cada transição de fase e milestone.
 4. Actualizar Context com estado actual
 
 ---
-*Last updated: 2026-03-30 — Milestone v2.0 iniciado (Sistema Integrado)*
+*Last updated: 2026-03-30 — Phase 5 complete: Docker container a correr no Unraid com SQLite persistente, migrações automáticas e /health endpoint verificados*
