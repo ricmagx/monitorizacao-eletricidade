@@ -24,11 +24,13 @@ def upgrade():
         sa.Column('power_label', sa.String(32)),
         sa.Column('created_at', sa.DateTime),
     )
-    op.create_unique_constraint(
-        'uq_comparacao_loc_month', 'comparacoes', ['location_id', 'year_month']
-    )
+    with op.batch_alter_table('comparacoes') as batch_op:
+        batch_op.create_unique_constraint(
+            'uq_comparacao_loc_month', ['location_id', 'year_month']
+        )
 
 
 def downgrade():
-    op.drop_constraint('uq_comparacao_loc_month', 'comparacoes')
+    with op.batch_alter_table('comparacoes') as batch_op:
+        batch_op.drop_constraint('uq_comparacao_loc_month', type_='unique')
     op.drop_table('locais')
