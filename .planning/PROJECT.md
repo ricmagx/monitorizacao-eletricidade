@@ -31,6 +31,9 @@ Com o perfil mensal real de cada local, saber hoje qual seria o comercializador 
 - ✓ Motor de comparação via tiagofelicia.pt: scraping Playwright do simulador oficial, extrai tabela de resultados — existing
 - ✓ Idempotência: evita reprocessar o mesmo XLSX — existing
 - ✓ Dashboard web MVP: FastAPI + HTMX + Chart.js, gráficos consumo/custo, ranking top-5, banner recomendação — Validated in Phase 04
+- ✓ Upload XLSX via browser para cada local — Validated in Phase 07
+- ✓ SQLite para histórico multi-ano (tabela locais + comparacoes com constraint uq_comparacao_loc_month) — Validated in Phase 07
+- ✓ Locais editáveis no UI (nome + CPE) — Validated in Phase 07
 
 ### Active
 
@@ -103,4 +106,4 @@ Este documento evolui em cada transição de fase e milestone.
 4. Actualizar Context com estado actual
 
 ---
-*Last updated: 2026-03-30 — Phase 5 complete: Docker container a correr no Unraid com SQLite persistente, migrações automáticas e /health endpoint verificados*
+*Last updated: 2026-03-30 — Phase 7 complete: Upload XLSX via browser, gestão de locais no UI, migration Alembic SQLite corrigida (batch mode), 79 testes a passar*
