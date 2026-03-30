@@ -6,6 +6,7 @@ from collections import defaultdict
 from calendar import monthrange
 from datetime import datetime, time
 from pathlib import Path
+from typing import Any
 from zoneinfo import ZoneInfo
 
 from openpyxl import load_workbook
@@ -93,9 +94,17 @@ def is_complete_month(year_month: str, latest_date_by_month: dict[str, datetime.
     return latest_date.day == monthrange(year, month)[1]
 
 
-def convert_xlsx_to_monthly_csv(
-    input_path: Path, output_path: Path, drop_partial_last_month: bool = False
-) -> Path:
+def parse_xlsx_to_dict(
+    input_path: Path, drop_partial_last_month: bool = False
+) -> dict[str, dict[str, float]]:
+    """Parse XLSX E-REDES e retorna dados mensais em memoria.
+
+    Returns:
+        Dict com year_month como chave (ex: '2025-01') e dict com
+        keys 'total_kwh', 'vazio_kwh', 'fora_vazio_kwh' como valor.
+    Raises:
+        ValueError: Se consumo fora dos limites plausiveis.
+    """
     wb = load_workbook(input_path, data_only=True, read_only=True)
     ws = pick_sheet(wb)
     data_start_row = detect_data_start_row(ws)
@@ -117,7 +126,6 @@ def convert_xlsx_to_monthly_csv(
         if extracted is None:
             continue
         row_date, row_time, interval_kwh = extracted
-
         local_dt = datetime.strptime(f"{row_date} {row_time}", "%Y/%m/%d %H:%M").replace(tzinfo=LISBON)
         year_month = local_dt.strftime("%Y-%m")
         current_date = local_dt.date()
@@ -134,13 +142,20 @@ def convert_xlsx_to_monthly_csv(
         if not is_complete_month(last_year_month, latest_date_by_month):
             del monthly[last_year_month]
 
-    # Bounds check: verificar limites plausiveis antes de escrever output (RES-02)
     for ym, totals in monthly.items():
         if not (MIN_MONTHLY_KWH <= totals["total_kwh"] <= MAX_MONTHLY_KWH):
             raise ValueError(
                 f"Consumo fora dos limites plausiveis para {ym}: "
-                f"{totals['total_kwh']:.1f} kWh (esperado {MIN_MONTHLY_KWH}–{MAX_MONTHLY_KWH} kWh/mes)"
+                f"{totals['total_kwh']:.1f} kWh (esperado {MIN_MONTHLY_KWH}-{MAX_MONTHLY_KWH} kWh/mes)"
             )
+
+    return dict(monthly)
+
+
+def convert_xlsx_to_monthly_csv(
+    input_path: Path, output_path: Path, drop_partial_last_month: bool = False
+) -> Path:
+    monthly = parse_xlsx_to_dict(input_path, drop_partial_last_month=drop_partial_last_month)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8", newline="") as handle:
@@ -148,15 +163,12 @@ def convert_xlsx_to_monthly_csv(
         writer.writerow(["year_month", "total_kwh", "vazio_kwh", "fora_vazio_kwh"])
         for year_month in sorted(monthly):
             totals = monthly[year_month]
-            writer.writerow(
-                [
-                    year_month,
-                    f"{totals['total_kwh']:.3f}",
-                    f"{totals['vazio_kwh']:.3f}",
-                    f"{totals['fora_vazio_kwh']:.3f}",
-                ]
-            )
-
+            writer.writerow([
+                year_month,
+                f"{totals['total_kwh']:.3f}",
+                f"{totals['vazio_kwh']:.3f}",
+                f"{totals['fora_vazio_kwh']:.3f}",
+            ])
     return output_path
 
 
