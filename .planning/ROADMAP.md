@@ -101,7 +101,7 @@ Plans:
 
 Plans:
 - [ ] 05-01-PLAN.md — Docker infrastructure (Dockerfile, compose, entrypoint) + remoção código macOS
-- [ ] 05-02-PLAN.md — SQLite schema (SQLAlchemy Core) + Alembic migrations + testes
+- [x] 05-02-PLAN.md — SQLite schema (SQLAlchemy Core) + Alembic migrations + testes
 - [ ] 05-03-PLAN.md — Integração FastAPI+DB + health endpoint + Docker smoke test
 **UI hint**: no
 
@@ -198,7 +198,7 @@ Plans:
 | 2. Resilience | v1.0 | 2/2 | Complete | 2026-03-29 |
 | 3. Multi-Location Refactor | v1.0 | 3/3 | Complete | 2026-03-29 |
 | 4. Web Dashboard MVP | v1.0 | 3/3 | Complete | 2026-03-30 |
-| 5. Docker + SQLite Foundation | v2.0 | 0/3 | Planned | — |
+| 5. Docker + SQLite Foundation | v2.0 | 1/3 | In Progress|  |
 | 6. UI Design (ui-phase) | v2.0 | 0/? | Not started | — |
 | 7. Upload XLSX + Ingestão | v2.0 | 0/? | Not started | — |
 | 8. Upload PDF + Extracção | v2.0 | 0/? | Not started | — |
