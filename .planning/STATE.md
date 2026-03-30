@@ -29,11 +29,11 @@ See: .planning/PROJECT.md (updated 2026-03-30)
 ## Current Position
 
 Phase: 5 of 12 total (1 of 8 in v2.0)
-Plan: 3 of 3 in Phase 5 (05-01 + 05-02 complete)
-Status: Ready to execute
-Last activity: 2026-03-30
+Plan: 3 of 3 in Phase 5 (05-01 + 05-02 + 05-03 complete — Phase 5 DONE)
+Status: Phase 5 Complete
+Last activity: 2026-03-30 — Plan 05-03 complete (FastAPI+DB integration + Docker smoke test on Unraid)
 
-Progress v2.0: [███░░░░░░░] 33%
+Progress v2.0: [██████████] 100% (Phase 5)
 
 ## Performance Metrics
 
@@ -44,16 +44,16 @@ Progress v2.0: [███░░░░░░░] 33%
 
 **v2.0:**
 
-- Plans completed: 2 (05-01, 05-02)
-- Phases complete: 0/8
+- Plans completed: 3 (05-01, 05-02, 05-03)
+- Phases complete: 1/8 (Phase 5 complete)
 
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 05 | 01 | 4min | 2 | 11 |
 | 05 | 02 | 144s | 2 | 11 |
+| 05 | 03 | 45min | 2 | 2 |
 
 *Updated after each plan completion*
-| Phase 05 P03 | 45min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -76,6 +76,9 @@ Progress v2.0: [███░░░░░░░] 33%
 - requirements-docker.txt exclui playwright — upload manual substituiu E-REDES download, poupa ~500MB
 - osascript substituído por logger.info com markers TODO Phase 7 — ficheiros backend preservados para reutilização
 - config/system.json: download_mode=disabled, watcher.enabled=false — Docker não tem filesystem watcher local
+- metadata.create_all() em lifespan como safety net para dev local — Alembic é o caminho principal em Docker
+- APP_ROOT env var para compatibilidade Docker — default é o path calculado, retrocompatível
+- Smoke test em Unraid (ambiente alvo) em vez de Mac local — Docker não disponível localmente por design
 
 ### Infra Unraid
 
