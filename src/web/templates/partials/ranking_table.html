@@ -1,0 +1,27 @@
+<div class="card">
+  <h2>Ranking de Fornecedores (Custo Anual Estimado)</h2>
+  {% if ranking %}
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Fornecedor</th>
+        <th>Plano</th>
+        <th>Custo Anual Est. (EUR)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in ranking %}
+      <tr{% if r.is_current %} class="highlight"{% endif %}>
+        <td>{{ loop.index }}</td>
+        <td>{{ r.supplier }}{% if r.is_current %} (actual){% endif %}</td>
+        <td>{{ r.plan }}</td>
+        <td>{{ "%.2f" | format(r.custo_anual_estimado) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color: var(--muted);">Sem dados de ranking disponiveis.</p>
+  {% endif %}
+</div>

@@ -1,13 +1,11 @@
+{% include "partials/recomendacao_banner.html" %}
 <div class="grid-2">
   {% include "partials/consumo_chart.html" %}
   <div id="custo-section">
     {% include "partials/custo_section.html" %}
   </div>
 </div>
-
-<!-- ranking e recomendacao adicionados pelo Plan 03 -->
-<div id="ranking-section" class="card">
-  <h2>Ranking de Fornecedores</h2>
-  <p style="color: var(--muted);">A implementar...</p>
+{% include "partials/custo_form.html" %}
+<div id="ranking-section">
+  {% include "partials/ranking_table.html" %}
 </div>
-<div id="recomendacao-section"></div>

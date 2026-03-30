@@ -15,6 +15,7 @@ from src.web.services.data_loader import (
     load_locations,
     load_monthly_status,
 )
+from src.web.services.rankings import build_recommendation, calculate_annual_ranking
 
 router = APIRouter()
 
@@ -40,6 +41,10 @@ def _load_location_data(request: Request, location: dict) -> dict:
     }
     custo_chart = build_custo_chart_data(consumo_data, analysis, custos_reais)
 
+    current_supplier = location.get("current_contract", {}).get("supplier", "")
+    ranking = calculate_annual_ranking(analysis, current_supplier)
+    recommendation = build_recommendation(analysis)
+
     return {
         "consumo_data": consumo_data,
         "analysis": analysis,
@@ -47,6 +52,8 @@ def _load_location_data(request: Request, location: dict) -> dict:
         "custos_reais": custos_reais,
         "consumo_chart": consumo_chart,
         "custo_chart": custo_chart,
+        "ranking": ranking,
+        "recommendation": recommendation,
     }
 
 
@@ -64,6 +71,11 @@ async def homepage(request: Request):
         "consumo_data": [],
         "analysis": None,
         "freshness": get_freshness_info(None),
+        "custos_reais": {},
+        "consumo_chart": {"labels": [], "vazio_data": [], "fora_vazio_data": []},
+        "custo_chart": {"labels": [], "estimativa_data": [], "custo_real_data": []},
+        "ranking": [],
+        "recommendation": {"show": False},
     }
 
     context = {
