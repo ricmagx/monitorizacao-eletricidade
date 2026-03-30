@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from src.web.services.data_loader import (
+    build_custo_chart_data,
     get_freshness_info,
     load_analysis_json,
     load_consumo_csv,
@@ -120,3 +121,54 @@ def test_get_freshness_info_missing_generated_at():
     result = get_freshness_info({"status": "ok"})
     assert result["is_stale"] is True
     assert result["days_ago"] is None
+
+
+# ---------------------------------------------------------------------------
+# build_custo_chart_data
+# ---------------------------------------------------------------------------
+
+
+def test_build_custo_chart_data(sample_csv):
+    """build_custo_chart_data retorna labels, estimativa_data e custo_real_data correctos."""
+    consumo = [
+        {"year_month": "2025-01", "total_kwh": 1429.0, "vazio_kwh": 571.6, "fora_vazio_kwh": 857.4},
+        {"year_month": "2025-02", "total_kwh": 1556.0, "vazio_kwh": 622.4, "fora_vazio_kwh": 933.6},
+        {"year_month": "2025-03", "total_kwh": 1100.0, "vazio_kwh": 440.0, "fora_vazio_kwh": 660.0},
+    ]
+    analysis = {
+        "history": [
+            {
+                "year_month": "2025-01",
+                "current_supplier_result": {"supplier": "Meo Energia", "total_eur": 263.12},
+            },
+            {
+                "year_month": "2025-02",
+                "current_supplier_result": {"supplier": "Meo Energia", "total_eur": 280.00},
+            },
+        ]
+    }
+    custos_reais = {"2025-01": 210.50}
+
+    result = build_custo_chart_data(consumo, analysis, custos_reais)
+
+    assert result["labels"] == ["2025-01", "2025-02", "2025-03"]
+    assert result["estimativa_data"][0] == pytest.approx(263.12)
+    assert result["estimativa_data"][1] == pytest.approx(280.00)
+    assert result["estimativa_data"][2] is None  # sem dados no analysis
+
+    # custo_real_data: so 2025-01 tem dado, os outros sao None
+    assert result["custo_real_data"][0] == pytest.approx(210.50)
+    assert result["custo_real_data"][1] is None
+    assert result["custo_real_data"][2] is None
+
+
+def test_build_custo_chart_data_no_analysis(sample_csv):
+    """build_custo_chart_data com analysis=None retorna estimativa_data com Nones."""
+    consumo = [
+        {"year_month": "2025-01", "total_kwh": 1429.0, "vazio_kwh": 571.6, "fora_vazio_kwh": 857.4},
+    ]
+    result = build_custo_chart_data(consumo, None, {})
+
+    assert result["labels"] == ["2025-01"]
+    assert result["estimativa_data"] == [None]
+    assert result["custo_real_data"] == [None]

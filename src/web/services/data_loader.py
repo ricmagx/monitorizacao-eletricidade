@@ -1,7 +1,7 @@
 """Servico de leitura de dados do pipeline de monitorizacao de eletricidade.
 
 Funcoes de leitura de CSV de consumo mensal, JSON de analise tiagofelicia,
-monthly_status e calculo de indicador de frescura.
+monthly_status, custos reais, e calculo de indicador de frescura.
 """
 import csv
 import json
@@ -82,6 +82,80 @@ def load_monthly_status(status_path: Path) -> dict | None:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return None
+
+
+def load_custos_reais(custos_path: Path) -> dict:
+    """Le custos_reais.json e retorna entries dict. {} se nao existe.
+
+    Args:
+        custos_path: Path para o ficheiro custos_reais.json.
+
+    Returns:
+        Dict com year_month como chave e custo_eur como valor float. {} se nao existe.
+    """
+    if not custos_path.exists():
+        return {}
+    try:
+        data = json.loads(custos_path.read_text(encoding="utf-8"))
+        return data.get("entries", {})
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_custo_real(custos_path: Path, year_month: str, custo_eur: float) -> None:
+    """Adiciona/actualiza entry em custos_reais.json. Cria ficheiro se nao existe.
+
+    Args:
+        custos_path: Path para o ficheiro custos_reais.json.
+        year_month: Mes no formato "YYYY-MM".
+        custo_eur: Custo real da factura em EUR.
+    """
+    entries = load_custos_reais(custos_path)
+    entries[year_month] = custo_eur
+    custos_path.parent.mkdir(parents=True, exist_ok=True)
+    custos_path.write_text(
+        json.dumps(
+            {"updated_at": datetime.now().isoformat(), "entries": entries},
+            indent=2,
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+
+def build_custo_chart_data(
+    consumo_data: list,
+    analysis: dict | None,
+    custos_reais: dict,
+) -> dict:
+    """Constroi dados para o grafico de custo misto (bar estimativa + line custo real).
+
+    Args:
+        consumo_data: Lista de dicts de load_consumo_csv.
+        analysis: Dict de load_analysis_json ou None.
+        custos_reais: Dict de load_custos_reais.
+
+    Returns:
+        Dict com:
+          - labels: lista de year_month
+          - estimativa_data: custo do fornecedor actual por mes (None se sem dados)
+          - custo_real_data: custo real por mes (None para meses sem dado — gap na linha)
+    """
+    labels = [row["year_month"] for row in consumo_data]
+
+    # Estimativa do fornecedor actual por mes
+    estimativa_by_month = {}
+    if analysis and "history" in analysis:
+        for entry in analysis["history"]:
+            ym = entry.get("year_month")
+            csr = entry.get("current_supplier_result", {})
+            if ym and "total_eur" in csr:
+                estimativa_by_month[ym] = round(csr["total_eur"], 2)
+
+    estimativa_data = [estimativa_by_month.get(ym) for ym in labels]
+    custo_real_data = [custos_reais.get(ym) for ym in labels]  # None se nao existe
+
+    return {"labels": labels, "estimativa_data": estimativa_data, "custo_real_data": custo_real_data}
 
 
 def get_freshness_info(status: dict | None) -> dict:

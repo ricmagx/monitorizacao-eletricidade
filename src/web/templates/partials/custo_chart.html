@@ -1,0 +1,41 @@
+<div class="card">
+  <h2>Custo Mensal (EUR)</h2>
+  <canvas id="custo-chart"></canvas>
+  <script>
+    (function() {
+      const ctx = document.getElementById('custo-chart').getContext('2d');
+      if (window._custoChart) window._custoChart.destroy();
+      window._custoChart = new Chart(ctx, {
+        data: {
+          labels: {{ custo_chart.labels | tojson }},
+          datasets: [
+            {
+              type: 'bar',
+              label: 'Estimativa Contrato (EUR)',
+              data: {{ custo_chart.estimativa_data | tojson }},
+              backgroundColor: 'rgba(75, 192, 192, 0.7)',
+              order: 2
+            },
+            {
+              type: 'line',
+              label: 'Custo Real Factura (EUR)',
+              data: {{ custo_chart.custo_real_data | tojson }},
+              borderColor: 'rgba(255, 99, 132, 1)',
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              tension: 0.1,
+              spanGaps: false,
+              order: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } },
+          scales: {
+            y: { title: { display: true, text: 'EUR' } }
+          }
+        }
+      });
+    })();
+  </script>
+</div>

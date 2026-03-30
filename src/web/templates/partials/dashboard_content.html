@@ -1,20 +1,13 @@
 <div class="grid-2">
-  <div class="card">
-    <h2>Consumo mensal (kWh)</h2>
-    <canvas id="consumo-chart"></canvas>
-  </div>
-  <div class="card">
-    <h2>Custo mensal (EUR)</h2>
-    <canvas id="custo-chart"></canvas>
+  {% include "partials/consumo_chart.html" %}
+  <div id="custo-section">
+    {% include "partials/custo_section.html" %}
   </div>
 </div>
 
-<div class="card" id="ranking-section">
-  <h2>Ranking de fornecedores</h2>
-  <p class="banner banner-muted">Ranking sera apresentado no proximo plano.</p>
+<!-- ranking e recomendacao adicionados pelo Plan 03 -->
+<div id="ranking-section" class="card">
+  <h2>Ranking de Fornecedores</h2>
+  <p style="color: var(--muted);">A implementar...</p>
 </div>
-
-<div id="recomendacao-section" class="card">
-  <h2>Recomendacao</h2>
-  <p class="banner banner-muted">Recomendacao sera apresentada no proximo plano.</p>
-</div>
+<div id="recomendacao-section"></div>

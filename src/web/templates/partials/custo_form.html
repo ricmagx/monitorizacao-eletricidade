@@ -1,0 +1,29 @@
+<div class="card">
+  <h2>Custos Reais das Facturas</h2>
+  <table>
+    <thead>
+      <tr><th>Mes</th><th>Custo Real (EUR)</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for row in consumo_data %}
+      <tr>
+        <td>{{ row.year_month }}</td>
+        <td>
+          {% if row.year_month in custos_reais %}
+            <strong>{{ custos_reais[row.year_month] }} EUR</strong>
+          {% else %}
+            <form class="form-inline"
+                  hx-post="/local/{{ selected_location.id }}/custo-real"
+                  hx-target="#custo-section"
+                  hx-swap="innerHTML">
+              <input type="hidden" name="year_month" value="{{ row.year_month }}">
+              <input type="number" name="custo_eur" step="0.01" min="0" placeholder="0.00" required>
+              <button type="submit">Guardar</button>
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

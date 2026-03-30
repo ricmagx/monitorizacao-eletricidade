@@ -7,9 +7,11 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from src.web.services.data_loader import (
+    build_custo_chart_data,
     get_freshness_info,
     load_analysis_json,
     load_consumo_csv,
+    load_custos_reais,
     load_locations,
     load_monthly_status,
 )
@@ -21,16 +23,30 @@ def _load_location_data(request: Request, location: dict) -> dict:
     """Carrega todos os dados para um local especifico."""
     project_root = request.app.state.project_root
     pipeline = location["pipeline"]
+    local_id = location["id"]
 
     consumo_data = load_consumo_csv(project_root / pipeline["processed_csv_path"])
     analysis = load_analysis_json(project_root / pipeline["analysis_json_path"])
     status = load_monthly_status(project_root / pipeline["status_path"])
     freshness = get_freshness_info(status)
 
+    custos_path = project_root / "data" / local_id / "custos_reais.json"
+    custos_reais = load_custos_reais(custos_path)
+
+    consumo_chart = {
+        "labels": [row["year_month"] for row in consumo_data],
+        "vazio_data": [row["vazio_kwh"] for row in consumo_data],
+        "fora_vazio_data": [row["fora_vazio_kwh"] for row in consumo_data],
+    }
+    custo_chart = build_custo_chart_data(consumo_data, analysis, custos_reais)
+
     return {
         "consumo_data": consumo_data,
         "analysis": analysis,
         "freshness": freshness,
+        "custos_reais": custos_reais,
+        "consumo_chart": consumo_chart,
+        "custo_chart": custo_chart,
     }
 
 

@@ -1,0 +1,38 @@
+<div class="card">
+  <h2>Consumo Mensal (kWh)</h2>
+  <canvas id="consumo-chart"></canvas>
+  <script>
+    (function() {
+      const ctx = document.getElementById('consumo-chart').getContext('2d');
+      if (window._consumoChart) window._consumoChart.destroy();
+      window._consumoChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: {{ consumo_chart.labels | tojson }},
+          datasets: [
+            {
+              label: 'Vazio (kWh)',
+              data: {{ consumo_chart.vazio_data | tojson }},
+              backgroundColor: 'rgba(54, 162, 235, 0.8)',
+              stack: 'consumo'
+            },
+            {
+              label: 'Fora de Vazio (kWh)',
+              data: {{ consumo_chart.fora_vazio_data | tojson }},
+              backgroundColor: 'rgba(255, 159, 64, 0.8)',
+              stack: 'consumo'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } },
+          scales: {
+            x: { stacked: true },
+            y: { stacked: true, title: { display: true, text: 'kWh' } }
+          }
+        }
+      });
+    })();
+  </script>
+</div>
