@@ -155,6 +155,13 @@ def web_client_with_csv(tmp_path, sample_tariffs, sample_contract):
     app.state.config_path = config_path
     app.state.project_root = tmp_path
 
+    # Fornecer db_engine para load_locations (necessario apos Phase 7)
+    from sqlalchemy import create_engine
+    from src.db.schema import metadata
+    test_engine = create_engine("sqlite:///:memory:")
+    metadata.create_all(test_engine)
+    app.state.db_engine = test_engine
+
     return TestClient(app)
 
 
