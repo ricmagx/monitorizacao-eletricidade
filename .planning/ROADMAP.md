@@ -101,7 +101,7 @@ Plans:
 
 Plans:
 - [x] 05-01-PLAN.md — Docker infrastructure (Dockerfile, compose, entrypoint) + remoção código macOS
-- [ ] 05-02-PLAN.md — SQLite schema (SQLAlchemy Core) + Alembic migrations + testes
+- [x] 05-02-PLAN.md — SQLite schema (SQLAlchemy Core) + Alembic migrations + testes
 - [ ] 05-03-PLAN.md — Integração FastAPI+DB + health endpoint + Docker smoke test
 **UI hint**: no
 

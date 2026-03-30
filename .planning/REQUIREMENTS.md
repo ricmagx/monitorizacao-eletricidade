@@ -15,10 +15,10 @@
 
 ### Dados (SQLite)
 
-- [ ] **DADOS-01**: Histórico de consumo mensal por local em SQLite (vazio/fora_vazio kWh)
-- [ ] **DADOS-02**: Histórico de comparações tiagofelicia.pt em SQLite (por mês, por local)
-- [ ] **DADOS-03**: Custos reais de faturas em SQLite (por mês, por local)
-- [ ] **DADOS-04**: Cache de resultados tiagofelicia.pt com timestamp
+- [x] **DADOS-01**: Histórico de consumo mensal por local em SQLite (vazio/fora_vazio kWh)
+- [x] **DADOS-02**: Histórico de comparações tiagofelicia.pt em SQLite (por mês, por local)
+- [x] **DADOS-03**: Custos reais de faturas em SQLite (por mês, por local)
+- [x] **DADOS-04**: Cache de resultados tiagofelicia.pt com timestamp
 
 ### Upload e Ingestão
 
@@ -84,10 +84,10 @@
 | INFRA-03 | Phase 5 | Pending |
 | INFRA-04 | Phase 12 | Pending |
 | INFRA-05 | Phase 12 | Pending |
-| DADOS-01 | Phase 5 | Pending |
-| DADOS-02 | Phase 5 | Pending |
-| DADOS-03 | Phase 5 | Pending |
-| DADOS-04 | Phase 5 | Pending |
+| DADOS-01 | Phase 5 | Complete |
+| DADOS-02 | Phase 5 | Complete |
+| DADOS-03 | Phase 5 | Complete |
+| DADOS-04 | Phase 5 | Complete |
 | UPLD-01 | Phase 7 | Pending |
 | UPLD-02 | Phase 7 | Pending |
 | UPLD-03 | Phase 8 | Pending |

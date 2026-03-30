@@ -4,14 +4,14 @@ milestone: v2.0
 milestone_name: Sistema Integrado
 current_phase: Phase 5 — Docker + SQLite Foundation
 status: planning
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-30T11:30:23.027Z"
+stopped_at: "Completed 05-01 and 05-02 (Docker infra + SQLite schema)"
+last_updated: "2026-03-30T11:31:00.000Z"
 last_activity: 2026-03-30 — Roadmap v2.0 criado (8 fases, 28 requisitos mapeados)
 progress:
   total_phases: 8
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -29,9 +29,9 @@ See: .planning/PROJECT.md (updated 2026-03-30)
 ## Current Position
 
 Phase: 5 of 12 total (1 of 8 in v2.0)
-Plan: 1 of 3 in Phase 5
+Plan: 2 of 3 in Phase 5 (05-01 + 05-02 complete)
 Status: In Progress
-Last activity: 2026-03-30 — Plan 05-01 completed (Docker infrastructure + macOS cleanup)
+Last activity: 2026-03-30 — Plans 05-01 and 05-02 complete (Docker infra + SQLite schema + migrations)
 
 Progress v2.0: [███░░░░░░░] 33%
 
@@ -44,12 +44,13 @@ Progress v2.0: [███░░░░░░░] 33%
 
 **v2.0:**
 
-- Plans completed: 1 (05-01)
+- Plans completed: 2 (05-01, 05-02)
 - Phases complete: 0/8
 
-| Plan | Duration | Tasks | Files |
-|------|----------|-------|-------|
-| 05-01 | 4min | 2 | 11 |
+| Phase | Plan | Duration | Tasks | Files |
+|-------|------|----------|-------|-------|
+| 05 | 01 | 4min | 2 | 11 |
+| 05 | 02 | 144s | 2 | 11 |
 
 *Updated after each plan completion*
 
@@ -94,6 +95,6 @@ Progress v2.0: [███░░░░░░░] 33%
 
 ## Session Continuity
 
-Last session: 2026-03-30T11:30:23.013Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-30T11:31:00.000Z
+Stopped at: Completed 05-01 and 05-02 (Docker infra + SQLite schema)
 Resume file: None
