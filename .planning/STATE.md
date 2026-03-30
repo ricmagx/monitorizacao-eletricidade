@@ -1,76 +1,70 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-current_phase: 04
-status: Milestone complete
-stopped_at: Completed 04-03-PLAN.md (ranking de fornecedores + LaunchAgent plist)
-last_updated: "2026-03-30T01:02:57.973Z"
+milestone: v2.0
+milestone_name: sistema-integrado
+current_phase: not-started
+status: Defining requirements
+stopped_at: Milestone v2.0 iniciado — a definir requirements
+last_updated: "2026-03-30"
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 10
-  completed_plans: 10
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
 
-**Last updated:** 2026-03-28
-**Current phase:** 04
+**Last updated:** 2026-03-30
+**Current phase:** Not started (defining requirements)
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-28)
+See: .planning/PROJECT.md (updated 2026-03-30)
 
-**Core value:** Com o perfil mensal real de cada local, saber qual seria o comercializador mais barato e quando compensa mudar — sem esforço manual após a configuração inicial.
-**Current focus:** Phase 04 — web-dashboard-mvp
+**Core value:** Com o perfil mensal real de cada local, saber qual seria o comercializador mais barato e quando compensa mudar — sem esforço manual além do upload mensal.
+**Current focus:** Milestone v2.0 — Sistema Integrado
 
 ## Milestone
 
-**Pipeline funcional multi-local com dashboard**
-Phases: 1 → 2 → 3 → 4
+**v2.0 — Sistema Integrado**
+Docker (Unraid) + Upload XLSX/PDF + SQLite multi-ano + UI redesenhado
 
 ## Phase Status
 
-| Phase | Name | Status | Plans |
-|-------|------|--------|-------|
-| 1 | Unblock & Validate End-to-End | ◑ In Progress | 1/2 |
-| 2 | Resilience | ○ Pending | 0/0 |
-| 3 | Multi-Location Refactor | ○ Pending | 0/0 |
-| 4 | Web Dashboard MVP | ○ Pending | 0/0 |
+*(A definir após roadmap)*
 
-## Critical Blockers (confirmed by research)
+## Accumulated Context
 
-- ~~launchd watcher quebrado — TCC permission error (Python path errado no plist)~~ RESOLVIDO (01-01)
-- Sessão E-REDES expirada — JWT exp em `state/eredes_storage_state.json` (FIX-03 — requer acção manual)
-- ~~`.gitignore` não exclui ficheiros de sessão/credenciais~~ RESOLVIDO (01-01)
+### Decisões v1.0 que se mantêm
+- Homebrew Python path confirmado: `/usr/local/opt/python@3.11/libexec/bin/python3`
+- `data/raw/`, `data/processed/`, `data/reports/` excluídos do git (CPE exposto)
+- Multi-local: loop sequencial no orquestrador (sessão Playwright partilhada)
+- 3 módulos já location-agnostic: `eredes_to_monthly_csv`, `energy_compare`, `tiagofelicia_compare`
+- SAVING_THRESHOLD_EUR = 50 como limiar anual para banner de recomendação
 
-## Decisions
+### Decisões v2.0 (novas)
+- Plataforma: Docker/Linux — eliminar launchd, osascript, open -a Firefox
+- Dados: SQLite em vez de ficheiros planos CSV/JSON
+- Upload: XLSX manual via browser (sem download automático do portal E-REDES)
+- PDF: pdfplumber para extracção (Meo Energia + Endesa — texto estruturado)
+- Comparação: tiagofelicia.pt primário + cache SQLite como fallback
+- Deploy: Unraid nginx :8090, homepage :3000, Tailscale activo
+- UI: redesenhado via ui-phase antes de qualquer frontend
 
-- Homebrew Python (`/usr/local/opt/python@3.11/libexec/bin/python3`) usado nos plists launchd — confirmado como path correcto que já correu o pipeline com sucesso (2026-03-26)
-- `data/raw/`, `data/processed/` e `data/reports/` excluidos do git — CPE do imóvel exposto e ficheiros gerados pelo pipeline
-- [Phase 02-resilience]: render_report refactorizada com dual-path (tiagofelicia vs local_catalog) porque estruturas de analise sao incompativeis
-- [Phase 02-resilience]: Bounds check inserido antes de output_path.parent.mkdir para garantir validate-before-write no parser XLSX (RES-02)
-- [Phase 03]: location dict passed as explicit parameter to run_workflow — avoids config root access for contract/pipeline data
-- [Phase 03]: process_latest_download routing fully automatic by CPE in filename — no --location flag needed
-- [Phase 03]: Launchd plists require no content changes — reminder_job now handles multi-location internally via config['locations'] iteration
-- [Phase 04-web-dashboard-mvp]: FastAPI upgradeado para 0.135.2 para compatibilidade com Starlette 1.0.0; TemplateResponse usa API request= kwarg
-- [Phase 04-web-dashboard-mvp]: app.state.config_path permite override em testes sem monkeypatch complexo — padrao para todos os planos da fase 04
-- [Phase 04-web-dashboard-mvp]: custo_section.html como wrapper unico para swap HTMX — permite actualizar grafico + formulario num unico hx-swap
-- [Phase 04-web-dashboard-mvp]: custos_reais.json em data/{local_id}/ — input do utilizador, nao estado do pipeline; None para meses sem custo real serializa para null (Chart.js gap)
-- [Phase 04]: SAVING_THRESHOLD_EUR = 50 como limiar anual — banner so aparece quando poupanca > 50 EUR/ano
-- [Phase 04]: LaunchAgent nao instalado automaticamente — utilizador instala manualmente com cp + launchctl load
+### Infra Unraid
+- Homepage: `http://192.168.122.110:3000`
+- Nginx: `http://192.168.122.110:8090`
+- Deploy script: `/Users/ricmag/Documents/AI/3-hobbies/Casa/deploy-dashboard.sh energia`
+- Target energia: `/hobbies/casa/energia/`
+
+### Locais conhecidos
+- Casa: CPE PT0002000084968079SX, Meo Energia, bi-horário, 10,35 kVA
+- Apartamento: CPE PT000200003982208 2NT, Endesa, bi-horário, 3,45 kVA
 
 ## Notes
 
-- Projecto brownfield: pipeline backend escrito mas nunca executado end-to-end
-- Download E-REDES: `external_firefox` é o design final (headless inviável por reCAPTCHA)
-- Multi-local: loop sequencial no orquestrador (sessão Playwright partilhada)
-- 3 módulos já location-agnostic: `eredes_to_monthly_csv`, `energy_compare`, `tiagofelicia_compare`
-- Plists launchd corrigidos e agents activos — watcher pronto para testar com trigger manual em ~/Downloads
-- Próximo passo: FIX-03 (re-bootstrap sessão E-REDES) requer acção manual do utilizador
-
-## Last session
-
-**Stopped at:** Completed 04-03-PLAN.md (ranking de fornecedores + LaunchAgent plist)
-**Session date:** 2026-03-28T23:05:00Z
+- v1.0 entregou pipeline backend + dashboard MVP (4 fases, 10 planos)
+- Dashboard v1 reconhecidamente fraca — redesign obrigatório em v2
+- FIX-03 (re-bootstrap sessão E-REDES) torna-se irrelevante em v2 (upload manual)
+- pdfplumber consegue extrair texto dos dois formatos de fatura sem IA
