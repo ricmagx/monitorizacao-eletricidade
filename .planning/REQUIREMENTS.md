@@ -7,7 +7,7 @@
 
 ### Infraestrutura (Docker/Unraid)
 
-- [ ] **INFRA-01**: Sistema corre como container Docker no Unraid
+- [x] **INFRA-01**: Sistema corre como container Docker no Unraid
 - [ ] **INFRA-02**: App exposta via reverse proxy nginx em `/hobbies/casa/energia/`
 - [ ] **INFRA-03**: Dados persistem em volume Docker (SQLite)
 - [ ] **INFRA-04**: App aparece como tile no Homepage do Unraid
@@ -79,7 +79,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | Phase 5 | Pending |
+| INFRA-01 | Phase 5 | Complete |
 | INFRA-02 | Phase 12 | Pending |
 | INFRA-03 | Phase 5 | Pending |
 | INFRA-04 | Phase 12 | Pending |
