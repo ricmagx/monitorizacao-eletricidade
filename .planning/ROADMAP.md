@@ -138,8 +138,12 @@ Plans:
   2. Upload de um PDF Endesa extrai o total pago em € e o período correcto, visíveis no dashboard
   3. Se o PDF não for reconhecido como nenhum dos formatos conhecidos, o sistema mostra mensagem de erro clara sem crash
   4. O gás, mesmo que presente na fatura Endesa, não é importado
-**Plans**: TBD
+**Plans**: 2 plans
 **UI hint**: no
+
+Plans:
+- [ ] 08-01-PLAN.md — pdfplumber dependency + extrator PDF (Meo Energia + Endesa) com testes
+- [ ] 08-02-PLAN.md — Endpoint POST /upload/pdf + templates HTML
 
 ### Phase 9: Dashboard UI
 **Goal**: Dashboard completo implementado conforme UI-SPEC produzida na Phase 6, com selector de local, ranking de fornecedores, gráficos de consumo e custo.
@@ -201,7 +205,7 @@ Plans:
 | 5. Docker + SQLite Foundation | v2.0 | 3/3 | Complete   | 2026-03-30 |
 | 6. UI Design (ui-phase) | v2.0 | 0/? | Not started | — |
 | 7. Upload XLSX + Ingestão | v2.0 | 3/3 | Complete   | 2026-03-30 |
-| 8. Upload PDF + Extracção | v2.0 | 0/? | Not started | — |
+| 8. Upload PDF + Extracção | v2.0 | 0/2 | Not started | — |
 | 9. Dashboard UI | v2.0 | 0/? | Not started | — |
 | 10. Cache + Comparação | v2.0 | 0/? | Not started | — |
 | 11. Análise Multi-ano | v2.0 | 0/? | Not started | — |
