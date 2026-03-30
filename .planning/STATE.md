@@ -2,28 +2,28 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 4
-status: Ready to plan
-stopped_at: Phase 4 context gathered (discuss mode)
-last_updated: "2026-03-29T23:55:17.107Z"
+current_phase: 04
+status: Executing Phase 04
+stopped_at: Completed 04-01-PLAN.md (web dashboard foundation)
+last_updated: "2026-03-30T00:47:31.164Z"
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 10
+  completed_plans: 8
 ---
 
 # Project State
 
 **Last updated:** 2026-03-28
-**Current phase:** 4
+**Current phase:** 04
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-03-28)
 
 **Core value:** Com o perfil mensal real de cada local, saber qual seria o comercializador mais barato e quando compensa mudar — sem esforço manual após a configuração inicial.
-**Current focus:** Phase 03 — multi-location-refactor
+**Current focus:** Phase 04 — web-dashboard-mvp
 
 ## Milestone
 
@@ -54,6 +54,8 @@ Phases: 1 → 2 → 3 → 4
 - [Phase 03]: location dict passed as explicit parameter to run_workflow — avoids config root access for contract/pipeline data
 - [Phase 03]: process_latest_download routing fully automatic by CPE in filename — no --location flag needed
 - [Phase 03]: Launchd plists require no content changes — reminder_job now handles multi-location internally via config['locations'] iteration
+- [Phase 04-web-dashboard-mvp]: FastAPI upgradeado para 0.135.2 para compatibilidade com Starlette 1.0.0; TemplateResponse usa API request= kwarg
+- [Phase 04-web-dashboard-mvp]: app.state.config_path permite override em testes sem monkeypatch complexo — padrao para todos os planos da fase 04
 
 ## Notes
 
@@ -66,5 +68,5 @@ Phases: 1 → 2 → 3 → 4
 
 ## Last session
 
-**Stopped at:** Phase 4 context gathered (discuss mode)
+**Stopped at:** Completed 04-01-PLAN.md (web dashboard foundation)
 **Session date:** 2026-03-28T23:05:00Z

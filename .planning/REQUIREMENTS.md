@@ -34,7 +34,7 @@
 
 ### Dashboard Web
 
-- [ ] **DASH-01**: Setup FastAPI + Jinja2 + HTMX (ficheiro estático local) + Chart.js (ficheiro estático local) — sem build step
+- [x] **DASH-01**: Setup FastAPI + Jinja2 + HTMX (ficheiro estático local) + Chart.js (ficheiro estático local) — sem build step
 - [ ] **DASH-02**: Gráfico de consumo mensal (kWh, barras empilhadas vazio/fora_vazio) ao longo do tempo, por local
 - [ ] **DASH-03**: Gráfico de custo €/mês: custo real da factura + estimativa calculada pelo contrato — sobrepostos no mesmo eixo temporal
 - [ ] **DASH-04**: Modelo de dados para custo real da factura: campo de entrada manual por mês (CSV ou formulário na dashboard)
@@ -94,7 +94,7 @@
 | MULTI-04 | Phase 3 | Complete |
 | MULTI-05 | Phase 3 | Complete |
 | MULTI-06 | Phase 3 | Complete |
-| DASH-01 | Phase 4 | Pending |
+| DASH-01 | Phase 4 | Complete |
 | DASH-02 | Phase 4 | Pending |
 | DASH-03 | Phase 4 | Pending |
 | DASH-04 | Phase 4 | Pending |
