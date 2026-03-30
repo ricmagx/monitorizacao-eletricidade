@@ -23,8 +23,23 @@ router = APIRouter()
 def _load_location_data(request: Request, location: dict) -> dict:
     """Carrega todos os dados para um local especifico."""
     project_root = request.app.state.project_root
-    pipeline = location["pipeline"]
     local_id = location["id"]
+
+    # Local criado via UI (Phase 7) — sem dados de pipeline CSV
+    # Retornar dados vazios — Phase 9 migrara para leitura directa de SQLite
+    if "pipeline" not in location:
+        return {
+            "consumo_data": [],
+            "analysis": None,
+            "freshness": get_freshness_info(None),
+            "custos_reais": {},
+            "consumo_chart": {"labels": [], "vazio_data": [], "fora_vazio_data": []},
+            "custo_chart": {"labels": [], "estimativa_data": [], "custo_real_data": []},
+            "ranking": [],
+            "recommendation": {"show": False},
+        }
+
+    pipeline = location["pipeline"]
 
     consumo_data = load_consumo_csv(project_root / pipeline["processed_csv_path"])
     analysis = load_analysis_json(project_root / pipeline["analysis_json_path"])
@@ -63,7 +78,7 @@ async def homepage(request: Request):
     config_path = request.app.state.config_path
     templates = request.app.state.templates
 
-    locations = load_locations(config_path)
+    locations = load_locations(config_path, engine=request.app.state.db_engine)
 
     # Usar primeiro local como default
     selected_location = locations[0] if locations else {}
@@ -96,7 +111,7 @@ async def local_dashboard(request: Request, local_id: str):
     config_path = request.app.state.config_path
     templates = request.app.state.templates
 
-    locations = load_locations(config_path)
+    locations = load_locations(config_path, engine=request.app.state.db_engine)
 
     # Validar que local_id existe
     location = next((loc for loc in locations if loc["id"] == local_id), None)

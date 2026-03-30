@@ -40,7 +40,7 @@ async def post_custo_real(
     save_custo_real(custos_path, year_month, custo_eur)
 
     # Retornar fragmento actualizado do grafico de custo
-    locations = load_locations(request.app.state.config_path)
+    locations = load_locations(request.app.state.config_path, engine=request.app.state.db_engine)
     location = next((loc for loc in locations if loc["id"] == local_id), None)
     if not location:
         return HTMLResponse(status_code=404, content="Local nao encontrado")

@@ -9,21 +9,56 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-def load_locations(config_path: Path) -> list:
-    """Le config/system.json e retorna locations[].
+def load_locations(config_path: Path, engine=None) -> list:
+    """Le locais de config/system.json e complementa com locais do SQLite.
+
+    Locais de config.json mantem formato original (com pipeline, current_contract).
+    Locais que existem apenas em SQLite (criados via UI Phase 7) sao adicionados
+    com formato compativel — aparecem no selector mas podem nao ter pipeline data.
 
     Args:
         config_path: Path para o ficheiro config/system.json.
+        engine: SQLAlchemy engine (opcional). Se fornecido, merge com SQLite.
 
     Returns:
-        Lista de dicts com os locais configurados. Retorna [] se ficheiro nao existe.
+        Lista de dicts com os locais configurados. Retorna [] se nenhuma fonte tem dados.
     """
+    # 1. Ler config.json (fonte original)
+    config_locations = []
     try:
         with open(config_path, encoding="utf-8") as f:
             config = json.load(f)
-        return config.get("locations", [])
+        config_locations = config.get("locations", [])
     except (FileNotFoundError, json.JSONDecodeError):
-        return []
+        pass
+
+    # 2. Se engine fornecido, merge com SQLite
+    if engine is not None:
+        try:
+            from src.web.services.locais_service import get_all_locais
+            sqlite_locais = get_all_locais(engine)
+        except Exception:
+            return config_locations
+
+        # IDs ja presentes no config.json
+        config_ids = {loc["id"] for loc in config_locations}
+
+        # Adicionar locais do SQLite que nao existem no config.json
+        for loc in sqlite_locais:
+            if loc["id"] not in config_ids:
+                config_locations.append({
+                    "id": loc["id"],
+                    "name": loc["name"],
+                    "cpe": loc.get("cpe", ""),
+                    "current_contract": {
+                        "supplier": loc.get("current_supplier", ""),
+                        "current_plan_contains": loc.get("current_plan_contains", ""),
+                        "power_label": loc.get("power_label", ""),
+                    },
+                    # pipeline ausente — dashboard deve tratar gracefully
+                })
+
+    return config_locations
 
 
 def load_consumo_csv(csv_path: Path) -> list:
