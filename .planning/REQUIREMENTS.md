@@ -77,44 +77,42 @@
 
 ## Traceability
 
-*(Preenchido pelo roadmapper)*
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | — | Pending |
-| INFRA-02 | — | Pending |
-| INFRA-03 | — | Pending |
-| INFRA-04 | — | Pending |
-| INFRA-05 | — | Pending |
-| DADOS-01 | — | Pending |
-| DADOS-02 | — | Pending |
-| DADOS-03 | — | Pending |
-| DADOS-04 | — | Pending |
-| UPLD-01 | — | Pending |
-| UPLD-02 | — | Pending |
-| UPLD-03 | — | Pending |
-| UPLD-04 | — | Pending |
-| UPLD-05 | — | Pending |
-| CONF-01 | — | Pending |
-| CONF-02 | — | Pending |
-| COMP-01 | — | Pending |
-| COMP-02 | — | Pending |
-| COMP-03 | — | Pending |
-| COMP-04 | — | Pending |
-| UI-01 | — | Pending |
-| UI-02 | — | Pending |
-| UI-03 | — | Pending |
-| UI-04 | — | Pending |
-| UI-05 | — | Pending |
-| ANAL-01 | — | Pending |
-| ANAL-02 | — | Pending |
-| ANAL-03 | — | Pending |
+| INFRA-01 | Phase 5 | Pending |
+| INFRA-02 | Phase 5 | Pending |
+| INFRA-03 | Phase 5 | Pending |
+| INFRA-04 | Phase 12 | Pending |
+| INFRA-05 | Phase 12 | Pending |
+| DADOS-01 | Phase 5 | Pending |
+| DADOS-02 | Phase 5 | Pending |
+| DADOS-03 | Phase 5 | Pending |
+| DADOS-04 | Phase 5 | Pending |
+| UPLD-01 | Phase 7 | Pending |
+| UPLD-02 | Phase 7 | Pending |
+| UPLD-03 | Phase 8 | Pending |
+| UPLD-04 | Phase 8 | Pending |
+| UPLD-05 | Phase 7 | Pending |
+| CONF-01 | Phase 7 | Pending |
+| CONF-02 | Phase 7 | Pending |
+| COMP-01 | Phase 7 | Pending |
+| COMP-02 | Phase 7 | Pending |
+| COMP-03 | Phase 10 | Pending |
+| COMP-04 | Phase 10 | Pending |
+| UI-01 | Phase 6 | Pending |
+| UI-02 | Phase 9 | Pending |
+| UI-03 | Phase 9 | Pending |
+| UI-04 | Phase 9 | Pending |
+| UI-05 | Phase 9 | Pending |
+| ANAL-01 | Phase 11 | Pending |
+| ANAL-02 | Phase 11 | Pending |
+| ANAL-03 | Phase 11 | Pending |
 
 **Coverage:**
 - v2 requirements: 28 total
-- Mapped to phases: 0
-- Unmapped: 28 ⚠️ (pending roadmap)
+- Mapped to phases: 28
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-30*
-*Last updated: 2026-03-30 after initial definition*
+*Last updated: 2026-03-30 — traceability preenchida após roadmap v2.0*
