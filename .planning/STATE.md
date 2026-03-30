@@ -2,35 +2,35 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Sistema Integrado
-current_phase: 6
-status: completed
-stopped_at: Completed 05-03 (FastAPI+DB integration + Docker smoke test verified on Unraid)
-last_updated: "2026-03-30T12:34:08.966Z"
+current_phase: 07
+status: executing
+stopped_at: Completed 07-01-PLAN.md
+last_updated: "2026-03-30T15:31:16.932Z"
 last_activity: 2026-03-30
 progress:
   total_phases: 8
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  completed_phases: 2
+  total_plans: 6
+  completed_plans: 5
 ---
 
 # Project State
 
 **Last updated:** 2026-03-30
-**Current phase:** 6
+**Current phase:** 07
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-03-30)
 
 **Core value:** Com o perfil mensal real de cada local, saber qual seria o comercializador mais barato e quando compensa mudar — sem esforço manual além do upload mensal.
-**Current focus:** Milestone v2.0 — Sistema Integrado (Phase 5 of 8)
+**Current focus:** Phase 07 — upload-xlsx-ingest-o-de-dados
 
 ## Current Position
 
-Phase: 5 of 12 total (1 of 8 in v2.0)
-Plan: Not started
-Status: Phase 5 Complete
+Phase: 07 (upload-xlsx-ingest-o-de-dados) — EXECUTING
+Plan: 2 of 2
+Status: Ready to execute
 Last activity: 2026-03-30
 
 Progress v2.0: [██████████] 100% (Phase 5)
@@ -54,6 +54,7 @@ Progress v2.0: [██████████] 100% (Phase 5)
 | 05 | 03 | 45min | 2 | 2 |
 
 *Updated after each plan completion*
+| Phase 07 P01 | 234 | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,13 @@ Progress v2.0: [██████████] 100% (Phase 5)
 - Casa: CPE PT0002000084968079SX, Meo Energia, bi-horário, 10,35 kVA
 - Apartamento: CPE PT000200003982208 2NT, Endesa, bi-horário, 3,45 kVA
 
+### Decisões Phase 07
+
+- Seed de locais idempotente: count(*) antes de inserir para segurança em restarts de container
+- UniqueConstraint em comparacoes adicionado na migration 002 para compatibilidade com DB existentes
+- parse_xlsx_to_dict() extraida como função pública reutilizável; convert_xlsx_to_monthly_csv() mantida como wrapper backward-compatible
+- ingerir_xlsx usa on_conflict_do_nothing (dialecto SQLite) para idempotência de ingestão
+
 ### Bloqueadores/Notas
 
 - Phase 6 é design-only (ui-phase) — não produz código, produz UI-SPEC.md
@@ -99,6 +107,6 @@ Progress v2.0: [██████████] 100% (Phase 5)
 
 ## Session Continuity
 
-Last session: 2026-03-30T12:24:48.215Z
-Stopped at: Completed 05-03 (FastAPI+DB integration + Docker smoke test verified on Unraid)
+Last session: 2026-03-30T15:31:16.920Z
+Stopped at: Completed 07-01-PLAN.md
 Resume file: None

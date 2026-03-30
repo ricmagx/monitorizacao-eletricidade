@@ -9,7 +9,7 @@
 
 - [x] **INFRA-01**: Sistema corre como container Docker no Unraid
 - [ ] **INFRA-02**: App exposta via reverse proxy nginx em `/hobbies/casa/energia/`
-- [ ] **INFRA-03**: Dados persistem em volume Docker (SQLite)
+- [x] **INFRA-03**: Dados persistem em volume Docker (SQLite)
 - [ ] **INFRA-04**: App aparece como tile no Homepage do Unraid
 - [ ] **INFRA-05**: App acessível via Tailscale fora da rede local
 
@@ -23,20 +23,20 @@
 ### Upload e Ingestão
 
 - [ ] **UPLD-01**: Utilizador faz upload de XLSX da E-REDES via browser
-- [ ] **UPLD-02**: Sistema normaliza XLSX e armazena consumo em SQLite automaticamente
+- [x] **UPLD-02**: Sistema normaliza XLSX e armazena consumo em SQLite automaticamente
 - [ ] **UPLD-03**: Utilizador faz upload de PDF de fatura via browser
 - [ ] **UPLD-04**: Sistema extrai total pago e período do PDF (formatos Meo Energia + Endesa)
-- [ ] **UPLD-05**: Sistema detecta o local correcto via CPE presente no ficheiro
+- [x] **UPLD-05**: Sistema detecta o local correcto via CPE presente no ficheiro
 
 ### Configuração de Locais
 
-- [ ] **CONF-01**: Utilizador pode criar e editar locais no UI (nome livre + CPE)
-- [ ] **CONF-02**: Utilizador pode definir fornecedor actual por local
+- [x] **CONF-01**: Utilizador pode criar e editar locais no UI (nome livre + CPE)
+- [x] **CONF-02**: Utilizador pode definir fornecedor actual por local
 
 ### Comparação de Tarifários
 
 - [ ] **COMP-01**: Sistema consulta tiagofelicia.pt após cada upload de XLSX
-- [ ] **COMP-02**: Resultado guardado em cache SQLite com data
+- [x] **COMP-02**: Resultado guardado em cache SQLite com data
 - [ ] **COMP-03**: Dashboard usa cache quando tiagofelicia.pt está indisponível
 - [ ] **COMP-04**: Badge indica se dados são frescos ou do cache (com data)
 
@@ -81,7 +81,7 @@
 |-------------|-------|--------|
 | INFRA-01 | Phase 5 | Complete |
 | INFRA-02 | Phase 12 | Pending |
-| INFRA-03 | Phase 5 | Pending |
+| INFRA-03 | Phase 5 | Complete |
 | INFRA-04 | Phase 12 | Pending |
 | INFRA-05 | Phase 12 | Pending |
 | DADOS-01 | Phase 5 | Complete |
@@ -89,14 +89,14 @@
 | DADOS-03 | Phase 5 | Complete |
 | DADOS-04 | Phase 5 | Complete |
 | UPLD-01 | Phase 7 | Pending |
-| UPLD-02 | Phase 7 | Pending |
+| UPLD-02 | Phase 7 | Complete |
 | UPLD-03 | Phase 8 | Pending |
 | UPLD-04 | Phase 8 | Pending |
-| UPLD-05 | Phase 7 | Pending |
-| CONF-01 | Phase 7 | Pending |
-| CONF-02 | Phase 7 | Pending |
+| UPLD-05 | Phase 7 | Complete |
+| CONF-01 | Phase 7 | Complete |
+| CONF-02 | Phase 7 | Complete |
 | COMP-01 | Phase 7 | Pending |
-| COMP-02 | Phase 7 | Pending |
+| COMP-02 | Phase 7 | Complete |
 | COMP-03 | Phase 10 | Pending |
 | COMP-04 | Phase 10 | Pending |
 | UI-01 | Phase 6 | Pending |

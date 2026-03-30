@@ -200,7 +200,7 @@ Plans:
 | 4. Web Dashboard MVP | v1.0 | 3/3 | Complete | 2026-03-30 |
 | 5. Docker + SQLite Foundation | v2.0 | 3/3 | Complete   | 2026-03-30 |
 | 6. UI Design (ui-phase) | v2.0 | 0/? | Not started | — |
-| 7. Upload XLSX + Ingestão | v2.0 | 0/? | Not started | — |
+| 7. Upload XLSX + Ingestão | v2.0 | 1/2 | In Progress|  |
 | 8. Upload PDF + Extracção | v2.0 | 0/? | Not started | — |
 | 9. Dashboard UI | v2.0 | 0/? | Not started | — |
 | 10. Cache + Comparação | v2.0 | 0/? | Not started | — |
