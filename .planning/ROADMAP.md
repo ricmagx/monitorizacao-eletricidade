@@ -101,27 +101,32 @@ Plans:
 
 ### Phase 4: Web Dashboard MVP
 
-**Goal:** Dashboard web local em modo leitura que apresenta histórico de consumo por local, ranking de fornecedores e recomendação de mudança, com indicadores de frescura e delta ano-a-ano.
+**Goal:** Dashboard web local em modo leitura que apresenta historico de consumo por local, ranking de fornecedores e recomendacao de mudanca, com indicadores de frescura.
 
 **Depends on:** Phase 3
 
 **Requirements:** DASH-01, DASH-02, DASH-03, DASH-04, DASH-05, DASH-06
 
 **Success Criteria** (o que deve ser verdade quando a fase termina):
-  1. `uvicorn src.web.app:app` arranca sem erros e a página principal abre em `http://localhost:8000` num browser local
-  2. O selector de local actualiza o gráfico e a tabela por HTMX sem recarregar a página inteira, e mostra dados corretos para cada local configurado
-  3. O gráfico de barras empilhadas mostra o consumo mensal (vazio / fora de vazio) para todos os meses disponíveis no CSV processado do local seleccionado
-  4. A tabela de ranking lista os fornecedores por custo anual estimado; a linha do fornecedor actual está assinalada; a recomendação mostra a poupança estimada em euros/ano
-  5. O indicador de frescura mostra a data do último relatório gerado; se o último relatório tiver mais de 40 dias, o indicador aparece em estado de aviso
-  6. O delta ano-a-ano está visível por mês (comparação com o período homólogo); meses sem dados do ano anterior não mostram delta
-  7. Nenhum pedido de rede externo é efectuado pelo browser (Chart.js e HTMX são servidos como ficheiros estáticos locais — verificável no Network tab das DevTools)
+  1. `uvicorn src.web.app:app` arranca sem erros e a pagina principal abre em `http://localhost:8000` num browser local
+  2. O selector de local actualiza o grafico e a tabela por HTMX sem recarregar a pagina inteira, e mostra dados corretos para cada local configurado
+  3. O grafico de barras empilhadas mostra o consumo mensal (vazio / fora de vazio) para todos os meses disponiveis no CSV processado do local seleccionado
+  4. A tabela de ranking lista os fornecedores por custo anual estimado; a linha do fornecedor actual esta assinalada; a recomendacao mostra a poupanca estimada em euros/ano
+  5. O indicador de frescura mostra a data do ultimo relatorio gerado; se o ultimo relatorio tiver mais de 40 dias, o indicador aparece em estado de aviso
+  6. O delta ano-a-ano esta visivel por mes (comparacao com o periodo homologo); meses sem dados do ano anterior nao mostram delta
+  7. Nenhum pedido de rede externo e efectuado pelo browser (Chart.js e HTMX sao servidos como ficheiros estaticos locais — verificavel no Network tab das DevTools)
 
 **Key Risks:**
-- O formato dos ficheiros JSON de análise (`analise_tiagofelicia_atual.json`) pode sofrer alterações durante a Phase 3 que tornem os routes FastAPI desta fase inconsistentes; definir e estabilizar o schema de output da Phase 3 antes de codificar os routes
-- HTMX e Chart.js devem ser descarregados e fixados como ficheiros estáticos locais antes de qualquer trabalho de UI — verificar versões disponíveis (HTMX 2.0.x, Chart.js 4.4.x) e confirmar que o UMD build do Chart.js não requer bundler
-- O ano-a-ano (DASH-06) depende de ter pelo menos 2 anos de dados para `casa`; para `apartamento` provavelmente não existe histórico suficiente na primeira iteração — a UI deve mostrar o estado "sem dados para comparação" de forma elegante e não como erro
+- O formato dos ficheiros JSON de analise (`analise_tiagofelicia_atual.json`) pode sofrer alteracoes durante a Phase 3 que tornem os routes FastAPI desta fase inconsistentes; definir e estabilizar o schema de output da Phase 3 antes de codificar os routes
+- HTMX e Chart.js devem ser descarregados e fixados como ficheiros estaticos locais antes de qualquer trabalho de UI — verificar versoes disponiveis (HTMX 2.0.x, Chart.js 4.4.x) e confirmar que o UMD build do Chart.js nao requer bundler
+- O ano-a-ano (DASH-06) depende de ter pelo menos 2 anos de dados para `casa`; para `apartamento` provavelmente nao existe historico suficiente na primeira iteracao — a UI deve mostrar o estado "sem dados para comparacao" de forma elegante e nao como erro
 
-**Plans:** [To be planned]
+**Plans:** 3 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — FastAPI app + data loader + templates base + ficheiros estaticos (HTMX, Chart.js)
+- [ ] 04-02-PLAN.md — Graficos de consumo e custo + formulario de custo real da factura
+- [ ] 04-03-PLAN.md — Ranking de fornecedores + banner de recomendacao + LaunchAgent plist
 
 ---
 
@@ -132,20 +137,20 @@ Plans:
 | 1. Unblock & Validate | 1/2 | In Progress|  |
 | 2. Resilience | 2/2 | Complete | 2026-03-29 |
 | 3. Multi-Location Refactor | 3/3 | Complete   | 2026-03-29 |
-| 4. Web Dashboard MVP | 0/? | Not started | - |
+| 4. Web Dashboard MVP | 0/3 | Not started | - |
 
 ---
 
 ## Milestone
 
 **Pipeline funcional multi-local com dashboard**
-Completo quando todas as 4 fases estiverem concluídas.
+Completo quando todas as 4 fases estiverem concluidas.
 
-Definição de concluído para o milestone:
-- O pipeline corre automaticamente via launchd para os dois locais após download de XLSX
-- Cada local tem relatório mensal independente com ranking de fornecedores e recomendação
-- A dashboard apresenta histórico, ranking e recomendação para ambos os locais
-- Nenhum requisito v1 está em estado pendente
+Definicao de concluido para o milestone:
+- O pipeline corre automaticamente via launchd para os dois locais apos download de XLSX
+- Cada local tem relatorio mensal independente com ranking de fornecedores e recomendacao
+- A dashboard apresenta historico, ranking e recomendacao para ambos os locais
+- Nenhum requisito v1 esta em estado pendente
 
 ---
 
