@@ -21,6 +21,7 @@ Com o perfil mensal real de cada local, saber hoje qual seria o comercializador 
 - ✓ Agendamento launchd: reminder no dia 1 às 09:00 + watcher `~/Downloads` para disparar pipeline automaticamente — existing
 - ✓ Gestão de sessão E-REDES: bootstrap com Firefox, sessão Playwright persistida em `state/` para downloads automáticos — existing
 - ✓ Idempotência: `process_latest_download.py` evita reprocessar o mesmo XLSX — existing
+- ✓ Dashboard web MVP: FastAPI + HTMX + Chart.js (local, sem CDN), gráficos consumo/custo, custo real da factura, ranking top-5 fornecedores, banner recomendação, LaunchAgent auto-start — Validated in Phase 04
 
 ### Active
 
@@ -29,7 +30,6 @@ Com o perfil mensal real de cada local, saber hoje qual seria o comercializador 
 - [ ] Validação end-to-end com XLSX real: correr o pipeline completo com os ficheiros XLSX já disponíveis e confirmar que tudo funciona
 - [ ] Suporte multi-local: refactorizar config/state/workflow para suportar N locais independentes (cada local com CPE, config e estado próprios)
 - [ ] Download multi-CPE: seleccionar o CPE correcto no portal E-REDES durante o download automático (mesma conta, múltiplos contadores)
-- [ ] Dashboard web: FastAPI + HTMX + Jinja + Chart.js com histórico temporal de consumo (kWh) e custo (€), custo real da factura vs estimativa calculada, ranking de comercializadores, simulação retroactiva (quem teria sido mais barato historicamente) e recomendação actual
 - [ ] requirements.txt: formalizar dependências (playwright, openpyxl, fastapi, uvicorn, jinja2)
 
 ### Out of Scope
@@ -49,7 +49,7 @@ Com o perfil mensal real de cada local, saber hoje qual seria o comercializador 
 
 **Stack técnica:**
 - Python 3.11, Playwright 1.58, openpyxl 3.1
-- FastAPI + HTMX + Jinja2 + Chart.js (a implementar para a dashboard)
+- FastAPI + HTMX + Jinja2 + Chart.js (dashboard implementada em Phase 04)
 - macOS: launchd, osascript, open -a Firefox
 - Dados como ficheiros planos (CSV, JSON, Markdown) — sem base de dados
 
@@ -90,4 +90,4 @@ Este documento evolui em cada transição de fase e milestone.
 4. Actualizar Context com estado actual
 
 ---
-*Last updated: 2026-03-28 after requirements refinement (dashboard scope expanded)*
+*Last updated: 2026-03-30 — Phase 04 complete (dashboard web MVP)*
