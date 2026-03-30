@@ -27,6 +27,7 @@ comparacoes = Table(
     Column("current_supplier_result_json", Text),
     Column("generated_at", String(32)),
     Column("cached_at", DateTime, default=lambda: datetime.now(timezone.utc)),
+    UniqueConstraint("location_id", "year_month", name="uq_comparacao_loc_month"),
 )
 
 custos_reais = Table(
@@ -38,4 +39,15 @@ custos_reais = Table(
     Column("source", String(64)),
     Column("created_at", DateTime, default=lambda: datetime.now(timezone.utc)),
     UniqueConstraint("location_id", "year_month", name="uq_custos_loc_month"),
+)
+
+locais = Table(
+    "locais", metadata,
+    Column("id", String(64), primary_key=True),
+    Column("name", String(128), nullable=False),
+    Column("cpe", String(64), nullable=False, unique=True),
+    Column("current_supplier", String(128)),
+    Column("current_plan_contains", String(128)),
+    Column("power_label", String(32)),
+    Column("created_at", DateTime, default=lambda: datetime.now(timezone.utc)),
 )

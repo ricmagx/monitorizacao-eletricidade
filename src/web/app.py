@@ -2,6 +2,7 @@
 
 Entry point: uvicorn src.web.app:app
 """
+import json
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -10,14 +11,45 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import text
+from sqlalchemy import text, select, insert, func
 
 from src.db.engine import engine
-from src.db.schema import metadata
+from src.db.schema import metadata, locais
 
 BASE_DIR = Path(__file__).resolve().parent
 # Docker-compatible: APP_ROOT env var tem precedencia sobre calculo por path
 PROJECT_ROOT = Path(os.environ.get("APP_ROOT", str(BASE_DIR.parent.parent)))
+
+
+def _seed_locais_from_config(engine, config_path: Path) -> None:
+    """Copia locais de config/system.json para SQLite se tabela estiver vazia.
+
+    Idempotente: nao faz nada se ja existirem locais na tabela.
+    """
+    if not config_path.exists():
+        return
+    with engine.connect() as conn:
+        count = conn.execute(select(func.count()).select_from(locais)).scalar()
+    if count and count > 0:
+        return
+    try:
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return
+    locations = config.get("locations", [])
+    if not locations:
+        return
+    with engine.begin() as conn:
+        for loc in locations:
+            contract = loc.get("current_contract", {})
+            conn.execute(insert(locais).values(
+                id=loc["id"],
+                name=loc["name"],
+                cpe=loc.get("cpe", ""),
+                current_supplier=contract.get("supplier"),
+                current_plan_contains=contract.get("current_plan_contains"),
+                power_label=contract.get("power_label"),
+            ))
 
 
 @asynccontextmanager
@@ -29,6 +61,7 @@ async def lifespan(app: FastAPI):
     """
     metadata.create_all(engine)
     app.state.db_engine = engine
+    _seed_locais_from_config(engine, PROJECT_ROOT / "config" / "system.json")
     yield
 
 
