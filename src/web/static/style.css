@@ -1,4 +1,35 @@
-/* Placeholder style - full CSS added in Task 2 */
 :root {
   --bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --text: #212529;
+  --muted: #6c757d;
+  --accent: #0d6efd;
+  --success: #198754;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --border: #dee2e6;
 }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; padding: 1rem 2rem; max-width: 1200px; margin: 0 auto; }
+h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+h2 { font-size: 1.2rem; margin-bottom: 0.75rem; color: var(--muted); }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+.selector { padding: 0.5rem; font-size: 1rem; border: 1px solid var(--border); border-radius: 4px; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.25rem; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+.badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem; font-weight: 500; }
+.badge-ok { background: #d1e7dd; color: var(--success); }
+.badge-stale { background: #fff3cd; color: #856404; }
+.banner { padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.25rem; font-weight: 500; }
+.banner-success { background: #d1e7dd; color: var(--success); border: 1px solid #badbcc; }
+.banner-muted { background: #e9ecef; color: var(--muted); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); }
+th { font-weight: 600; color: var(--muted); font-size: 0.85rem; text-transform: uppercase; }
+tr.highlight { background: #fff3cd; }
+.form-inline { display: flex; gap: 0.5rem; align-items: center; }
+.form-inline input { padding: 0.35rem 0.5rem; border: 1px solid var(--border); border-radius: 4px; width: 100px; }
+.form-inline button { padding: 0.35rem 0.75rem; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; }
+.htmx-indicator { display: none; }
+.htmx-request .htmx-indicator { display: inline; }
