@@ -331,3 +331,14 @@ def web_client(sample_config_json):
 
     client = TestClient(app)
     return client
+
+
+@pytest.fixture
+def db_engine_test():
+    """SQLAlchemy engine para SQLite in-memory — tabelas Phase 7."""
+    from sqlalchemy import create_engine
+    from src.db.schema import metadata
+    engine = create_engine("sqlite:///:memory:")
+    metadata.create_all(engine)
+    yield engine
+    engine.dispose()
