@@ -1,0 +1,15 @@
+{% if erro %}
+<div style="padding: 0.75rem 1rem; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24;">
+  {{ erro }}
+</div>
+{% elif resultado %}
+  {% if resultado.meses_inseridos > 0 %}
+  <div style="padding: 0.75rem 1rem; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
+    Importados {{ resultado.meses_inseridos }} meses para {{ resultado.location_name }} (CPE: {{ resultado.cpe }}). Periodo: {{ resultado.periodo_inicio }} a {{ resultado.periodo_fim }}.
+  </div>
+  {% else %}
+  <div style="padding: 0.75rem 1rem; background: #e2e3e5; border: 1px solid #d6d8db; border-radius: 4px; color: #383d41;">
+    Dados ja importados para este periodo. Nenhuma alteracao efectuada.
+  </div>
+  {% endif %}
+{% endif %}

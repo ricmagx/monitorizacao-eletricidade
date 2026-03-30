@@ -1,0 +1,16 @@
+<!-- Upload XLSX E-REDES — conforme UI-SPEC Phase 6 -->
+<div class="card" style="margin-bottom: 2rem;">
+  <h2>Importar XLSX E-REDES</h2>
+  <form hx-post="/upload/xlsx"
+        hx-target="#upload-xlsx-resultado"
+        hx-swap="innerHTML"
+        hx-encoding="multipart/form-data"
+        hx-indicator="#upload-xlsx-spinner">
+    <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+      <input type="file" name="ficheiro" accept=".xlsx" required id="xlsx-input">
+      <button type="submit" class="btn-primary">Importar XLSX</button>
+      <span id="upload-xlsx-spinner" class="htmx-indicator" style="color: var(--muted, #6c757d);">A processar...</span>
+    </div>
+  </form>
+  <div id="upload-xlsx-resultado" style="margin-top: 1rem;"></div>
+</div>
