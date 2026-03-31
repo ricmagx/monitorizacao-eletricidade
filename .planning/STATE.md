@@ -4,7 +4,7 @@ milestone: v2.0
 milestone_name: Sistema Integrado
 current_phase: 11
 status: executing
-stopped_at: Completed quick task 260331-dl8 (analise multi-ano)
+stopped_at: Completed quick task 260331-edj (deploy unraid + homepage + tailscale)
 last_updated: "2026-03-31T09:13:00.289Z"
 last_activity: 2026-03-31
 progress:
@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-03-30)
 Phase: 10 (cache-tiagofelicia-pt-integra-o-compara-o) — EXECUTING
 Plan: Not started
 Status: Executing Phase 10
-Last activity: 2026-03-31
+Last activity: 2026-03-31 - Completed quick task 260331-edj: Deploy Unraid + Homepage tile + Tailscale (Phase 12)
 
 Progress v2.0: [██████████] 100% (Phase 5)
 
@@ -122,9 +122,10 @@ Progress v2.0: [██████████] 100% (Phase 5)
 
 ### Quick Tasks Completed
 
-| # | Description | Date | Commit | Directory |
-|---|-------------|------|--------|-----------|
-| 260331-dl8 | Análise multi-ano: gráfico consumo 3+ anos, comparação mês vs ano, resumo anual por local | 2026-03-31 | 643708d | [260331-dl8-an-lise-multi-ano-gr-fico-consumo-3-anos](.planning/quick/260331-dl8-an-lise-multi-ano-gr-fico-consumo-3-anos/) |
+| # | Description | Date | Commit | Status | Directory |
+|---|-------------|------|--------|--------|-----------|
+| 260331-dl8 | Análise multi-ano: gráfico consumo 3+ anos, comparação mês vs ano, resumo anual por local | 2026-03-31 | 643708d | | [260331-dl8-an-lise-multi-ano-gr-fico-consumo-3-anos](.planning/quick/260331-dl8-an-lise-multi-ano-gr-fico-consumo-3-anos/) |
+| 260331-edj | Deploy Unraid + Homepage tile + Tailscale (Phase 12) | 2026-03-31 | 29abfa8 | Needs Review | [260331-edj-implementar-fase-12](.planning/quick/260331-edj-implementar-fase-12/) |
 | 260331-edj | Deploy Unraid: root_path FastAPI, docker-compose.prod.yml, nginx reverse proxy, deploy.sh, homepage widget | 2026-03-31 | 48c99ec | [260331-edj-implementar-fase-12](.planning/quick/260331-edj-implementar-fase-12/) |
 
 ## Session Continuity
