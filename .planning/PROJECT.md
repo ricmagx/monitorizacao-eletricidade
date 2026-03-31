@@ -34,6 +34,8 @@ Com o perfil mensal real de cada local, saber hoje qual seria o comercializador 
 - ✓ Upload XLSX via browser para cada local — Validated in Phase 07
 - ✓ SQLite para histórico multi-ano (tabela locais + comparacoes com constraint uq_comparacao_loc_month) — Validated in Phase 07
 - ✓ Locais editáveis no UI (nome + CPE) — Validated in Phase 07
+- ✓ Dashboard funcional para locais SQLite-only (sem pipeline CSV) — Validated in Phase 09
+- ✓ UI redesenhado com UI-SPEC: gráfico custo bar+bar, ranking com poupança potencial, banner com plano, upload PDF integrado — Validated in Phase 09
 
 ### Active
 
@@ -106,4 +108,4 @@ Este documento evolui em cada transição de fase e milestone.
 4. Actualizar Context com estado actual
 
 ---
-*Last updated: 2026-03-31 — Phase 8 complete: Upload PDF de faturas (Meo Energia + Endesa), extracção automática pdfplumber, endpoint POST /upload/pdf, templates HTMX, persistência dual SQLite+JSON, 89 testes a passar*
+*Last updated: 2026-03-31 — Phase 9 complete: Dashboard UI alinhado com UI-SPEC — SQLite como fonte primária com fallback CSV, gráfico custo bar+bar, ranking com poupança potencial, banner com plano, upload PDF integrado no layout. 107 testes a passar.*
