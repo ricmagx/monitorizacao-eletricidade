@@ -1,4 +1,4 @@
-"""Routes de upload de ficheiros XLSX E-REDES."""
+"""Routes de upload de ficheiros XLSX E-REDES e PDF de faturas."""
 import os
 import tempfile
 from pathlib import Path
@@ -7,6 +7,8 @@ from fastapi import APIRouter, BackgroundTasks, File, Request, UploadFile
 from fastapi.responses import HTMLResponse
 
 from src.web.services.ingestao_xlsx import ingerir_xlsx
+from src.web.services.extrator_pdf import ingerir_pdf
+from src.web.services.data_loader import save_custo_real
 
 router = APIRouter()
 
@@ -105,5 +107,38 @@ async def upload_xlsx(
     return templates.TemplateResponse(
         request=request,
         name="partials/upload_confirmacao.html",
+        context={"erro": None, "resultado": resultado},
+    )
+
+
+@router.post("/upload/pdf", response_class=HTMLResponse)
+async def upload_pdf(
+    request: Request,
+    ficheiro: UploadFile = File(...),
+):
+    """Recebe PDF de fatura, extrai total pago e periodo, grava em custos_reais."""
+    templates = request.app.state.templates
+    engine = request.app.state.db_engine
+
+    content = await ficheiro.read()  # BytesIO — sem ficheiro temporario
+
+    resultado = ingerir_pdf(content, engine)
+
+    if resultado["erro"]:
+        return templates.TemplateResponse(
+            request=request,
+            name="partials/upload_pdf_confirmacao.html",
+            context={"erro": resultado["erro"], "resultado": None},
+        )
+
+    # Escrever tambem no custos_reais.json para que o dashboard mostre o valor.
+    # O dashboard le de data/{local_id}/custos_reais.json, nao da tabela SQLite.
+    project_root = request.app.state.project_root
+    custos_path = project_root / "data" / resultado["location_id"] / "custos_reais.json"
+    save_custo_real(custos_path, resultado["year_month"], resultado["custo_eur"])
+
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/upload_pdf_confirmacao.html",
         context={"erro": None, "resultado": resultado},
     )

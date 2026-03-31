@@ -1,0 +1,18 @@
+{% if erro %}
+<div style="padding: 0.75rem 1rem; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24;">
+  <strong>Erro:</strong> {{ erro }}
+</div>
+{% elif resultado %}
+<div style="padding: 0.75rem 1rem; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
+  <strong>Fatura importada com sucesso!</strong>
+  <ul style="margin: 0.5rem 0 0 0; padding-left: 1.25rem;">
+    <li>Formato: {{ resultado.formato }}</li>
+    <li>Local: {{ resultado.location_name }} (CPE: {{ resultado.cpe }})</li>
+    <li>Periodo: {{ resultado.year_month }}</li>
+    <li>Total pago: {{ "%.2f"|format(resultado.custo_eur) }} EUR</li>
+    {% if not resultado.inserido %}
+    <li><em>Nota: ja existia custo para este periodo — dados nao duplicados.</em></li>
+    {% endif %}
+  </ul>
+</div>
+{% endif %}

@@ -1,0 +1,17 @@
+<!-- Upload PDF Fatura — conforme UI-SPEC Phase 6 -->
+<div class="card" style="margin-bottom: 2rem;">
+  <h2>Importar Fatura PDF</h2>
+  <p style="color: var(--muted, #6c757d); margin-bottom: 0.75rem;">Formatos suportados: Meo Energia, Endesa</p>
+  <form hx-post="/upload/pdf"
+        hx-target="#upload-pdf-resultado"
+        hx-swap="innerHTML"
+        hx-encoding="multipart/form-data"
+        hx-indicator="#upload-pdf-spinner">
+    <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+      <input type="file" name="ficheiro" accept=".pdf" required id="pdf-input">
+      <button type="submit" class="btn-primary">Importar PDF</button>
+      <span id="upload-pdf-spinner" class="htmx-indicator" style="color: var(--muted, #6c757d);">A processar...</span>
+    </div>
+  </form>
+  <div id="upload-pdf-resultado" style="margin-top: 1rem;"></div>
+</div>
