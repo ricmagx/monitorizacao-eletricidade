@@ -149,13 +149,46 @@ def test_calculate_annual_ranking_empty():
     assert calculate_annual_ranking({"history": []}, "Meo Energia") == []
 
 
+def test_annual_ranking_poupanca_potencial():
+    """Cada entry tem key poupanca_potencial; fornecedor actual tem poupanca 0; mais barato tem positiva."""
+    from src.web.services.rankings import calculate_annual_ranking
+
+    analysis = make_analysis(months=3)
+    result = calculate_annual_ranking(analysis, "Meo Energia")
+
+    # Todas as entries devem ter poupanca_potencial
+    for entry in result:
+        assert "poupanca_potencial" in entry
+
+    # Fornecedor actual deve ter poupanca 0.0
+    current_entries = [r for r in result if r["is_current"]]
+    assert len(current_entries) == 1
+    assert current_entries[0]["poupanca_potencial"] == 0.0
+
+    # Fornecedor mais barato (primeiro na lista) deve ter poupanca positiva
+    cheapest = result[0]
+    if not cheapest["is_current"]:
+        assert cheapest["poupanca_potencial"] > 0
+
+
+def test_annual_ranking_poupanca_no_current():
+    """Quando current_supplier_name nao corresponde a nenhum fornecedor, poupanca_potencial e None."""
+    from src.web.services.rankings import calculate_annual_ranking
+
+    analysis = make_analysis(months=3)
+    result = calculate_annual_ranking(analysis, "Fornecedor Inexistente")
+
+    for entry in result:
+        assert entry["poupanca_potencial"] is None
+
+
 # ---------------------------------------------------------------------------
 # build_recommendation
 # ---------------------------------------------------------------------------
 
 
 def test_build_recommendation_significant():
-    """Com poupanca > 50 EUR/ano, retorna show=True com supplier e saving_eur e message."""
+    """Com poupanca > 50 EUR/ano, retorna show=True com supplier, plan, saving_eur e message."""
     from src.web.services.rankings import build_recommendation
 
     # saving mensal 74.8 * 12 = 897.6 EUR/ano → significativo
@@ -165,7 +198,9 @@ def test_build_recommendation_significant():
     assert result["show"] is True
     assert result["supplier"] == "Ibelectra"
     assert result["saving_eur"] > 50
-    assert "Podes poupar" in result["message"]
+    assert "plan" in result
+    assert result["plan"] == "Indexado Bi-Horario"
+    assert "Mudando para" in result["message"]
     assert "Ibelectra" in result["message"]
     assert "EUR/ano" in result["message"]
 

@@ -82,6 +82,16 @@ def calculate_annual_ranking(
         if current_entry:
             top5.append(current_entry)
 
+    # Calcular poupanca potencial em relacao ao fornecedor actual
+    current_annual = next(
+        (r["custo_anual_estimado"] for r in top5 if r["is_current"]), None
+    )
+    for r in top5:
+        if current_annual is not None:
+            r["poupanca_potencial"] = round(current_annual - r["custo_anual_estimado"], 2)
+        else:
+            r["poupanca_potencial"] = None
+
     return top5
 
 
@@ -114,11 +124,14 @@ def build_recommendation(analysis: dict | None) -> dict:
     # Melhor fornecedor: primeiro do latest_top_3
     top3 = hs.get("latest_top_3", [])
     best_supplier = top3[0]["supplier"] if top3 else "desconhecido"
+    best_plan = top3[0].get("plan", "") if top3 else ""
 
     saving_rounded = int(round(saving_annual, 0))
+    message = f"Mudando para {best_supplier} — plano {best_plan}, poupa cerca de {saving_rounded} EUR/ano"
     return {
         "show": True,
         "supplier": best_supplier,
+        "plan": best_plan,
         "saving_eur": float(saving_rounded),
-        "message": f"Podes poupar ~{saving_rounded} EUR/ano mudando para {best_supplier}",
+        "message": message,
     }
