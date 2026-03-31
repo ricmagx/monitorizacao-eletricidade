@@ -2,11 +2,21 @@
 
 Funcoes de leitura de CSV de consumo mensal, JSON de analise tiagofelicia,
 monthly_status, custos reais, e calculo de indicador de frescura.
+Tambem inclui funcoes SQLite para locais criados via UI (Phase 9).
 """
 import csv
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+
+from sqlalchemy import select, func
+from sqlalchemy.engine import Engine
+
+from src.db.schema import (
+    consumo_mensal as consumo_mensal_table,
+    comparacoes as comparacoes_table,
+    custos_reais as custos_reais_table,
+)
 
 
 def load_locations(config_path: Path, engine=None) -> list:
@@ -231,3 +241,180 @@ def get_freshness_info(status: dict | None) -> dict:
         }
     except (ValueError, TypeError):
         return {"days_ago": None, "is_stale": True, "generated_at": generated_at_str}
+
+
+# ---------------------------------------------------------------------------
+# Funcoes SQLite — leitura directa de BD para locais sem pipeline CSV (Phase 9)
+# ---------------------------------------------------------------------------
+
+
+def load_consumo_sqlite(location_id: str, engine: Engine) -> list:
+    """Le consumo mensal de SQLite para um local. Retorna lista de dicts ordenada por year_month.
+
+    Args:
+        location_id: ID do local (ex: "casa").
+        engine: SQLAlchemy engine com tabelas criadas.
+
+    Returns:
+        Lista de dicts com keys year_month, total_kwh, vazio_kwh, fora_vazio_kwh.
+        Retorna [] se sem dados.
+    """
+    stmt = (
+        select(consumo_mensal_table)
+        .where(consumo_mensal_table.c.location_id == location_id)
+        .order_by(consumo_mensal_table.c.year_month)
+    )
+    try:
+        with engine.connect() as conn:
+            rows = conn.execute(stmt).fetchall()
+        return [
+            {
+                "year_month": row._mapping["year_month"],
+                "total_kwh": row._mapping["total_kwh"],
+                "vazio_kwh": row._mapping["vazio_kwh"],
+                "fora_vazio_kwh": row._mapping["fora_vazio_kwh"],
+            }
+            for row in rows
+        ]
+    except Exception:
+        return []
+
+
+def build_analysis_from_sqlite(location_id: str, engine: Engine) -> dict | None:
+    """Constroi dict de analise a partir de comparacoes SQLite.
+
+    Compativel com calculate_annual_ranking() e build_recommendation() — tem
+    "history" e "history_summary".
+
+    Args:
+        location_id: ID do local.
+        engine: SQLAlchemy engine.
+
+    Returns:
+        Dict com history e history_summary, ou None se sem dados.
+    """
+    stmt = (
+        select(comparacoes_table)
+        .where(comparacoes_table.c.location_id == location_id)
+        .order_by(comparacoes_table.c.year_month)
+    )
+    try:
+        with engine.connect() as conn:
+            rows = conn.execute(stmt).fetchall()
+    except Exception:
+        return None
+
+    if not rows:
+        return None
+
+    history = []
+    for row in rows:
+        m = row._mapping
+        # top_3_json e current_supplier_result_json podem ser None
+        try:
+            top_3 = json.loads(m["top_3_json"]) if m["top_3_json"] else []
+        except (json.JSONDecodeError, TypeError):
+            top_3 = []
+        try:
+            csr = json.loads(m["current_supplier_result_json"]) if m["current_supplier_result_json"] else {}
+        except (json.JSONDecodeError, TypeError):
+            csr = {}
+        history.append({
+            "year_month": m["year_month"],
+            "top_3": top_3,
+            "current_supplier_result": csr,
+        })
+
+    # Derivar history_summary do ultimo mes
+    last = history[-1]
+    last_top_3 = last["top_3"]
+    last_csr = last["current_supplier_result"]
+    last_csr_cost = last_csr.get("total_eur", 0.0) if last_csr else 0.0
+    best_cost = last_top_3[0].get("total_eur", 0.0) if last_top_3 else 0.0
+    saving = round(last_csr_cost - best_cost, 2) if last_csr else None
+
+    history_summary = {
+        "months_analysed": len(history),
+        "latest_top_3": last_top_3,
+        "latest_current_supplier_result": last_csr,
+        "latest_saving_vs_current_eur": saving,
+    }
+
+    return {
+        "history": history,
+        "history_summary": history_summary,
+    }
+
+
+def load_custos_reais_sqlite(location_id: str, engine: Engine) -> dict:
+    """Le custos reais de SQLite. Retorna dict {year_month: custo_eur}.
+
+    Formato compativel com o que build_custo_chart_data() espera.
+
+    Args:
+        location_id: ID do local.
+        engine: SQLAlchemy engine.
+
+    Returns:
+        Dict {year_month: custo_eur}. Retorna {} se sem dados.
+    """
+    stmt = (
+        select(custos_reais_table)
+        .where(custos_reais_table.c.location_id == location_id)
+    )
+    try:
+        with engine.connect() as conn:
+            rows = conn.execute(stmt).fetchall()
+        return {row._mapping["year_month"]: row._mapping["custo_eur"] for row in rows}
+    except Exception:
+        return {}
+
+
+def get_freshness_from_sqlite(location_id: str, engine: Engine) -> dict:
+    """Calcula frescura a partir de MAX(cached_at) de comparacoes SQLite.
+
+    Usa o mesmo threshold de 40 dias que get_freshness_info().
+
+    Args:
+        location_id: ID do local.
+        engine: SQLAlchemy engine.
+
+    Returns:
+        Dict com days_ago (int|None), is_stale (bool), generated_at (str|None).
+        Se sem comparacoes: {"days_ago": None, "is_stale": True, "generated_at": None}.
+    """
+    STALE_THRESHOLD_DAYS = 40
+
+    stmt = (
+        select(func.max(comparacoes_table.c.cached_at))
+        .where(comparacoes_table.c.location_id == location_id)
+    )
+    try:
+        with engine.connect() as conn:
+            max_cached_at = conn.execute(stmt).scalar()
+    except Exception:
+        return {"days_ago": None, "is_stale": True, "generated_at": None}
+
+    if max_cached_at is None:
+        return {"days_ago": None, "is_stale": True, "generated_at": None}
+
+    try:
+        # cached_at pode ser datetime ou string ISO
+        if isinstance(max_cached_at, str):
+            cached_at = datetime.fromisoformat(max_cached_at)
+        else:
+            cached_at = max_cached_at
+
+        if cached_at.tzinfo is None:
+            cached_at = cached_at.replace(tzinfo=timezone.utc)
+
+        now = datetime.now(timezone.utc)
+        days_ago = (now - cached_at).days
+
+        return {
+            "days_ago": days_ago,
+            "is_stale": days_ago > STALE_THRESHOLD_DAYS,
+            "generated_at": cached_at.isoformat(),
+        }
+    except (ValueError, TypeError, AttributeError):
+        return {"days_ago": None, "is_stale": True, "generated_at": None}
