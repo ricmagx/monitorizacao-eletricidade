@@ -7,11 +7,15 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from src.web.services.data_loader import (
+    build_analysis_from_sqlite,
     build_custo_chart_data,
+    get_freshness_from_sqlite,
     get_freshness_info,
     load_analysis_json,
     load_consumo_csv,
+    load_consumo_sqlite,
     load_custos_reais,
+    load_custos_reais_sqlite,
     load_locations,
     load_monthly_status,
 )
@@ -21,42 +25,51 @@ router = APIRouter()
 
 
 def _load_location_data(request: Request, location: dict) -> dict:
-    """Carrega todos os dados para um local especifico."""
+    """Carrega todos os dados para um local especifico.
+
+    Usa SQLite como fonte primaria para todos os locais.
+    Se SQLite nao tiver dados e o local tiver pipeline CSV, usa fallback CSV/JSON.
+    """
     project_root = request.app.state.project_root
+    engine = request.app.state.db_engine
     local_id = location["id"]
+    pipeline = location.get("pipeline")
 
-    # Local criado via UI (Phase 7) — sem dados de pipeline CSV
-    # Retornar dados vazios — Phase 9 migrara para leitura directa de SQLite
-    if "pipeline" not in location:
-        return {
-            "consumo_data": [],
-            "analysis": None,
-            "freshness": get_freshness_info(None),
-            "custos_reais": {},
-            "consumo_chart": {"labels": [], "vazio_data": [], "fora_vazio_data": []},
-            "custo_chart": {"labels": [], "estimativa_data": [], "custo_real_data": []},
-            "ranking": [],
-            "recommendation": {"show": False},
-        }
+    # --- Consumo ---
+    consumo_data = load_consumo_sqlite(local_id, engine)
+    if not consumo_data and pipeline:
+        consumo_data = load_consumo_csv(project_root / pipeline["processed_csv_path"])
 
-    pipeline = location["pipeline"]
+    # --- Analise de comparacoes ---
+    analysis = build_analysis_from_sqlite(local_id, engine)
+    if analysis is None and pipeline:
+        analysis = load_analysis_json(project_root / pipeline["analysis_json_path"])
 
-    consumo_data = load_consumo_csv(project_root / pipeline["processed_csv_path"])
-    analysis = load_analysis_json(project_root / pipeline["analysis_json_path"])
-    status = load_monthly_status(project_root / pipeline["status_path"])
-    freshness = get_freshness_info(status)
+    # --- Custos reais ---
+    custos_dict = load_custos_reais_sqlite(local_id, engine)
+    if not custos_dict and pipeline:
+        custos_path = project_root / "data" / local_id / "custos_reais.json"
+        custos_dict = load_custos_reais(custos_path)
 
-    custos_path = project_root / "data" / local_id / "custos_reais.json"
-    custos_reais = load_custos_reais(custos_path)
+    # --- Frescura ---
+    freshness = get_freshness_from_sqlite(local_id, engine)
+    if freshness["days_ago"] is None and pipeline:
+        status = load_monthly_status(project_root / pipeline["status_path"])
+        freshness = get_freshness_info(status)
 
+    # --- Graficos ---
     consumo_chart = {
         "labels": [row["year_month"] for row in consumo_data],
         "vazio_data": [row["vazio_kwh"] for row in consumo_data],
         "fora_vazio_data": [row["fora_vazio_kwh"] for row in consumo_data],
     }
-    custo_chart = build_custo_chart_data(consumo_data, analysis, custos_reais)
+    custo_chart = build_custo_chart_data(consumo_data, analysis, custos_dict)
 
-    current_supplier = location.get("current_contract", {}).get("supplier", "")
+    # Suporta ambos os formatos: config.json (current_contract) e SQLite (current_supplier)
+    current_supplier = (
+        location.get("current_supplier")
+        or location.get("current_contract", {}).get("supplier", "")
+    )
     ranking = calculate_annual_ranking(analysis, current_supplier)
     recommendation = build_recommendation(analysis)
 
@@ -64,7 +77,7 @@ def _load_location_data(request: Request, location: dict) -> dict:
         "consumo_data": consumo_data,
         "analysis": analysis,
         "freshness": freshness,
-        "custos_reais": custos_reais,
+        "custos_reais": custos_dict,
         "consumo_chart": consumo_chart,
         "custo_chart": custo_chart,
         "ranking": ranking,

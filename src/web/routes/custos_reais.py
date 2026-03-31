@@ -6,9 +6,11 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
 
 from src.web.services.data_loader import (
+    build_analysis_from_sqlite,
     build_custo_chart_data,
     load_analysis_json,
     load_consumo_csv,
+    load_consumo_sqlite,
     load_custos_reais,
     load_locations,
     save_custo_real,
@@ -45,8 +47,13 @@ async def post_custo_real(
     if not location:
         return HTMLResponse(status_code=404, content="Local nao encontrado")
 
-    consumo_data = load_consumo_csv(project_root / location["pipeline"]["processed_csv_path"])
-    analysis = load_analysis_json(project_root / location["pipeline"]["analysis_json_path"])
+    if "pipeline" in location:
+        consumo_data = load_consumo_csv(project_root / location["pipeline"]["processed_csv_path"])
+        analysis = load_analysis_json(project_root / location["pipeline"]["analysis_json_path"])
+    else:
+        engine = request.app.state.db_engine
+        consumo_data = load_consumo_sqlite(local_id, engine)
+        analysis = build_analysis_from_sqlite(local_id, engine)
     custos_reais = load_custos_reais(custos_path)
     custo_chart = build_custo_chart_data(consumo_data, analysis, custos_reais)
 

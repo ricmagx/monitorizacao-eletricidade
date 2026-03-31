@@ -332,12 +332,18 @@ def web_client(sample_config_json):
     app.state.config_path = sample_config_json
 
     # Fornecer db_engine (necessario apos Phase 7)
-    test_engine = create_engine("sqlite:///:memory:")
+    from sqlalchemy.pool import StaticPool
+    test_engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
     metadata.create_all(test_engine)
-    app.state.db_engine = test_engine
 
-    client = TestClient(app)
-    yield client
+    with TestClient(app) as client:
+        app.state.db_engine = test_engine
+        yield client
+
     test_engine.dispose()
 
 
@@ -368,7 +374,14 @@ def web_client_sqlite(tmp_path, sample_tariffs, sample_contract):
     from src.web.app import app
 
     # --- Engine SQLite in-memory com seed data ---
-    test_engine = create_engine("sqlite:///:memory:")
+    # StaticPool garante que todas as conexoes partilham a mesma BD in-memory
+    # (sem StaticPool, cada nova conexao cria uma BD vazia diferente)
+    from sqlalchemy.pool import StaticPool
+    test_engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
     metadata.create_all(test_engine)
 
     top_3_data = [
@@ -462,10 +475,14 @@ def web_client_sqlite(tmp_path, sample_tariffs, sample_contract):
     config_path.parent.mkdir(parents=True, exist_ok=True)
     config_path.write_text(_json.dumps(config_payload, indent=2), encoding="utf-8")
 
-    # Override app state
+    # Override config_path e project_root antes de iniciar o TestClient
     app.state.config_path = config_path
     app.state.project_root = tmp_path
-    app.state.db_engine = test_engine
 
-    yield TestClient(app)
+    # TestClient como context manager — lifespan corre no __enter__
+    # Apos o enter, sobrepor db_engine com o engine de teste (que tem o seed data)
+    with TestClient(app) as client:
+        app.state.db_engine = test_engine
+        yield client
+
     test_engine.dispose()
