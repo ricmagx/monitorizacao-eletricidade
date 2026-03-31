@@ -37,6 +37,7 @@ custos_reais = Table(
     Column("year_month", String(7), nullable=False),
     Column("custo_eur", Float, nullable=False),
     Column("source", String(64)),
+    Column("detalhe_json", Text, nullable=True),
     Column("created_at", DateTime, default=lambda: datetime.now(timezone.utc)),
     UniqueConstraint("location_id", "year_month", name="uq_custos_loc_month"),
 )

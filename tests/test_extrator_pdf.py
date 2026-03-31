@@ -49,7 +49,7 @@ Sem formato reconhecido
 Valor: 100.00 EUR
 """
 
-# Formato real MEO Energia: "MEO Energia" (caps), "€ NNN,NN" (euro antes do numero)
+# Formato real MEO Energia: "MEO Energia" (caps), "€ NNN,NN", linhas detalhadas bi-horaria
 TEXTO_MEO_ENERGIA_REAL = """
 .A.S ,aigrenE ed oãçazilaicremoC - aigrenE OEM
 Pág. 1 de 3
@@ -58,10 +58,17 @@ Período de faturação: 07/02/2026 a 20/03/2026
 CPE (Código Ponto de Entrega): PT0002000084968079SX
 Tarifa: MEO + MEO Energia FIXA MB PAPEL M4 09.25
 Total a pagar: € 343,92
+Pág. 2 de 3
+Potência Contratada 07/02/2026 20/03/2026 42,00 (Dias) € 0,6500 € 27,30 23%
+Consumo medido em Fora Vazio 07/02/2026 20/03/2026 540,00 (kWh) € 0,1999 € 107,95 23%
+Consumo medido em Vazio Normal 07/02/2026 20/03/2026 1 161,00 (kWh) € 0,1199 € 139,20 23%
+CAV Contribuição AudioVisual 2,85 € x 12 meses / 365,25 dias 07/02/2026 20/03/2026 42,00 (Dias) € 0,0936 € 3,93 6%
+IEC Imposto Especial de Consumo Eletricidade 07/02/2026 20/03/2026 1 701,00 (kWh) € 0,0010 € 1,70 23%
+Taxa de Exploração DGEG 07/02/2026 20/03/2026 1,00 (UN) € 0,0700 € 0,07 23%
 meoenergia.pt
 """
 
-# Formato real Endesa: "A LUZ NNN,NN €", periodo com nomes de mes PT
+# Formato real Endesa: "A LUZ NNN,NN €", periodo PT, secao LUZ com sub-periodos e descontos
 TEXTO_ENDESA_REAL = """
 K Luz e Gás Nº Documento: 26010310165507399
 TOTAL A DEBITAR 41,46 €
@@ -69,7 +76,18 @@ A LUZ 16,25 €
 B GÁS 28,54 €
 A CPE (Código Ponto Entrega) PT 0002 0000 3982 2082 NT
 Endesa poupa todos os meses!
-Período de Faturação: 23 dez 2025 a 22 jan 2026
+LUZ Fatura: FAC 0280312026/0077051163 Data: 29 jan 2026 Período de Faturação: 23 dez 2025 a 22 jan 2026
+Termo de Energia (Real) 8 kWh 0,171050€/kWh [0,136840€/kWh] 1,37 € -0,27 € 1,10 € 6% (b)
+Termo de Energia (Real) 20 kWh 0,174553€/kWh [0,139642€/kWh] 3,49 € -0,68 € 2,81 € 6% (b)
+Termo de Potência (3.45 kVA) 9 dias 0,322000€/dia [0,257600€/dia] 2,90 € -0,59 € 2,31 € 23% (c)
+Termo de Potência (3.45 kVA) 22 dias 0,332913€/dia [0,266330€/dia] 7,32 € -1,47 € 5,85 € 23% (c)
+Termo Fixo Acesso às Redes 9 dias 0,158700€/dia [0,126960€/dia] 1,43 € -0,27 € 1,16 € 6% (b)
+Termo Fixo Acesso às Redes 22 dias 0,171800€/dia [0,137440€/dia] 3,78 € -0,76 € 3,02 € 6% (b)
+Desconto de boas-vindas 1,00 -10,000000€ -10,00 € -10,00 € 23% (c)
+Contribuição Audiovisual 1,0192 meses 2,850000€/meses 2,90 € 2,90 € 6% (b)
+Taxa Exploração DGEG (DL-4/93) 1,0192 meses 0,070000€/meses 0,07 € 0,07 € 23% (c)
+Imposto Especial Consumo (Real) 28 kWh 0,001000€/kWh 0,03 € 0,03 € 23% (c)
+GÁS Fatura: FAC 0280312026/0077051888
 """
 
 TEXTO_CPE_COM_ESPACO = """
@@ -138,6 +156,36 @@ def test_extrair_meo_energia_formato_real():
     assert resultado["custo_eur"] == pytest.approx(343.92)
 
 
+def test_detalhe_meo_energia():
+    """Meo Energia: detalhe com 6 linhas e custo real por kWh para bi-horaria."""
+    from src.web.services.extrator_pdf import extrair_fatura
+
+    resultado = extrair_fatura(TEXTO_MEO_ENERGIA_REAL)
+
+    d = resultado["detalhe"]
+    assert d is not None
+
+    tipos = {l["tipo"] for l in d["linhas"]}
+    assert "energia_fv" in tipos
+    assert "energia_vn" in tipos
+    assert "potencia" in tipos
+    assert "cav" in tipos
+    assert "iec" in tipos
+    assert "dgeg" in tipos
+
+    fv = next(l for l in d["linhas"] if l["tipo"] == "energia_fv")
+    assert fv["kwh"] == pytest.approx(540.0)
+    assert fv["preco_base"] == pytest.approx(0.1999)
+
+    # Custo real por kWh: FV mais caro que VN (inclui custos fixos distribuidos)
+    assert d["custo_real_kwh_fv"] is not None
+    assert d["custo_real_kwh_vn"] is not None
+    assert d["custo_real_kwh_fv"] > d["custo_real_kwh_vn"]
+    # Valores calculados validados contra fatura real
+    assert d["custo_real_kwh_fv"] == pytest.approx(0.2694, abs=0.001)
+    assert d["custo_real_kwh_vn"] == pytest.approx(0.1709, abs=0.001)
+
+
 def test_extrair_endesa_formato_real():
     """Endesa: formato real — 'A LUZ NNN,NN €' e periodo com nomes de mes PT."""
     from src.web.services.extrator_pdf import extrair_fatura
@@ -151,6 +199,39 @@ def test_extrair_endesa_formato_real():
     assert resultado["custo_eur"] == pytest.approx(16.25)
     # Periodo: data de fim "22 jan 2026" -> 2026-01
     assert resultado["year_month"] == "2026-01"
+
+
+def test_detalhe_endesa():
+    """Endesa: detalhe com 7 linhas (inclui desconto BV) e custo real por kWh."""
+    from src.web.services.extrator_pdf import extrair_fatura
+
+    resultado = extrair_fatura(TEXTO_ENDESA_REAL)
+
+    d = resultado["detalhe"]
+    assert d is not None
+
+    tipos = {l["tipo"] for l in d["linhas"]}
+    assert "energia" in tipos
+    assert "potencia" in tipos
+    assert "termo_fixo_redes" in tipos
+    assert "desconto_bv" in tipos
+    assert "cav" in tipos
+    assert "dgeg" in tipos
+    assert "iec" in tipos
+
+    energia = next(l for l in d["linhas"] if l["tipo"] == "energia")
+    assert energia["kwh"] == pytest.approx(28.0)
+    assert energia["subperiodos"] == 2
+    assert energia["desconto_pct"] == pytest.approx(20.0, abs=0.5)
+
+    # Desconto BV e negativo
+    bv = next(l for l in d["linhas"] if l["tipo"] == "desconto_bv")
+    assert bv["valor_liquido"] < 0
+
+    # Custo real inclui todos os componentes
+    assert d["custo_real_kwh"] is not None
+    assert d["custo_real_kwh"] > 0
+    assert d["custo_real_kwh_fv"] is None  # tarifa simples, sem bi-horaria
 
 
 def test_formato_desconhecido():
