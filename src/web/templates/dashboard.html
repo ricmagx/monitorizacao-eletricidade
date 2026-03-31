@@ -1,34 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="header">
-  <h1>Monitorizacao Eletricidade</h1>
-</div>
-
-<div class="header">
-  <div class="form-inline">
-    <label for="local-selector">Local:</label>
-    <select class="selector" id="local-selector"
-            hx-get="/local/placeholder/dashboard"
-            hx-target="#dashboard-content"
-            hx-swap="innerHTML"
-            hx-trigger="change">
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Electricidade</div>
+    <nav class="sidebar-nav">
       {% for loc in locations %}
-      <option value="{{ loc.id }}" {% if loc.id == selected_location.id %}selected{% endif %}>{{ loc.name }}</option>
+      <a class="sidebar-item {% if loc.id == selected_location.id %}active{% endif %}"
+         href="{{ request.scope.get('root_path', '') }}/?local={{ loc.id }}"
+         hx-get="/local/{{ loc.id }}/dashboard"
+         hx-target="#dashboard-content"
+         hx-swap="innerHTML">
+        {{ loc.name }}
+      </a>
       {% endfor %}
-    </select>
-    <a href="{{ request.scope.get('root_path', '') }}/locais" style="font-size: 0.85rem; color: var(--muted, #6c757d); margin-left: 0.75rem;">Gerir locais</a>
-    <script>
-    document.getElementById('local-selector').addEventListener('htmx:configRequest', function(evt) {
-      evt.detail.path = '/local/' + this.value + '/dashboard';
+    </nav>
+    <a class="sidebar-footer" href="{{ request.scope.get('root_path', '') }}/locais">+ Gerir locais</a>
+  </aside>
+  <main class="main-content">
+    <div id="dashboard-content">
+      {% include "partials/dashboard_content.html" %}
+    </div>
+  </main>
+</div>
+<script>
+  // Actualiza o item activo na sidebar apos navegacao HTMX
+  document.addEventListener('htmx:afterSettle', function(evt) {
+    if (evt.detail.target.id !== 'dashboard-content') return;
+    var url = new URL(window.location);
+    var localId = url.searchParams.get('local');
+    document.querySelectorAll('.sidebar-item').forEach(function(el) {
+      var href = el.getAttribute('href') || '';
+      el.classList.toggle('active', localId ? href.endsWith('local=' + localId) : false);
     });
-    </script>
-  </div>
-</div>
-
-<div id="dashboard-content">
-  {% include "partials/dashboard_content.html" %}
-</div>
-
-<!-- Seccao de Upload — Phase 7 -->
-{% include "partials/upload_xlsx.html" %}
+  });
+</script>
 {% endblock %}

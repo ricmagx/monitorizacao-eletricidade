@@ -1,5 +1,52 @@
-<div class="card">
-  <h2>Ranking de Fornecedores (Custo Anual Estimado)</h2>
+<div class="card" id="ranking-section">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+    <h2 style="margin: 0;">Ranking de Fornecedores (Custo Anual Estimado)</h2>
+    <button hx-post="/local/{{ selected_location.id }}/comparar"
+            hx-target="#ranking-section"
+            hx-swap="outerHTML"
+            hx-indicator="#comparar-spinner"
+            class="btn-primary">Pesquisar Melhores Preços</button>
+    <span id="comparar-spinner" class="htmx-indicator" style="font-size:0.85rem; color:var(--muted,#6c757d);">A calcular…</span>
+  </div>
+
+  {% if comparar_erro %}
+  <div style="padding: 0.75rem 1rem; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; margin-bottom: 1rem;">
+    {{ comparar_erro }}
+  </div>
+  {% endif %}
+  {% if comparar_ok %}
+  <div style="padding: 0.5rem 1rem; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724; margin-bottom: 1rem; font-size:0.9rem;">
+    Comparacao calculada para {{ comparar_ok }} mes(es).
+  </div>
+  {% endif %}
+
+  {# Caixa verde: preços actuais do contrato #}
+  {% if current_prices %}
+  {% set contract = selected_location.get('current_contract', {}) %}
+  <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.9rem; color: #155724;">
+    <strong>{{ contract.get('supplier', 'Contrato actual') }}</strong>
+    {% if contract.get('current_plan_contains') %} — {{ contract.get('current_plan_contains') }}{% endif %}
+    <span style="margin-left: 1rem; font-weight: 400;">
+      {% if current_prices.preco_vn is defined %}
+        Vazio: <strong>{{ "%.4f" | format(current_prices.preco_vn_base) }}</strong>
+        <span style="font-size:0.8rem; opacity:0.8;">({{ "%.4f" | format(current_prices.preco_vn) }} c/IVA)</span> €/kWh
+      {% endif %}
+      {% if current_prices.preco_fv is defined %}
+        &nbsp;·&nbsp; F. Vazio: <strong>{{ "%.4f" | format(current_prices.preco_fv_base) }}</strong>
+        <span style="font-size:0.8rem; opacity:0.8;">({{ "%.4f" | format(current_prices.preco_fv) }} c/IVA)</span> €/kWh
+      {% endif %}
+      {% if current_prices.preco_simples is defined and current_prices.preco_vn is not defined %}
+        Simples: <strong>{{ "%.4f" | format(current_prices.preco_simples_base) }}</strong>
+        <span style="font-size:0.8rem; opacity:0.8;">({{ "%.4f" | format(current_prices.preco_simples) }} c/IVA)</span> €/kWh
+      {% endif %}
+      {% if current_prices.potencia_dia is defined %}
+        &nbsp;·&nbsp; Potência: <strong>{{ "%.4f" | format(current_prices.potencia_dia_base) }}</strong>
+        <span style="font-size:0.8rem; opacity:0.8;">({{ "%.4f" | format(current_prices.potencia_dia) }} c/IVA)</span> €/dia
+      {% endif %}
+    </span>
+  </div>
+  {% endif %}
+
   {% if ranking %}
   <table>
     <thead>
@@ -7,22 +54,49 @@
         <th>#</th>
         <th>Fornecedor</th>
         <th>Plano</th>
-        <th>Custo Anual Est. (EUR)</th>
-        <th>Poupanca Potencial (EUR/ano)</th>
+        <th>€/kWh Vazio</th>
+        <th>€/kWh F. Vazio</th>
+        <th>Potência €/dia</th>
+        <th>Custo Anual Est.</th>
+        <th>Poupança/ano</th>
       </tr>
     </thead>
     <tbody>
       {% for r in ranking %}
       <tr{% if r.is_current %} class="highlight"{% endif %}>
         <td>{{ loop.index }}</td>
-        <td>{{ r.supplier }}{% if r.is_current %} (actual){% endif %}</td>
+        <td>
+          {{ r.supplier }}{% if r.is_current %} (actual){% endif %}
+          {% if r.from_custos_reais %}
+            <span style="font-size:0.75rem; color:var(--muted,#6c757d); font-weight:400;" title="Custo calculado com base nos preços da última fatura (fornecedor não consta nos tarifários comparados)">*fatura</span>
+          {% endif %}
+        </td>
         <td>{{ r.plan }}</td>
-        <td>{{ "%.2f" | format(r.custo_anual_estimado) }}</td>
+        <td>
+          {% if r.preco_vn is defined and r.preco_vn is not none %}
+            {{ "%.4f" | format(r.preco_vn) }}
+          {% elif r.preco_simples is defined and r.preco_simples is not none %}
+            {{ "%.4f" | format(r.preco_simples) }}
+          {% else %}—{% endif %}
+        </td>
+        <td>
+          {% if r.preco_fv is defined and r.preco_fv is not none %}
+            {{ "%.4f" | format(r.preco_fv) }}
+          {% elif r.preco_simples is defined and r.preco_simples is not none %}
+            (simples)
+          {% else %}—{% endif %}
+        </td>
+        <td>
+          {% if r.potencia_dia is defined and r.potencia_dia is not none %}
+            {{ "%.4f" | format(r.potencia_dia) }}
+          {% else %}—{% endif %}
+        </td>
+        <td>{{ "%.2f" | format(r.custo_anual_estimado) }} €</td>
         <td>
           {% if r.is_current %}
             —
-          {% elif r.poupanca_potencial is not none and r.poupanca_potencial > 0 %}
-            <span style="color: var(--success); font-weight: 600;">{{ "%.2f" | format(r.poupanca_potencial) }}</span>
+          {% elif r.poupanca_potencial is defined and r.poupanca_potencial is not none and r.poupanca_potencial > 0 %}
+            <span style="color: var(--success); font-weight: 600;">{{ "%.2f" | format(r.poupanca_potencial) }} €</span>
           {% else %}
             —
           {% endif %}
@@ -32,6 +106,6 @@
     </tbody>
   </table>
   {% else %}
-  <p style="color: var(--muted);">Sem dados de comparacao disponiveis. Importe um XLSX para gerar o ranking.</p>
+  <p style="color: var(--muted);">Sem dados de comparacao. Clique em <strong>Pesquisar Melhores Preços</strong> para calcular (requer XLSX importado para este local).</p>
   {% endif %}
 </div>

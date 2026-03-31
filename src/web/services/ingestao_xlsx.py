@@ -33,7 +33,7 @@ def ingerir_xlsx(tmp_path: Path, filename: str, engine: Engine) -> dict:
 
     # 3. Parse XLSX em memoria
     try:
-        monthly_data = parse_xlsx_to_dict(tmp_path)
+        monthly_data = parse_xlsx_to_dict(tmp_path, drop_partial_last_month=True)
     except ValueError as e:
         return {"erro": str(e)}
 

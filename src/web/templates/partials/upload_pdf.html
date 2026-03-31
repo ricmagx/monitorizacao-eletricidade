@@ -1,7 +1,7 @@
 <!-- Upload PDF Fatura — conforme UI-SPEC Phase 6 -->
 <div class="card" style="margin-bottom: 2rem;">
   <h2>Importar Fatura PDF</h2>
-  <p style="color: var(--muted, #6c757d); margin-bottom: 0.75rem;">Formatos suportados: Meo Energia, Endesa</p>
+  <p style="color: var(--muted, #6c757d); margin-bottom: 0.75rem;">Formatos suportados: Meo Energia, Endesa. Importa o <strong>custo total pago (€)</strong> — para dados de consumo (kWh), use o XLSX da E-REDES.</p>
   <form hx-post="/upload/pdf"
         hx-target="#upload-pdf-resultado"
         hx-swap="innerHTML"

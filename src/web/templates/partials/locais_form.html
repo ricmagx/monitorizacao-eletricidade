@@ -16,14 +16,14 @@
   <form hx-post="/locais" hx-target="#locais-container" hx-swap="outerHTML">
     <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: end; margin-bottom: 1rem;">
       <div>
-        <label for="loc-name" style="font-size: 0.85rem; color: var(--muted, #6c757d);">Nome</label><br>
-        <input type="text" id="loc-name" name="name" required placeholder="Ex: Escritorio"
+        <label style="font-size: 0.85rem; color: var(--muted, #6c757d);">Nome</label><br>
+        <input type="text" name="name" required placeholder="Ex: Escritorio"
                style="padding: 0.5rem 0.75rem; border: 1px solid #dee2e6; border-radius: 4px;">
       </div>
       <div>
-        <label for="loc-cpe" style="font-size: 0.85rem; color: var(--muted, #6c757d);">CPE</label><br>
-        <input type="text" id="loc-cpe" name="cpe" required placeholder="PT000..."
-               style="padding: 0.5rem 0.75rem; border: 1px solid #dee2e6; border-radius: 4px;">
+        <label style="font-size: 0.85rem; color: var(--muted, #6c757d);">CPE</label><br>
+        <input type="text" name="cpe" required placeholder="PT000..."
+               style="padding: 0.5rem 0.75rem; border: 1px solid #dee2e6; border-radius: 4px; width: 220px; font-family: monospace;">
       </div>
       <button type="submit" class="btn-primary">Criar Local</button>
     </div>
@@ -34,29 +34,70 @@
   <table style="width: 100%; border-collapse: collapse;">
     <thead>
       <tr>
-        <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.85rem; text-transform: uppercase; color: var(--muted, #6c757d);">Nome</th>
-        <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.85rem; text-transform: uppercase; color: var(--muted, #6c757d);">CPE</th>
-        <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.85rem; text-transform: uppercase; color: var(--muted, #6c757d);">Fornecedor Actual</th>
-        <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.85rem; text-transform: uppercase; color: var(--muted, #6c757d);">Accoes</th>
+        <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.8rem; text-transform: uppercase; color: var(--muted, #6c757d); white-space: nowrap;">Nome</th>
+        <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.8rem; text-transform: uppercase; color: var(--muted, #6c757d); white-space: nowrap;">CPE</th>
+        <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.8rem; text-transform: uppercase; color: var(--muted, #6c757d); white-space: nowrap;">Fornecedor / Plano</th>
+        <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.8rem; text-transform: uppercase; color: var(--muted, #6c757d); white-space: nowrap;">Acções</th>
       </tr>
     </thead>
     <tbody>
       {% for loc in locais %}
-      <tr>
-        <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #dee2e6;">{{ loc.name }}</td>
-        <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #dee2e6; font-size: 0.85rem;">{{ loc.cpe }}</td>
-        <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #dee2e6;">{{ loc.current_supplier or '—' }}</td>
-        <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #dee2e6;">
-          <form hx-post="/locais/{{ loc.id }}/fornecedor" hx-target="#locais-container" hx-swap="outerHTML"
-                style="display: flex; gap: 0.5rem; align-items: center;">
-            <input type="text" name="supplier" placeholder="Fornecedor" value="{{ loc.current_supplier or '' }}"
-                   style="padding: 0.25rem 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; width: 140px; font-size: 0.85rem;">
-            <input type="text" name="plan_contains" placeholder="Plano (opcional)" value="{{ loc.current_plan_contains or '' }}"
-                   style="padding: 0.25rem 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; width: 140px; font-size: 0.85rem;">
-            <button type="submit" style="padding: 0.25rem 0.75rem; font-size: 0.85rem; background: var(--accent, #0d6efd); color: white; border: none; border-radius: 4px; cursor: pointer;">Guardar</button>
+
+      {% if editing_id is defined and editing_id == loc.id %}
+      {# Linha em modo de edição #}
+      <tr style="background: #fff8e1;">
+        <td colspan="4" style="padding: 0.75rem; border-bottom: 1px solid #dee2e6;">
+          <form hx-post="/locais/{{ loc.id }}" hx-target="#locais-container" hx-swap="outerHTML"
+                style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <div>
+              <label style="font-size: 0.8rem; color: var(--muted, #6c757d);">Nome</label><br>
+              <input type="text" name="name" value="{{ loc.name }}" required
+                     style="padding: 0.4rem 0.6rem; border: 1px solid #adb5bd; border-radius: 4px; width: 160px;">
+            </div>
+            <div>
+              <label style="font-size: 0.8rem; color: var(--muted, #6c757d);">CPE</label><br>
+              <input type="text" name="cpe" value="{{ loc.cpe }}" required
+                     style="padding: 0.4rem 0.6rem; border: 1px solid #adb5bd; border-radius: 4px; width: 220px; font-family: monospace;">
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-self: flex-end;">
+              <button type="submit"
+                      style="padding: 0.4rem 1rem; background: #198754; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Guardar</button>
+              <a hx-get="/locais" hx-target="#locais-container" hx-swap="outerHTML"
+                 style="padding: 0.4rem 1rem; background: #6c757d; color: white; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.9rem;">Cancelar</a>
+            </div>
           </form>
         </td>
       </tr>
+
+      {% else %}
+      {# Linha normal #}
+      <tr>
+        <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #dee2e6; font-weight: 500;">{{ loc.name }}</td>
+        <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #dee2e6; font-family: monospace; font-size: 0.85rem;">{{ loc.cpe }}</td>
+        <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #dee2e6;">
+          <form hx-post="/locais/{{ loc.id }}/fornecedor" hx-target="#locais-container" hx-swap="outerHTML"
+                style="display: flex; gap: 0.4rem; align-items: center;">
+            <input type="text" name="supplier" placeholder="Fornecedor" value="{{ loc.current_supplier or '' }}"
+                   style="padding: 0.3rem 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; width: 130px; font-size: 0.85rem;">
+            <input type="text" name="plan_contains" placeholder="Plano" value="{{ loc.current_plan_contains or '' }}"
+                   style="padding: 0.3rem 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; width: 120px; font-size: 0.85rem;">
+            <button type="submit"
+                    style="padding: 0.3rem 0.6rem; font-size: 0.8rem; background: var(--accent, #0d6efd); color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">✓</button>
+          </form>
+        </td>
+        <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #dee2e6; white-space: nowrap;">
+          <a hx-get="/locais/{{ loc.id }}/editar" hx-target="#locais-container" hx-swap="outerHTML"
+             style="display: inline-block; padding: 0.3rem 0.75rem; font-size: 0.85rem; background: #fd7e14; color: white; border-radius: 4px; cursor: pointer; text-decoration: none; margin-right: 0.4rem;">Editar</a>
+          <form hx-post="/locais/{{ loc.id }}/apagar" hx-target="#locais-container" hx-swap="outerHTML"
+                hx-confirm="Apagar '{{ loc.name }}'? Esta acção não pode ser desfeita."
+                style="display: inline;">
+            <button type="submit"
+                    style="padding: 0.3rem 0.75rem; font-size: 0.85rem; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Apagar</button>
+          </form>
+        </td>
+      </tr>
+      {% endif %}
+
       {% endfor %}
     </tbody>
   </table>

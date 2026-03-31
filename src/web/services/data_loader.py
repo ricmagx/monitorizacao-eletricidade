@@ -378,6 +378,35 @@ def load_custos_reais_sqlite(location_id: str, engine: Engine) -> dict:
         return {}
 
 
+def load_ultimo_detalhe_sqlite(location_id: str, engine: Engine) -> dict | None:
+    """Retorna detalhe_json da fatura mais recente com detalhe, ou None.
+
+    Args:
+        location_id: ID do local.
+        engine: SQLAlchemy engine.
+
+    Returns:
+        Dict com 'linhas', 'custo_real_kwh_fv', etc. ou None se sem dados.
+    """
+    stmt = (
+        select(custos_reais_table)
+        .where(
+            custos_reais_table.c.location_id == location_id,
+            custos_reais_table.c.detalhe_json.isnot(None),
+        )
+        .order_by(custos_reais_table.c.year_month.desc())
+        .limit(1)
+    )
+    try:
+        with engine.connect() as conn:
+            row = conn.execute(stmt).fetchone()
+        if row and row._mapping["detalhe_json"]:
+            return json.loads(row._mapping["detalhe_json"])
+    except Exception:
+        pass
+    return None
+
+
 # ---------------------------------------------------------------------------
 # Funcoes de analise multi-ano (Phase 11)
 # ---------------------------------------------------------------------------

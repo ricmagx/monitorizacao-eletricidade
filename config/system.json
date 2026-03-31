@@ -26,11 +26,11 @@
     {
       "id": "apartamento",
       "name": "Apartamento",
-      "cpe": "PT000200XXXXXXXXXX",
+      "cpe": "PT0002000039822082NT",
       "current_contract": {
-        "supplier": "...",
-        "current_plan_contains": "...",
-        "power_label": "..."
+        "supplier": "Endesa",
+        "current_plan_contains": "",
+        "power_label": ""
       },
       "pipeline": {
         "raw_dir": "data/apartamento/raw/eredes",

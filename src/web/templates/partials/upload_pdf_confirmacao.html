@@ -15,4 +15,9 @@
     {% endif %}
   </ul>
 </div>
+{# Auto-refresh do dashboard para mostrar o custo real actualizado #}
+<div hx-get="/local/{{ resultado.location_id }}/dashboard"
+     hx-target="#dashboard-content"
+     hx-swap="innerHTML"
+     hx-trigger="load delay:300ms"></div>
 {% endif %}

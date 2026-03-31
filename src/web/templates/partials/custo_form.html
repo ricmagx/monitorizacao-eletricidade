@@ -1,29 +1,38 @@
 <div class="card">
   <h2>Custos Reais das Facturas</h2>
+  {% set meses_xlsx = consumo_data | map(attribute='year_month') | list %}
+  {% set meses_custos = custos_reais | list %}
+  {% set todos_meses = (meses_xlsx + meses_custos) | unique | sort %}
+  {% if todos_meses %}
   <table>
     <thead>
       <tr><th>Mes</th><th>Custo Real (EUR)</th><th></th></tr>
     </thead>
     <tbody>
-      {% for row in consumo_data %}
+      {% for ym in todos_meses %}
       <tr>
-        <td>{{ row.year_month }}</td>
+        <td>{{ ym }}</td>
         <td>
-          {% if row.year_month in custos_reais %}
-            <strong>{{ custos_reais[row.year_month] }} EUR</strong>
-          {% else %}
+          {% if ym in custos_reais %}
+            <strong>{{ custos_reais[ym] }} EUR</strong>
+          {% elif ym in meses_xlsx %}
             <form class="form-inline"
                   hx-post="/local/{{ selected_location.id }}/custo-real"
                   hx-target="#custo-section"
                   hx-swap="innerHTML">
-              <input type="hidden" name="year_month" value="{{ row.year_month }}">
+              <input type="hidden" name="year_month" value="{{ ym }}">
               <input type="number" name="custo_eur" step="0.01" min="0" placeholder="0.00" required>
               <button type="submit">Guardar</button>
             </form>
+          {% else %}
+            <span style="color: var(--muted,#6c757d); font-size:0.85rem;">sem consumo XLSX</span>
           {% endif %}
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  {% else %}
+  <p style="color: var(--muted,#6c757d);">Sem dados. Importe um XLSX ou uma fatura PDF.</p>
+  {% endif %}
 </div>

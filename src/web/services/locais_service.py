@@ -61,6 +61,40 @@ def create_local(local_id: str, name: str, cpe: str, engine: Engine) -> dict:
     return get_local_by_id(local_id, engine)
 
 
+def update_local(local_id: str, name: str, cpe: str, engine: Engine) -> dict | None:
+    """Actualiza o nome e CPE de um local.
+
+    Returns:
+        Dict actualizado do local, ou None se local nao existe.
+
+    Raises:
+        ValueError: Se CPE ja pertence a outro local.
+    """
+    existing_cpe = get_local_by_cpe(cpe, engine)
+    if existing_cpe and existing_cpe["id"] != local_id:
+        raise ValueError(f"CPE {cpe} ja esta associado ao local '{existing_cpe['name']}'.")
+
+    with engine.begin() as conn:
+        result = conn.execute(
+            update(locais)
+            .where(locais.c.id == local_id)
+            .values(name=name, cpe=cpe)
+        )
+    if result.rowcount == 0:
+        return None
+    return get_local_by_id(local_id, engine)
+
+
+def delete_local(local_id: str, engine: Engine) -> bool:
+    """Apaga um local pelo id. Retorna True se apagado, False se nao existia."""
+    from sqlalchemy import delete as sql_delete
+    with engine.begin() as conn:
+        result = conn.execute(
+            sql_delete(locais).where(locais.c.id == local_id)
+        )
+    return result.rowcount > 0
+
+
 def update_fornecedor(local_id: str, supplier: str, plan_contains: str | None, engine: Engine) -> dict | None:
     """Actualiza o fornecedor actual de um local.
 

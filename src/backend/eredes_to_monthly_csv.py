@@ -15,9 +15,9 @@ from openpyxl import load_workbook
 LISBON = ZoneInfo("Europe/Lisbon")
 
 # Limites plausiveis de consumo mensal (kWh)
-# 30 kWh = minimo conservador (casa desocupada)
+# 1 kWh = minimo (apanha dados corrompidos; apartamentos pouco ocupados podem ter <30 kWh)
 # 5000 kWh = maximo conservador (consumo industrial nao esperado em residencial)
-MIN_MONTHLY_KWH = 30
+MIN_MONTHLY_KWH = 1
 MAX_MONTHLY_KWH = 5000
 
 

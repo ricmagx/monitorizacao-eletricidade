@@ -5,9 +5,11 @@ from fastapi.responses import HTMLResponse
 
 from src.web.services.locais_service import (
     create_local,
+    delete_local,
     get_all_locais,
     get_local_by_id,
     update_fornecedor,
+    update_local,
 )
 
 router = APIRouter()
@@ -22,14 +24,16 @@ def _slugify(name: str) -> str:
 
 @router.get("/locais", response_class=HTMLResponse)
 async def locais_page(request: Request):
-    """Pagina de gestao de locais: formulario + lista."""
+    """Pagina de gestao de locais. Full page ou partial (HTMX)."""
     templates = request.app.state.templates
     engine = request.app.state.db_engine
 
     all_locais = get_all_locais(engine)
+    is_htmx = request.headers.get("HX-Request") == "true"
+    template = "partials/locais_form.html" if is_htmx else "locais.html"
     return templates.TemplateResponse(
         request=request,
-        name="partials/locais_form.html",
+        name=template,
         context={"locais": all_locais, "erro": None, "sucesso": None},
     )
 
@@ -72,6 +76,83 @@ async def criar_local(
             "erro": None,
             "sucesso": f"Local '{novo['name']}' criado com sucesso.",
         },
+    )
+
+
+@router.get("/locais/{local_id}/editar", response_class=HTMLResponse)
+async def editar_local_form(request: Request, local_id: str):
+    """Mostra a pagina de locais com o local em modo de edicao."""
+    templates = request.app.state.templates
+    engine = request.app.state.db_engine
+    all_locais = get_all_locais(engine)
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/locais_form.html",
+        context={"locais": all_locais, "erro": None, "sucesso": None, "editing_id": local_id},
+    )
+
+
+@router.post("/locais/{local_id}", response_class=HTMLResponse)
+async def guardar_local(
+    request: Request,
+    local_id: str,
+    name: str = Form(...),
+    cpe: str = Form(...),
+):
+    """Actualiza nome e CPE de um local existente."""
+    templates = request.app.state.templates
+    engine = request.app.state.db_engine
+
+    try:
+        result = update_local(local_id, name.strip(), cpe.strip(), engine)
+    except ValueError as e:
+        all_locais = get_all_locais(engine)
+        return templates.TemplateResponse(
+            request=request,
+            name="partials/locais_form.html",
+            context={"locais": all_locais, "erro": str(e), "sucesso": None, "editing_id": local_id},
+        )
+
+    if result is None:
+        all_locais = get_all_locais(engine)
+        return templates.TemplateResponse(
+            request=request,
+            name="partials/locais_form.html",
+            context={"locais": all_locais, "erro": f"Local '{local_id}' nao encontrado.", "sucesso": None},
+        )
+
+    all_locais = get_all_locais(engine)
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/locais_form.html",
+        context={
+            "locais": all_locais,
+            "erro": None,
+            "sucesso": f"Local '{result['name']}' actualizado com sucesso.",
+        },
+    )
+
+
+@router.post("/locais/{local_id}/apagar", response_class=HTMLResponse)
+async def apagar_local(request: Request, local_id: str):
+    """Apaga um local."""
+    templates = request.app.state.templates
+    engine = request.app.state.db_engine
+
+    apagado = delete_local(local_id, engine)
+    all_locais = get_all_locais(engine)
+
+    if not apagado:
+        return templates.TemplateResponse(
+            request=request,
+            name="partials/locais_form.html",
+            context={"locais": all_locais, "erro": f"Local '{local_id}' nao encontrado.", "sucesso": None},
+        )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/locais_form.html",
+        context={"locais": all_locais, "erro": None, "sucesso": "Local apagado com sucesso."},
     )
 
 
