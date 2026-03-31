@@ -378,6 +378,150 @@ def load_custos_reais_sqlite(location_id: str, engine: Engine) -> dict:
         return {}
 
 
+# ---------------------------------------------------------------------------
+# Funcoes de analise multi-ano (Phase 11)
+# ---------------------------------------------------------------------------
+
+_MESES_PT = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+              "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+
+
+def build_consumo_multi_ano(consumo_data: list) -> dict:
+    """Agrupa dados de consumo por ano para grafico multi-ano.
+
+    Args:
+        consumo_data: Lista de dicts com year_month, vazio_kwh, fora_vazio_kwh.
+
+    Returns:
+        Dict com:
+          - anos: lista de anos ordenados ASC (ex: ["2023","2024","2025"])
+          - meses: lista de abreviacoes PT (["Jan","Fev",...,"Dez"])
+          - datasets: lista de {"ano": str, "vazio": [12 valores], "fora_vazio": [12 valores]}
+            Cada lista tem 12 entradas (None para meses sem dados).
+    """
+    # Agrupar por ano
+    anos_data: dict[str, dict[int, tuple[float, float]]] = {}
+    for row in consumo_data:
+        ym = row["year_month"]
+        ano = ym[:4]
+        mes_idx = int(ym[5:7]) - 1  # 0-based (0=Jan, 11=Dez)
+        if ano not in anos_data:
+            anos_data[ano] = {}
+        anos_data[ano][mes_idx] = (row["vazio_kwh"], row["fora_vazio_kwh"])
+
+    anos = sorted(anos_data.keys())
+    datasets = []
+    for ano in anos:
+        vazio = [None] * 12
+        fora_vazio = [None] * 12
+        for mes_idx, (v, fv) in anos_data[ano].items():
+            vazio[mes_idx] = v
+            fora_vazio[mes_idx] = fv
+        datasets.append({"ano": ano, "vazio": vazio, "fora_vazio": fora_vazio})
+
+    return {"anos": anos, "meses": _MESES_PT, "datasets": datasets}
+
+
+def build_resumo_anual(consumo_data: list, comparacoes_history: list | None) -> list:
+    """Constroi resumo anual de consumo e custo por ano.
+
+    Args:
+        consumo_data: Lista de dicts com year_month, total_kwh.
+        comparacoes_history: Lista de entries com year_month e current_supplier_result,
+            ou None se sem dados de comparacao.
+
+    Returns:
+        Lista de dicts ordenada por ano ASC com:
+          - ano: str
+          - consumo_total_kwh: float
+          - custo_total_eur: float | None (None se sem dados de comparacao)
+    """
+    # Agregar consumo por ano
+    consumo_por_ano: dict[str, float] = {}
+    for row in consumo_data:
+        ano = row["year_month"][:4]
+        consumo_por_ano[ano] = consumo_por_ano.get(ano, 0.0) + row["total_kwh"]
+
+    # Agregar custo por ano (se comparacoes_history fornecida)
+    custo_por_ano: dict[str, float] | None = None
+    if comparacoes_history is not None:
+        custo_por_ano = {}
+        for entry in comparacoes_history:
+            ano = entry["year_month"][:4]
+            csr = entry.get("current_supplier_result", {})
+            eur = csr.get("total_eur") if csr else None
+            if eur is not None:
+                custo_por_ano[ano] = custo_por_ano.get(ano, 0.0) + eur
+
+    result = []
+    for ano in sorted(consumo_por_ano.keys()):
+        custo = custo_por_ano.get(ano) if custo_por_ano is not None else None
+        result.append({
+            "ano": ano,
+            "consumo_total_kwh": round(consumo_por_ano[ano], 2),
+            "custo_total_eur": round(custo, 2) if custo is not None else None,
+        })
+    return result
+
+
+def build_comparacao_meses(
+    consumo_data: list,
+    comparacoes_history: list | None,
+    ano1: str,
+    ano2: str,
+    mes: str,
+) -> dict:
+    """Compara o mesmo mes entre dois anos — consumo kWh e custo EUR.
+
+    Args:
+        consumo_data: Lista de dicts com year_month, total_kwh.
+        comparacoes_history: Lista de entries com year_month e current_supplier_result,
+            ou None se sem dados de comparacao.
+        ano1: Primeiro ano (ex: "2023").
+        ano2: Segundo ano (ex: "2024").
+        mes: Mes no formato "MM" zero-padded (ex: "03").
+
+    Returns:
+        Dict com:
+          - mes: str
+          - ano1: str
+          - ano2: str
+          - consumo_ano1: float | None
+          - consumo_ano2: float | None
+          - custo_ano1: float | None
+          - custo_ano2: float | None
+    """
+    ym1 = f"{ano1}-{mes}"
+    ym2 = f"{ano2}-{mes}"
+
+    # Consumo
+    consumo_by_ym = {row["year_month"]: row["total_kwh"] for row in consumo_data}
+    consumo_ano1 = consumo_by_ym.get(ym1)
+    consumo_ano2 = consumo_by_ym.get(ym2)
+
+    # Custo
+    custo_ano1 = None
+    custo_ano2 = None
+    if comparacoes_history:
+        for entry in comparacoes_history:
+            ym = entry["year_month"]
+            csr = entry.get("current_supplier_result", {})
+            if ym == ym1 and csr:
+                custo_ano1 = csr.get("total_eur")
+            elif ym == ym2 and csr:
+                custo_ano2 = csr.get("total_eur")
+
+    return {
+        "mes": mes,
+        "ano1": ano1,
+        "ano2": ano2,
+        "consumo_ano1": consumo_ano1,
+        "consumo_ano2": consumo_ano2,
+        "custo_ano1": custo_ano1,
+        "custo_ano2": custo_ano2,
+    }
+
+
 def get_freshness_from_sqlite(location_id: str, engine: Engine) -> dict:
     """Calcula frescura a partir de MAX(cached_at) de comparacoes SQLite.
 

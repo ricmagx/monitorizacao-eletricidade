@@ -7,7 +7,10 @@ from pathlib import Path
 import pytest
 
 from src.web.services.data_loader import (
+    build_consumo_multi_ano,
     build_custo_chart_data,
+    build_resumo_anual,
+    build_comparacao_meses,
     get_freshness_info,
     load_analysis_json,
     load_consumo_csv,
@@ -353,3 +356,83 @@ def test_freshness_source_stale_is_cache(db_engine_test):
     result = get_freshness_from_sqlite("teste-stale", db_engine_test)
     assert result["source"] == "cache"
     assert result["is_stale"] is True
+
+
+# ---------------------------------------------------------------------------
+# Testes para funcoes multi-ano (Phase 11)
+# ---------------------------------------------------------------------------
+
+
+class TestMultiAno:
+    """Testes para build_consumo_multi_ano, build_resumo_anual, build_comparacao_meses."""
+
+    CONSUMO_3_ANOS = [
+        # 2023
+        {"year_month": "2023-01", "total_kwh": 1400.0, "vazio_kwh": 560.0, "fora_vazio_kwh": 840.0},
+        {"year_month": "2023-06", "total_kwh": 800.0, "vazio_kwh": 320.0, "fora_vazio_kwh": 480.0},
+        {"year_month": "2023-12", "total_kwh": 1300.0, "vazio_kwh": 520.0, "fora_vazio_kwh": 780.0},
+        # 2024
+        {"year_month": "2024-01", "total_kwh": 1450.0, "vazio_kwh": 580.0, "fora_vazio_kwh": 870.0},
+        {"year_month": "2024-03", "total_kwh": 1100.0, "vazio_kwh": 440.0, "fora_vazio_kwh": 660.0},
+        # 2025
+        {"year_month": "2025-01", "total_kwh": 1500.0, "vazio_kwh": 600.0, "fora_vazio_kwh": 900.0},
+        {"year_month": "2025-03", "total_kwh": 1050.0, "vazio_kwh": 420.0, "fora_vazio_kwh": 630.0},
+    ]
+
+    COMPARACOES_HISTORY = [
+        {"year_month": "2023-01", "current_supplier_result": {"supplier": "Meo", "total_eur": 200.0}},
+        {"year_month": "2024-01", "current_supplier_result": {"supplier": "Meo", "total_eur": 210.0}},
+        {"year_month": "2024-03", "current_supplier_result": {"supplier": "Meo", "total_eur": 180.0}},
+        {"year_month": "2025-01", "current_supplier_result": {"supplier": "Meo", "total_eur": 215.0}},
+    ]
+
+    def test_consumo_multi_ano_3_anos(self):
+        """build_consumo_multi_ano retorna 3 anos com datasets correctos."""
+        result = build_consumo_multi_ano(self.CONSUMO_3_ANOS)
+        assert sorted(result["anos"]) == ["2023", "2024", "2025"]
+        assert result["meses"] == ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+                                    "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+        assert len(result["datasets"]) == 3
+        # Verificar dataset 2023 — indice 0 = Jan, indice 5 = Jun
+        ds_2023 = next(d for d in result["datasets"] if d["ano"] == "2023")
+        assert ds_2023["vazio"][0] == pytest.approx(560.0)   # Jan
+        assert ds_2023["fora_vazio"][0] == pytest.approx(840.0)  # Jan
+        assert ds_2023["vazio"][5] == pytest.approx(320.0)   # Jun
+        assert ds_2023["vazio"][11] == pytest.approx(520.0)  # Dez
+
+    def test_consumo_multi_ano_meses_em_falta(self):
+        """build_consumo_multi_ano preenche None para meses sem dados."""
+        result = build_consumo_multi_ano(self.CONSUMO_3_ANOS)
+        ds_2024 = next(d for d in result["datasets"] if d["ano"] == "2024")
+        # 2024 so tem Jan e Mar — Feb (indice 1) deve ser None
+        assert ds_2024["vazio"][1] is None
+        assert ds_2024["fora_vazio"][1] is None
+        # Jan (indice 0) deve ter valor
+        assert ds_2024["vazio"][0] == pytest.approx(580.0)
+
+    def test_resumo_anual_sem_comparacoes(self):
+        """build_resumo_anual com comparacoes_history=None retorna custo_total_eur=None."""
+        result = build_resumo_anual(self.CONSUMO_3_ANOS, None)
+        assert len(result) == 3
+        anos = {r["ano"] for r in result}
+        assert anos == {"2023", "2024", "2025"}
+        for r in result:
+            assert r["custo_total_eur"] is None
+            assert r["consumo_total_kwh"] > 0
+
+    def test_comparacao_meses_basica(self):
+        """build_comparacao_meses retorna consumo e custo correctos para mes existente."""
+        result = build_comparacao_meses(
+            self.CONSUMO_3_ANOS,
+            self.COMPARACOES_HISTORY,
+            ano1="2024",
+            ano2="2025",
+            mes="01",
+        )
+        assert result["mes"] == "01"
+        assert result["ano1"] == "2024"
+        assert result["ano2"] == "2025"
+        assert result["consumo_ano1"] == pytest.approx(1450.0)
+        assert result["consumo_ano2"] == pytest.approx(1500.0)
+        assert result["custo_ano1"] == pytest.approx(210.0)
+        assert result["custo_ano2"] == pytest.approx(215.0)
