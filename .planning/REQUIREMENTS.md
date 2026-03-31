@@ -24,8 +24,8 @@
 
 - [x] **UPLD-01**: Utilizador faz upload de XLSX da E-REDES via browser
 - [x] **UPLD-02**: Sistema normaliza XLSX e armazena consumo em SQLite automaticamente
-- [ ] **UPLD-03**: Utilizador faz upload de PDF de fatura via browser
-- [ ] **UPLD-04**: Sistema extrai total pago e período do PDF (formatos Meo Energia + Endesa)
+- [x] **UPLD-03**: Utilizador faz upload de PDF de fatura via browser
+- [x] **UPLD-04**: Sistema extrai total pago e período do PDF (formatos Meo Energia + Endesa)
 - [x] **UPLD-05**: Sistema detecta o local correcto via CPE presente no ficheiro
 
 ### Configuração de Locais
@@ -90,8 +90,8 @@
 | DADOS-04 | Phase 5 | Complete |
 | UPLD-01 | Phase 7 | Complete |
 | UPLD-02 | Phase 7 | Complete |
-| UPLD-03 | Phase 8 | Pending |
-| UPLD-04 | Phase 8 | Pending |
+| UPLD-03 | Phase 8 | Complete |
+| UPLD-04 | Phase 8 | Complete |
 | UPLD-05 | Phase 7 | Complete |
 | CONF-01 | Phase 7 | Complete |
 | CONF-02 | Phase 7 | Complete |
