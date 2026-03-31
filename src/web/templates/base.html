@@ -4,9 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Monitorizacao Eletricidade</title>
+  <meta name="root-path" content="{{ request.scope.get('root_path', '') }}">
   <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
   <script src="{{ url_for('static', path='vendor/htmx.min.js') }}"></script>
   <script src="{{ url_for('static', path='vendor/chart.umd.min.js') }}"></script>
+  <script>
+    const ROOT_PATH = document.querySelector('meta[name="root-path"]').content;
+    if (ROOT_PATH) {
+      document.addEventListener('htmx:configRequest', function(evt) {
+        if (evt.detail.path && evt.detail.path.startsWith('/') && !evt.detail.path.startsWith(ROOT_PATH)) {
+          evt.detail.path = ROOT_PATH + evt.detail.path;
+        }
+      });
+    }
+  </script>
 </head>
 <body>
 {% block content %}{% endblock %}

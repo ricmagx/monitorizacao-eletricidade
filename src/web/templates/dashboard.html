@@ -16,7 +16,7 @@
       <option value="{{ loc.id }}" {% if loc.id == selected_location.id %}selected{% endif %}>{{ loc.name }}</option>
       {% endfor %}
     </select>
-    <a href="/locais" style="font-size: 0.85rem; color: var(--muted, #6c757d); margin-left: 0.75rem;">Gerir locais</a>
+    <a href="{{ request.scope.get('root_path', '') }}/locais" style="font-size: 0.85rem; color: var(--muted, #6c757d); margin-left: 0.75rem;">Gerir locais</a>
     <script>
     document.getElementById('local-selector').addEventListener('htmx:configRequest', function(evt) {
       evt.detail.path = '/local/' + this.value + '/dashboard';
