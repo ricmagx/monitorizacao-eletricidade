@@ -174,7 +174,7 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 10-01-PLAN.md — Backend: upsert on_conflict_do_update + campo source no freshness dict
+- [x] 10-01-PLAN.md — Backend: upsert on_conflict_do_update + campo source no freshness dict
 - [ ] 10-02-PLAN.md — Frontend: badge ternario (frescos/cache/sem dados) + relocacao HTMX
 
 ### Phase 11: Análise Multi-ano
@@ -215,7 +215,7 @@ Plans:
 | 7. Upload XLSX + Ingestão | v2.0 | 3/3 | Complete   | 2026-03-30 |
 | 8. Upload PDF + Extracção | v2.0 | 2/2 | Complete   | 2026-03-31 |
 | 9. Dashboard UI | v2.0 | 2/2 | Complete   | 2026-03-31 |
-| 10. Cache + Comparação | v2.0 | 0/? | Not started | — |
+| 10. Cache + Comparação | v2.0 | 1/2 | In Progress|  |
 | 11. Análise Multi-ano | v2.0 | 0/? | Not started | — |
 | 12. Deploy Unraid + Homepage | v2.0 | 0/? | Not started | — |
 
