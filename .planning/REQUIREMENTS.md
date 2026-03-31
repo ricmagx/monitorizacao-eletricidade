@@ -43,10 +43,10 @@
 ### UI e Dashboard
 
 - [ ] **UI-01**: Design definido via ui-phase antes de qualquer implementação frontend
-- [ ] **UI-02**: Selector de local no topo da dashboard
-- [ ] **UI-03**: Ranking de fornecedores com poupança potencial em €/ano
-- [ ] **UI-04**: Gráfico de consumo mensal (vazio/fora vazio empilhados)
-- [ ] **UI-05**: Gráfico de custo: estimativa do fornecedor actual vs custo real da fatura
+- [x] **UI-02**: Selector de local no topo da dashboard
+- [x] **UI-03**: Ranking de fornecedores com poupança potencial em €/ano
+- [x] **UI-04**: Gráfico de consumo mensal (vazio/fora vazio empilhados)
+- [x] **UI-05**: Gráfico de custo: estimativa do fornecedor actual vs custo real da fatura
 
 ### Análise Multi-ano
 
@@ -100,10 +100,10 @@
 | COMP-03 | Phase 10 | Pending |
 | COMP-04 | Phase 10 | Pending |
 | UI-01 | Phase 6 | Pending |
-| UI-02 | Phase 9 | Pending |
-| UI-03 | Phase 9 | Pending |
-| UI-04 | Phase 9 | Pending |
-| UI-05 | Phase 9 | Pending |
+| UI-02 | Phase 9 | Complete |
+| UI-03 | Phase 9 | Complete |
+| UI-04 | Phase 9 | Complete |
+| UI-05 | Phase 9 | Complete |
 | ANAL-01 | Phase 11 | Pending |
 | ANAL-02 | Phase 11 | Pending |
 | ANAL-03 | Phase 11 | Pending |
