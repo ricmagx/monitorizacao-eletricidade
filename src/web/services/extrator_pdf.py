@@ -71,6 +71,8 @@ PERIODO_MEO_PATTERNS = [
 TOTAL_ENDESA_PATTERNS = [
     re.compile(r"\bA\s+LUZ\s+(\d+[,\.]\d{2})\s*€", re.IGNORECASE),
     re.compile(r"Total\s+Ele[ct]ricidade[:\s]+(?:EUR|€)?\s*(\d+[,\.]\d{2})", re.IGNORECASE),
+    re.compile(r"TOTAL\s+Luz\s+\([^)]+\)\s+([\d]+[,\.][\d]{2})\s*€", re.IGNORECASE),
+    re.compile(r"(?<!\bGÁS\s)\bLUZ\s+([\d]+[,\.][\d]{2})\s*€", re.IGNORECASE),
 ]
 
 # Endesa — periodo com nomes de mes PT
