@@ -106,4 +106,4 @@ Este documento evolui em cada transição de fase e milestone.
 4. Actualizar Context com estado actual
 
 ---
-*Last updated: 2026-03-30 — Phase 7 complete: Upload XLSX via browser, gestão de locais no UI, migration Alembic SQLite corrigida (batch mode), 79 testes a passar*
+*Last updated: 2026-03-31 — Phase 8 complete: Upload PDF de faturas (Meo Energia + Endesa), extracção automática pdfplumber, endpoint POST /upload/pdf, templates HTMX, persistência dual SQLite+JSON, 89 testes a passar*
