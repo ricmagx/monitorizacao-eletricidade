@@ -50,9 +50,9 @@
 
 ### Análise Multi-ano
 
-- [ ] **ANAL-01**: Histórico com 3+ anos de dados visível em gráficos
-- [ ] **ANAL-02**: Comparação do mesmo mês em anos diferentes
-- [ ] **ANAL-03**: Resumo anual: custo total, consumo total por ano
+- [x] **ANAL-01**: Histórico com 3+ anos de dados visível em gráficos
+- [x] **ANAL-02**: Comparação do mesmo mês em anos diferentes
+- [x] **ANAL-03**: Resumo anual: custo total, consumo total por ano
 
 ## v3 Requirements (deferred)
 
@@ -104,9 +104,9 @@
 | UI-03 | Phase 9 | Complete |
 | UI-04 | Phase 9 | Complete |
 | UI-05 | Phase 9 | Complete |
-| ANAL-01 | Phase 11 | Pending |
-| ANAL-02 | Phase 11 | Pending |
-| ANAL-03 | Phase 11 | Pending |
+| ANAL-01 | Phase 11 | Complete |
+| ANAL-02 | Phase 11 | Complete |
+| ANAL-03 | Phase 11 | Complete |
 
 **Coverage:**
 - v2 requirements: 28 total
