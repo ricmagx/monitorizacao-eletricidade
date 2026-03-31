@@ -175,7 +175,7 @@ Plans:
 
 Plans:
 - [x] 10-01-PLAN.md — Backend: upsert on_conflict_do_update + campo source no freshness dict
-- [ ] 10-02-PLAN.md — Frontend: badge ternario (frescos/cache/sem dados) + relocacao HTMX
+- [x] 10-02-PLAN.md — Frontend: badge ternario (frescos/cache/sem dados) + relocacao HTMX
 
 ### Phase 11: Análise Multi-ano
 **Goal**: O utilizador pode comparar o consumo e custo do mesmo mês em anos diferentes e ver resumos anuais, com 3+ anos de histórico visíveis nos gráficos.

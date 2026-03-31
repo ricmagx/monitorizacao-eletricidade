@@ -38,7 +38,7 @@
 - [x] **COMP-01**: Sistema consulta tiagofelicia.pt após cada upload de XLSX
 - [x] **COMP-02**: Resultado guardado em cache SQLite com data
 - [x] **COMP-03**: Dashboard usa cache quando tiagofelicia.pt está indisponível
-- [ ] **COMP-04**: Badge indica se dados são frescos ou do cache (com data)
+- [x] **COMP-04**: Badge indica se dados são frescos ou do cache (com data)
 
 ### UI e Dashboard
 
@@ -98,7 +98,7 @@
 | COMP-01 | Phase 7 | Complete |
 | COMP-02 | Phase 7 | Complete |
 | COMP-03 | Phase 10 | Complete |
-| COMP-04 | Phase 10 | Pending |
+| COMP-04 | Phase 10 | Complete |
 | UI-01 | Phase 6 | Pending |
 | UI-02 | Phase 9 | Complete |
 | UI-03 | Phase 9 | Complete |
