@@ -133,6 +133,19 @@ Nenhum — todos os 3 estados do badge estao completamente implementados e wired
 - Badge actualiza automaticamente ao mudar de local via HTMX selector
 - Phase 10-01 (upsert cached_at + source em SQLite) pode ser executada de forma independente — data_loader.py ja tem a constante e a logica source
 
+## Self-Check: PASSED
+
+- FOUND: src/web/templates/partials/frescura_badge.html
+- FOUND: src/web/templates/partials/dashboard_content.html
+- FOUND: src/web/templates/dashboard.html
+- FOUND: src/web/static/style.css
+- FOUND: src/web/services/data_loader.py
+- FOUND: tests/test_web_dashboard.py
+- FOUND: .planning/phases/10-cache-tiagofelicia-pt-integra-o-compara-o/10-02-SUMMARY.md
+- COMMIT 6583b3a: test(10-02) — FOUND
+- COMMIT 5e354cb: feat(10-02) — FOUND
+- pytest: 112 passed, 14 skipped
+
 ---
 *Phase: 10-cache-tiagofelicia-pt-integra-o-compara-o*
 *Completed: 2026-03-31*
