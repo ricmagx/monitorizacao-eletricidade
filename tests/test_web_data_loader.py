@@ -172,3 +172,105 @@ def test_build_custo_chart_data_no_analysis(sample_csv):
     assert result["labels"] == ["2025-01"]
     assert result["estimativa_data"] == [None]
     assert result["custo_real_data"] == [None]
+
+
+# ---------------------------------------------------------------------------
+# Testes para funcoes SQLite (Phase 9)
+# ---------------------------------------------------------------------------
+
+
+def test_load_consumo_sqlite(db_engine_test):
+    """load_consumo_sqlite retorna lista de dicts ordenada por year_month."""
+    from sqlalchemy import insert
+    from src.db.schema import consumo_mensal
+    from src.web.services.data_loader import load_consumo_sqlite
+
+    with db_engine_test.begin() as conn:
+        for ym, total, vazio, fv in [
+            ("2025-02", 1550.0, 620.0, 930.0),
+            ("2025-01", 1400.0, 560.0, 840.0),
+        ]:
+            conn.execute(insert(consumo_mensal).values(
+                location_id="teste",
+                year_month=ym,
+                total_kwh=total,
+                vazio_kwh=vazio,
+                fora_vazio_kwh=fv,
+            ))
+
+    rows = load_consumo_sqlite("teste", db_engine_test)
+    assert len(rows) == 2
+    assert rows[0]["year_month"] == "2025-01"
+    assert rows[1]["year_month"] == "2025-02"
+    assert "vazio_kwh" in rows[0]
+    assert "fora_vazio_kwh" in rows[0]
+    assert rows[0]["total_kwh"] == pytest.approx(1400.0)
+
+
+def test_build_analysis_from_sqlite(db_engine_test):
+    """build_analysis_from_sqlite retorna dict compativel com calculate_annual_ranking."""
+    import json as _json
+    from datetime import datetime, timezone
+    from sqlalchemy import insert
+    from src.db.schema import comparacoes
+    from src.web.services.data_loader import build_analysis_from_sqlite
+
+    top_3 = [
+        {"rank": 1, "supplier": "Luzboa", "plan": "Bi Base", "total_eur": 110.0},
+        {"rank": 2, "supplier": "EDP", "plan": "Bi Eco", "total_eur": 120.0},
+        {"rank": 3, "supplier": "Meo Energia", "plan": "Variavel", "total_eur": 155.0},
+    ]
+    csr = {"supplier": "Meo Energia", "plan": "Variavel", "total_eur": 155.0}
+
+    with db_engine_test.begin() as conn:
+        for ym in ("2025-02", "2025-03"):
+            conn.execute(insert(comparacoes).values(
+                location_id="teste",
+                year_month=ym,
+                top_3_json=_json.dumps(top_3),
+                current_supplier_result_json=_json.dumps(csr),
+                generated_at="2026-03-01T10:00:00",
+                cached_at=datetime(2026, 3, 1, tzinfo=timezone.utc),
+            ))
+
+    result = build_analysis_from_sqlite("teste", db_engine_test)
+    assert result is not None
+    assert "history" in result
+    assert "history_summary" in result
+    assert len(result["history"]) == 2
+    # Deve ter latest_top_3 em history_summary
+    assert "latest_top_3" in result["history_summary"]
+    assert "latest_saving_vs_current_eur" in result["history_summary"]
+
+
+def test_build_analysis_from_sqlite_empty(db_engine_test):
+    """build_analysis_from_sqlite retorna None se sem dados."""
+    from src.web.services.data_loader import build_analysis_from_sqlite
+
+    result = build_analysis_from_sqlite("local-inexistente", db_engine_test)
+    assert result is None
+
+
+def test_get_freshness_from_sqlite(db_engine_test):
+    """get_freshness_from_sqlite calcula frescura a partir de MAX(cached_at) de comparacoes."""
+    import json as _json
+    from datetime import datetime, timedelta, timezone
+    from sqlalchemy import insert
+    from src.db.schema import comparacoes
+    from src.web.services.data_loader import get_freshness_from_sqlite
+
+    recent_ts = datetime.now(timezone.utc) - timedelta(days=5)
+    with db_engine_test.begin() as conn:
+        conn.execute(insert(comparacoes).values(
+            location_id="teste",
+            year_month="2025-03",
+            top_3_json=_json.dumps([]),
+            current_supplier_result_json=_json.dumps({}),
+            generated_at="2026-03-01T10:00:00",
+            cached_at=recent_ts,
+        ))
+
+    result = get_freshness_from_sqlite("teste", db_engine_test)
+    assert result["days_ago"] is not None
+    assert result["days_ago"] <= 6  # 5 dias atras, margem de 1 dia
+    assert result["is_stale"] is False

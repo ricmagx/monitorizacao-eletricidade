@@ -37,3 +37,36 @@ def test_local_dashboard_invalid(web_client):
     """GET /local/inexistente/dashboard retorna 404."""
     response = web_client.get("/local/inexistente/dashboard")
     assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# Testes para locais SQLite-only (Phase 9)
+# ---------------------------------------------------------------------------
+
+
+def test_sqlite_only_local_shows_consumo(web_client_sqlite):
+    """GET /local/teste-sqlite/dashboard retorna 200 com canvas consumo-chart."""
+    response = web_client_sqlite.get("/local/teste-sqlite/dashboard")
+    assert response.status_code == 200
+    assert 'id="consumo-chart"' in response.text
+
+
+def test_sqlite_only_local_shows_ranking(web_client_sqlite):
+    """GET /local/teste-sqlite/dashboard retorna ranking com fornecedores."""
+    response = web_client_sqlite.get("/local/teste-sqlite/dashboard")
+    assert response.status_code == 200
+    # Deve conter pelo menos um fornecedor do seed data
+    assert "Luzboa" in response.text or "EDP" in response.text or "Meo Energia" in response.text
+
+
+def test_sqlite_only_local_shows_custo_chart(web_client_sqlite):
+    """GET /local/teste-sqlite/dashboard contem canvas custo-chart."""
+    response = web_client_sqlite.get("/local/teste-sqlite/dashboard")
+    assert response.status_code == 200
+    assert 'id="custo-chart"' in response.text
+
+
+def test_pipeline_local_still_works(web_client_sqlite):
+    """GET /local/casa/dashboard continua a retornar 200 (retrocompatibilidade)."""
+    response = web_client_sqlite.get("/local/casa/dashboard")
+    assert response.status_code == 200

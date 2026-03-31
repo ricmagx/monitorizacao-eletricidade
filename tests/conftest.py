@@ -324,13 +324,21 @@ def sample_config_json(tmp_path, sample_tariffs, sample_contract):
 def web_client(sample_config_json):
     """FastAPI TestClient com config mock via override de app.state.config_path."""
     from fastapi.testclient import TestClient
+    from sqlalchemy import create_engine
+    from src.db.schema import metadata
     from src.web.app import app
 
     # Override config path to use the test config
     app.state.config_path = sample_config_json
 
+    # Fornecer db_engine (necessario apos Phase 7)
+    test_engine = create_engine("sqlite:///:memory:")
+    metadata.create_all(test_engine)
+    app.state.db_engine = test_engine
+
     client = TestClient(app)
-    return client
+    yield client
+    test_engine.dispose()
 
 
 @pytest.fixture
@@ -342,3 +350,122 @@ def db_engine_test():
     metadata.create_all(engine)
     yield engine
     engine.dispose()
+
+
+@pytest.fixture
+def web_client_sqlite(tmp_path, sample_tariffs, sample_contract):
+    """FastAPI TestClient com local SQLite-only (sem pipeline CSV).
+
+    Cria um local "teste-sqlite" apenas na BD SQLite — sem entrada no config.json.
+    Inclui seed data de consumo, comparacoes e custos_reais.
+    Usado para testar que o dashboard funciona para locais criados via UI (Phase 7).
+    """
+    import json as _json
+    from datetime import datetime, timezone
+    from fastapi.testclient import TestClient
+    from sqlalchemy import create_engine, insert
+    from src.db.schema import metadata, locais, consumo_mensal, comparacoes, custos_reais
+    from src.web.app import app
+
+    # --- Engine SQLite in-memory com seed data ---
+    test_engine = create_engine("sqlite:///:memory:")
+    metadata.create_all(test_engine)
+
+    top_3_data = [
+        {"rank": 1, "supplier": "Luzboa", "plan": "Bi Base", "total_eur": 110.0},
+        {"rank": 2, "supplier": "EDP", "plan": "Bi Eco", "total_eur": 120.0},
+        {"rank": 3, "supplier": "Meo Energia", "plan": "Variavel", "total_eur": 155.0},
+    ]
+    csr_data = {"supplier": "Meo Energia", "plan": "Variavel", "total_eur": 155.0}
+    cached_ts = datetime(2026, 3, 1, 10, 0, 0, tzinfo=timezone.utc)
+
+    with test_engine.begin() as conn:
+        # Local SQLite-only — sem entrada em config.json
+        conn.execute(insert(locais).values(
+            id="teste-sqlite",
+            name="Teste SQLite",
+            cpe="PT0099999999999999XX",
+            current_supplier="Meo Energia",
+            current_plan_contains="Variavel",
+            power_label="6.9 kVA",
+        ))
+
+        # Seed consumo_mensal (3 meses)
+        for ym, total, vazio, fv in [
+            ("2025-01", 1400.0, 560.0, 840.0),
+            ("2025-02", 1550.0, 620.0, 930.0),
+            ("2025-03", 1100.0, 440.0, 660.0),
+        ]:
+            conn.execute(insert(consumo_mensal).values(
+                location_id="teste-sqlite",
+                year_month=ym,
+                total_kwh=total,
+                vazio_kwh=vazio,
+                fora_vazio_kwh=fv,
+            ))
+
+        # Seed comparacoes (2 meses)
+        for ym in ("2025-02", "2025-03"):
+            conn.execute(insert(comparacoes).values(
+                location_id="teste-sqlite",
+                year_month=ym,
+                top_3_json=_json.dumps(top_3_data),
+                current_supplier_result_json=_json.dumps(csr_data),
+                generated_at="2026-03-01T10:00:00",
+                cached_at=cached_ts,
+            ))
+
+        # Seed custos_reais (1 mes)
+        conn.execute(insert(custos_reais).values(
+            location_id="teste-sqlite",
+            year_month="2025-01",
+            custo_eur=145.50,
+            source="pdf",
+        ))
+
+    # --- Config com locais CSV-pipeline + local SQLite-only nao incluido ---
+    for location_id in ("casa", "apartamento"):
+        (tmp_path / "data" / location_id / "raw" / "eredes").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "data" / location_id / "processed").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "data" / location_id / "reports").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "state" / location_id).mkdir(parents=True, exist_ok=True)
+
+    config_payload = {
+        "locations": [
+            {
+                "id": "casa",
+                "name": "Casa",
+                "cpe": "PT0002000084968079SX",
+                "current_contract": {
+                    "supplier": "Meo Energia",
+                    "current_plan_contains": "Tarifa Variavel",
+                    "power_label": "10.35 kVA",
+                },
+                "pipeline": {
+                    "raw_dir": "data/casa/raw/eredes",
+                    "processed_csv_path": "data/casa/processed/consumo_mensal_atual.csv",
+                    "analysis_json_path": "data/casa/processed/analise_tiagofelicia_atual.json",
+                    "report_dir": "data/casa/reports",
+                    "status_path": "state/casa/monthly_status.json",
+                    "last_processed_tracker_path": "state/casa/last_processed_download.json",
+                    "drop_partial_last_month": True,
+                    "notify_on_completion": False,
+                    "months_limit": None,
+                    "local_tariffs_path": str(sample_tariffs),
+                    "local_contract_path": str(sample_contract),
+                },
+            },
+        ],
+        "eredes": {"download_dir_base": "data/{location_id}/raw/eredes"},
+    }
+    config_path = tmp_path / "config" / "system.json"
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+    config_path.write_text(_json.dumps(config_payload, indent=2), encoding="utf-8")
+
+    # Override app state
+    app.state.config_path = config_path
+    app.state.project_root = tmp_path
+    app.state.db_engine = test_engine
+
+    yield TestClient(app)
+    test_engine.dispose()
