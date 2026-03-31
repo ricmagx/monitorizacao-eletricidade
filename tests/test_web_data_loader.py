@@ -274,3 +274,82 @@ def test_get_freshness_from_sqlite(db_engine_test):
     assert result["days_ago"] is not None
     assert result["days_ago"] <= 6  # 5 dias atras, margem de 1 dia
     assert result["is_stale"] is False
+
+
+def test_freshness_source_fresh(db_engine_test):
+    """cached_at recente (<48h) -> source='fresh'."""
+    import json as _json
+    from datetime import datetime, timedelta, timezone
+    from sqlalchemy import insert
+    from src.db.schema import comparacoes
+    from src.web.services.data_loader import get_freshness_from_sqlite
+
+    recent_ts = datetime.now(timezone.utc) - timedelta(hours=1)
+    with db_engine_test.begin() as conn:
+        conn.execute(insert(comparacoes).values(
+            location_id="teste-fresh",
+            year_month="2025-03",
+            top_3_json=_json.dumps([]),
+            current_supplier_result_json=_json.dumps({}),
+            generated_at="2026-03-01T10:00:00",
+            cached_at=recent_ts,
+        ))
+
+    result = get_freshness_from_sqlite("teste-fresh", db_engine_test)
+    assert result["source"] == "fresh"
+    assert result["is_stale"] is False
+
+
+def test_freshness_source_cache(db_engine_test):
+    """cached_at antigo (>48h) -> source='cache'."""
+    import json as _json
+    from datetime import datetime, timedelta, timezone
+    from sqlalchemy import insert
+    from src.db.schema import comparacoes
+    from src.web.services.data_loader import get_freshness_from_sqlite
+
+    old_ts = datetime.now(timezone.utc) - timedelta(hours=72)
+    with db_engine_test.begin() as conn:
+        conn.execute(insert(comparacoes).values(
+            location_id="teste-cache",
+            year_month="2025-03",
+            top_3_json=_json.dumps([]),
+            current_supplier_result_json=_json.dumps({}),
+            generated_at="2026-03-01T10:00:00",
+            cached_at=old_ts,
+        ))
+
+    result = get_freshness_from_sqlite("teste-cache", db_engine_test)
+    assert result["source"] == "cache"
+    assert result["is_stale"] is False
+
+
+def test_freshness_source_none(db_engine_test):
+    """Sem comparacoes -> source='none'."""
+    from src.web.services.data_loader import get_freshness_from_sqlite
+    result = get_freshness_from_sqlite("local-inexistente", db_engine_test)
+    assert result["source"] == "none"
+
+
+def test_freshness_source_stale_is_cache(db_engine_test):
+    """cached_at de 50 dias -> source='cache' e is_stale=True."""
+    import json as _json
+    from datetime import datetime, timedelta, timezone
+    from sqlalchemy import insert
+    from src.db.schema import comparacoes
+    from src.web.services.data_loader import get_freshness_from_sqlite
+
+    stale_ts = datetime.now(timezone.utc) - timedelta(days=50)
+    with db_engine_test.begin() as conn:
+        conn.execute(insert(comparacoes).values(
+            location_id="teste-stale",
+            year_month="2025-03",
+            top_3_json=_json.dumps([]),
+            current_supplier_result_json=_json.dumps({}),
+            generated_at="2026-03-01T10:00:00",
+            cached_at=stale_ts,
+        ))
+
+    result = get_freshness_from_sqlite("teste-stale", db_engine_test)
+    assert result["source"] == "cache"
+    assert result["is_stale"] is True

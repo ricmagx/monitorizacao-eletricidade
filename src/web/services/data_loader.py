@@ -374,16 +374,22 @@ def get_freshness_from_sqlite(location_id: str, engine: Engine) -> dict:
     """Calcula frescura a partir de MAX(cached_at) de comparacoes SQLite.
 
     Usa o mesmo threshold de 40 dias que get_freshness_info().
+    Inclui campo source para distinguir dados frescos de cache:
+      - "fresh": cached_at < FRESH_THRESHOLD_HOURS (48h)
+      - "cache": cached_at >= FRESH_THRESHOLD_HOURS
+      - "none": sem comparacoes para este local
 
     Args:
         location_id: ID do local.
         engine: SQLAlchemy engine.
 
     Returns:
-        Dict com days_ago (int|None), is_stale (bool), generated_at (str|None).
-        Se sem comparacoes: {"days_ago": None, "is_stale": True, "generated_at": None}.
+        Dict com days_ago (int|None), is_stale (bool), generated_at (str|None),
+        source ("fresh"|"cache"|"none").
+        Se sem comparacoes: {"days_ago": None, "is_stale": True, "generated_at": None, "source": "none"}.
     """
     STALE_THRESHOLD_DAYS = 40
+    FRESH_THRESHOLD_HOURS = 48
 
     stmt = (
         select(func.max(comparacoes_table.c.cached_at))
@@ -393,10 +399,10 @@ def get_freshness_from_sqlite(location_id: str, engine: Engine) -> dict:
         with engine.connect() as conn:
             max_cached_at = conn.execute(stmt).scalar()
     except Exception:
-        return {"days_ago": None, "is_stale": True, "generated_at": None}
+        return {"days_ago": None, "is_stale": True, "generated_at": None, "source": "none"}
 
     if max_cached_at is None:
-        return {"days_ago": None, "is_stale": True, "generated_at": None}
+        return {"days_ago": None, "is_stale": True, "generated_at": None, "source": "none"}
 
     try:
         # cached_at pode ser datetime ou string ISO
@@ -410,11 +416,14 @@ def get_freshness_from_sqlite(location_id: str, engine: Engine) -> dict:
 
         now = datetime.now(timezone.utc)
         days_ago = (now - cached_at).days
+        hours_ago = (now - cached_at).total_seconds() / 3600
+        source = "fresh" if hours_ago <= FRESH_THRESHOLD_HOURS else "cache"
 
         return {
             "days_ago": days_ago,
             "is_stale": days_ago > STALE_THRESHOLD_DAYS,
             "generated_at": cached_at.isoformat(),
+            "source": source,
         }
     except (ValueError, TypeError, AttributeError):
-        return {"days_ago": None, "is_stale": True, "generated_at": None}
+        return {"days_ago": None, "is_stale": True, "generated_at": None, "source": "none"}

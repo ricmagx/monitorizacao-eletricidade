@@ -18,7 +18,7 @@ def _consultar_tiagofelicia_bg(location_id: str, engine):
 
     Funcao sincrona (nao async def) — FastAPI corre automaticamente em thread pool.
     Se playwright nao estiver disponivel, loga aviso e retorna sem erro.
-    Insere com ON CONFLICT DO NOTHING para idempotencia (UniqueConstraint uq_comparacao_loc_month).
+    Upsert com ON CONFLICT DO UPDATE — actualiza cached_at em cada consulta bem-sucedida.
     """
     import json
     import logging
@@ -55,7 +55,7 @@ def _consultar_tiagofelicia_bg(location_id: str, engine):
             fora_vazio_kwh=row.fora_vazio_kwh,
         )
         with engine.begin() as conn:
-            stmt = sqlite_insert(comparacoes).values(
+            insert_stmt = sqlite_insert(comparacoes).values(
                 location_id=location_id,
                 year_month=row.year_month,
                 top_3_json=json.dumps(result.get("top_3", []), ensure_ascii=False),
@@ -64,8 +64,15 @@ def _consultar_tiagofelicia_bg(location_id: str, engine):
                 ),
                 generated_at=result.get("generated_at", ""),
                 cached_at=datetime.now(timezone.utc),
-            ).on_conflict_do_nothing(
-                index_elements=["location_id", "year_month"]
+            )
+            stmt = insert_stmt.on_conflict_do_update(
+                index_elements=["location_id", "year_month"],
+                set_={
+                    "top_3_json": insert_stmt.excluded.top_3_json,
+                    "current_supplier_result_json": insert_stmt.excluded.current_supplier_result_json,
+                    "generated_at": insert_stmt.excluded.generated_at,
+                    "cached_at": datetime.now(timezone.utc),
+                }
             )
             conn.execute(stmt)
         logger.info(f"tiagofelicia.pt consultado com sucesso para {location_id}")
