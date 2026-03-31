@@ -120,6 +120,12 @@ Progress v2.0: [██████████] 100% (Phase 5)
 - Phase 6 é design-only (ui-phase) — não produz código, produz UI-SPEC.md
 - Phase 9 depende de UI-SPEC de Phase 6 — não implementar frontend antes disso
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260331-dl8 | Análise multi-ano: gráfico consumo 3+ anos, comparação mês vs ano, resumo anual por local | 2026-03-31 | 643708d | [260331-dl8-an-lise-multi-ano-gr-fico-consumo-3-anos](.planning/quick/260331-dl8-an-lise-multi-ano-gr-fico-consumo-3-anos/) |
+
 ## Session Continuity
 
 Last session: 2026-03-31T09:13:00.274Z
