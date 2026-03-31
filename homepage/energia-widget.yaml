@@ -1,0 +1,48 @@
+# Tile "Energia" para o Homepage do Unraid
+#
+# INSTRUCOES:
+# ===========
+# 1. Abrir o Homepage do Unraid: http://192.168.122.110:3000
+# 2. Editar o ficheiro de servicos: /mnt/user/appdata/homepage/config/services.yaml
+#    Ou via UI do Homepage: Settings > Services
+#
+# 3. Copiar o bloco YAML abaixo para o ficheiro services.yaml
+#
+# NOTA: A variante simples (apenas link, sem iframe) e recomendada.
+#       O iframe pode causar problemas de CORS ou CSP dependendo da configuracao.
+#
+# ============================================================
+# OPCAO 1 (RECOMENDADA) — Tile simples com link e icone
+# ============================================================
+
+- Casa:
+    - Energia:
+        icon: mdi-lightning-bolt
+        href: http://192.168.122.110:8090/hobbies/casa/energia/
+        description: Monitorizacao de electricidade
+
+# ============================================================
+# OPCAO 2 — Tile com iframe (preview da pagina)
+# Usar apenas se a opcao 1 nao for suficiente.
+# Requer que a aplicacao nao envie X-Frame-Options: DENY
+# ============================================================
+
+# - Casa:
+#     - Energia:
+#         icon: mdi-lightning-bolt
+#         href: http://192.168.122.110:8090/hobbies/casa/energia/
+#         description: Monitorizacao de electricidade
+#         widget:
+#           type: iframe
+#           src: http://192.168.122.110:8090/hobbies/casa/energia/
+
+# ============================================================
+# ACESSO TAILSCALE (para uso fora da rede local)
+# Substituir TAILSCALE_IP pelo IP obtido com: ssh unraid 'tailscale ip -4'
+# ============================================================
+
+# - Casa:
+#     - Energia (Tailscale):
+#         icon: mdi-lightning-bolt
+#         href: http://TAILSCALE_IP:8090/hobbies/casa/energia/
+#         description: Monitorizacao de electricidade (acesso remoto)
