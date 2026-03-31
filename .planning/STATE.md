@@ -2,34 +2,34 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Sistema Integrado
-current_phase: 9
+current_phase: 09
 status: executing
-stopped_at: Completed 08-02-PLAN.md
-last_updated: "2026-03-31T00:20:37.123Z"
+stopped_at: Completed 09-01-PLAN.md
+last_updated: "2026-03-31T01:30:16.311Z"
 last_activity: 2026-03-31
 progress:
   total_phases: 8
   completed_phases: 4
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 11
+  completed_plans: 10
 ---
 
 # Project State
 
 **Last updated:** 2026-03-30
-**Current phase:** 9
+**Current phase:** 09
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-03-30)
 
 **Core value:** Com o perfil mensal real de cada local, saber qual seria o comercializador mais barato e quando compensa mudar — sem esforço manual além do upload mensal.
-**Current focus:** Phase 08 — upload-pdf-extrac-o-de-faturas
+**Current focus:** Phase 09 — dashboard-ui
 
 ## Current Position
 
-Phase: 08 (upload-pdf-extrac-o-de-faturas) — EXECUTING
-Plan: Not started
+Phase: 09 (dashboard-ui) — EXECUTING
+Plan: 2 of 2
 Status: Ready to execute
 Last activity: 2026-03-31
 
@@ -57,6 +57,7 @@ Progress v2.0: [██████████] 100% (Phase 5)
 | Phase 07 P01 | 234 | 3 tasks | 11 files |
 | Phase 07 P02 | 5 | 5 tasks | 11 files |
 | Phase 08 P02 | 231 | 2 tasks | 4 files |
+| Phase 09 P01 | 20 | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -105,6 +106,12 @@ Progress v2.0: [██████████] 100% (Phase 5)
 - load_locations() engine=None opcional para backward compatibility — merge SQLite transparente
 - Locais sem pipeline retornam dados vazios em _load_location_data — Phase 9 migrara para SQLite
 
+### Decisoes Phase 09 Plan 01
+
+- SQLite-first com fallback CSV: tentar SQLite primeiro; se vazio e local tem pipeline, usar CSV/JSON. Preserva retrocompatibilidade total.
+- StaticPool para engines SQLite in-memory em testes: garante todas as conexoes partilham a mesma BD (sem StaticPool, cada nova conexao cria BD vazia).
+- Context manager TestClient para override pos-lifespan: lifespan sobrescreve db_engine; usar with TestClient() e sobrepor apos __enter__.
+
 ### Bloqueadores/Notas
 
 - Phase 6 é design-only (ui-phase) — não produz código, produz UI-SPEC.md
@@ -112,6 +119,6 @@ Progress v2.0: [██████████] 100% (Phase 5)
 
 ## Session Continuity
 
-Last session: 2026-03-31T00:17:25.962Z
-Stopped at: Completed 08-02-PLAN.md
+Last session: 2026-03-31T01:30:16.298Z
+Stopped at: Completed 09-01-PLAN.md
 Resume file: None
