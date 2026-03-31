@@ -1,5 +1,5 @@
 {% if recommendation.show %}
 <div class="banner banner-success">
-  {{ recommendation.message }}
+  Mudando para {{ recommendation.supplier }}{% if recommendation.plan %} — plano {{ recommendation.plan }}{% endif %}, poupa cerca de {{ recommendation.saving_eur | int }} EUR/ano
 </div>
 {% endif %}

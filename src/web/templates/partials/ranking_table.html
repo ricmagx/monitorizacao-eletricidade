@@ -8,6 +8,7 @@
         <th>Fornecedor</th>
         <th>Plano</th>
         <th>Custo Anual Est. (EUR)</th>
+        <th>Poupanca Potencial (EUR/ano)</th>
       </tr>
     </thead>
     <tbody>
@@ -17,11 +18,20 @@
         <td>{{ r.supplier }}{% if r.is_current %} (actual){% endif %}</td>
         <td>{{ r.plan }}</td>
         <td>{{ "%.2f" | format(r.custo_anual_estimado) }}</td>
+        <td>
+          {% if r.is_current %}
+            —
+          {% elif r.poupanca_potencial is not none and r.poupanca_potencial > 0 %}
+            <span style="color: var(--success); font-weight: 600;">{{ "%.2f" | format(r.poupanca_potencial) }}</span>
+          {% else %}
+            —
+          {% endif %}
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
   {% else %}
-  <p style="color: var(--muted);">Sem dados de ranking disponiveis.</p>
+  <p style="color: var(--muted);">Sem dados de comparacao disponiveis. Importe um XLSX para gerar o ranking.</p>
   {% endif %}
 </div>
