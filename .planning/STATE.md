@@ -125,9 +125,10 @@ Progress v2.0: [██████████] 100% (Phase 5)
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260331-dl8 | Análise multi-ano: gráfico consumo 3+ anos, comparação mês vs ano, resumo anual por local | 2026-03-31 | 643708d | [260331-dl8-an-lise-multi-ano-gr-fico-consumo-3-anos](.planning/quick/260331-dl8-an-lise-multi-ano-gr-fico-consumo-3-anos/) |
+| 260331-edj | Deploy Unraid: root_path FastAPI, docker-compose.prod.yml, nginx reverse proxy, deploy.sh, homepage widget | 2026-03-31 | 48c99ec | [260331-edj-implementar-fase-12](.planning/quick/260331-edj-implementar-fase-12/) |
 
 ## Session Continuity
 
 Last session: 2026-03-31T09:13:00.274Z
-Stopped at: Completed quick task 260331-dl8 (analise multi-ano)
+Stopped at: Completed quick task 260331-edj (deploy unraid) — checkpoint:human-verify pendente
 Resume file: None
