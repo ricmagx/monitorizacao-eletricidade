@@ -170,8 +170,12 @@ Plans:
   1. Com tiagofelicia.pt inacessível, o dashboard continua a mostrar o ranking usando os dados do cache SQLite
   2. Um badge visível indica se os dados de comparação são frescos (data da última consulta bem-sucedida) ou provêm do cache
   3. O utilizador nunca fica bloqueado ou vê uma página de erro devido à indisponibilidade de tiagofelicia.pt
-**Plans**: TBD
+**Plans**: 2 plans
 **UI hint**: yes
+
+Plans:
+- [ ] 10-01-PLAN.md — Backend: upsert on_conflict_do_update + campo source no freshness dict
+- [ ] 10-02-PLAN.md — Frontend: badge ternario (frescos/cache/sem dados) + relocacao HTMX
 
 ### Phase 11: Análise Multi-ano
 **Goal**: O utilizador pode comparar o consumo e custo do mesmo mês em anos diferentes e ver resumos anuais, com 3+ anos de histórico visíveis nos gráficos.
