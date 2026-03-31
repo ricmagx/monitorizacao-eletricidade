@@ -1,0 +1,19 @@
+# Compose de producao para deploy no Unraid
+# Uso: docker compose -f docker-compose.prod.yml up -d --build
+#
+# Estrategia de rede: expor porta 8001 no host Unraid e proxy_pass para 127.0.0.1:8001
+# Isto evita complexidade de redes Docker partilhadas e funciona sempre.
+# O nginx faz proxy de /hobbies/casa/energia/ -> http://127.0.0.1:8001/
+
+services:
+  energia:
+    build: .
+    container_name: energia-monitor
+    ports:
+      - "8001:8000"
+    environment:
+      - DB_PATH=/app/data/energia.db
+      - ROOT_PATH=/hobbies/casa/energia
+    volumes:
+      - /mnt/user/appdata/energia/data:/app/data
+    restart: unless-stopped

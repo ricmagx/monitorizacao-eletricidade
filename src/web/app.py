@@ -19,6 +19,8 @@ from src.db.schema import metadata, locais
 BASE_DIR = Path(__file__).resolve().parent
 # Docker-compatible: APP_ROOT env var tem precedencia sobre calculo por path
 PROJECT_ROOT = Path(os.environ.get("APP_ROOT", str(BASE_DIR.parent.parent)))
+# Suporte a reverse proxy: ROOT_PATH define o prefixo do path (ex: /hobbies/casa/energia)
+ROOT_PATH = os.environ.get("ROOT_PATH", "")
 
 
 def _seed_locais_from_config(engine, config_path: Path) -> None:
@@ -65,7 +67,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Monitorizacao Eletricidade", lifespan=lifespan)
+app = FastAPI(title="Monitorizacao Eletricidade", lifespan=lifespan, root_path=ROOT_PATH)
 
 # Montar ficheiros estaticos
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
