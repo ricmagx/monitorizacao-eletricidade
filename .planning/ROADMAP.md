@@ -155,8 +155,12 @@ Plans:
   3. O gráfico de consumo mensal mostra barras empilhadas vazio/fora_vazio para todos os meses disponíveis
   4. O gráfico de custo mostra a estimativa do fornecedor actual lado a lado com o custo real da fatura para os meses com PDF importado
   5. O layout segue a UI-SPEC aprovada (cores, tipografia, espaçamento)
-**Plans**: TBD
+**Plans**: 2 plans
 **UI hint**: yes
+
+Plans:
+- [ ] 09-01-PLAN.md — Migracao data source CSV/JSON para SQLite + retrocompatibilidade
+- [ ] 09-02-PLAN.md — Alinhamento UI com UI-SPEC (custo chart, ranking, banner, layout)
 
 ### Phase 10: Cache tiagofelicia.pt + Integração Comparação
 **Goal**: O dashboard usa sempre dados de comparação actuais quando tiagofelicia.pt está disponível e recorre ao cache de forma transparente quando o site está em baixo, com indicação visível do estado dos dados.
@@ -206,7 +210,7 @@ Plans:
 | 6. UI Design (ui-phase) | v2.0 | 0/? | Not started | — |
 | 7. Upload XLSX + Ingestão | v2.0 | 3/3 | Complete   | 2026-03-30 |
 | 8. Upload PDF + Extracção | v2.0 | 2/2 | Complete   | 2026-03-31 |
-| 9. Dashboard UI | v2.0 | 0/? | Not started | — |
+| 9. Dashboard UI | v2.0 | 0/2 | Not started | — |
 | 10. Cache + Comparação | v2.0 | 0/? | Not started | — |
 | 11. Análise Multi-ano | v2.0 | 0/? | Not started | — |
 | 12. Deploy Unraid + Homepage | v2.0 | 0/? | Not started | — |
