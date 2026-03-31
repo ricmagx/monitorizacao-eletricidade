@@ -11,3 +11,12 @@
 <div id="ranking-section">
   {% include "partials/ranking_table.html" %}
 </div>
+
+{# Analise Multi-ano: carregada via HTMX ao clicar no botao #}
+<div style="margin-top:1.5rem;">
+  <button hx-get="/local/{{ selected_location.id }}/multi-ano"
+          hx-target="#multi-ano-section"
+          hx-swap="innerHTML"
+          class="btn">Analise Multi-ano</button>
+</div>
+<div id="multi-ano-section"></div>

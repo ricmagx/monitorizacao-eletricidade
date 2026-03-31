@@ -1,0 +1,74 @@
+<div class="card">
+  {# Formulario HTMX para seleccionar anos e mes a comparar #}
+  <form hx-get="/local/{{ local_id }}/multi-ano"
+        hx-target="#multi-ano-container"
+        hx-trigger="change"
+        style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap; margin-bottom:1rem;">
+    <label>
+      Ano 1:
+      <select name="ano1">
+        {% for ano in anos_disponiveis %}
+        <option value="{{ ano }}" {% if ano == selected_ano1 %}selected{% endif %}>{{ ano }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Ano 2:
+      <select name="ano2">
+        {% for ano in anos_disponiveis %}
+        <option value="{{ ano }}" {% if ano == selected_ano2 %}selected{% endif %}>{{ ano }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Mes:
+      <select name="mes">
+        {% set _meses = [("01","Jan"),("02","Fev"),("03","Mar"),("04","Abr"),("05","Mai"),("06","Jun"),
+                         ("07","Jul"),("08","Ago"),("09","Set"),("10","Out"),("11","Nov"),("12","Dez")] %}
+        {% for val, label in _meses %}
+        <option value="{{ val }}" {% if val == selected_mes %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </form>
+
+  {# Tabela resumo anual #}
+  <h3>Resumo Anual</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Ano</th>
+        <th>Consumo Total (kWh)</th>
+        <th>Custo Total (&euro;)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in resumo_anual %}
+      <tr>
+        <td>{{ r.ano }}</td>
+        <td>{{ "%.1f"|format(r.consumo_total_kwh) }}</td>
+        <td>{% if r.custo_total_eur is not none %}{{ "%.2f"|format(r.custo_total_eur) }}&euro;{% else %}&mdash;{% endif %}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="3">Sem dados</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {# Comparacao mensal lado a lado (apenas se comparacao_meses presente) #}
+  {% if comparacao_meses is not none %}
+  <h3>Comparação Mensal &mdash; Mês {{ comparacao_meses.mes }}</h3>
+  <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+    <div class="card" style="flex:1; min-width:200px;">
+      <h4>{{ comparacao_meses.ano1 }}</h4>
+      <p>Consumo: {% if comparacao_meses.consumo_ano1 is not none %}{{ "%.1f"|format(comparacao_meses.consumo_ano1) }} kWh{% else %}Sem dados{% endif %}</p>
+      <p>Custo: {% if comparacao_meses.custo_ano1 is not none %}{{ "%.2f"|format(comparacao_meses.custo_ano1) }}&euro;{% else %}Sem dados{% endif %}</p>
+    </div>
+    <div class="card" style="flex:1; min-width:200px;">
+      <h4>{{ comparacao_meses.ano2 }}</h4>
+      <p>Consumo: {% if comparacao_meses.consumo_ano2 is not none %}{{ "%.1f"|format(comparacao_meses.consumo_ano2) }} kWh{% else %}Sem dados{% endif %}</p>
+      <p>Custo: {% if comparacao_meses.custo_ano2 is not none %}{{ "%.2f"|format(comparacao_meses.custo_ano2) }}&euro;{% else %}Sem dados{% endif %}</p>
+    </div>
+  </div>
+  {% endif %}
+</div>

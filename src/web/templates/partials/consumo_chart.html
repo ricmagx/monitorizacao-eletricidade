@@ -5,6 +5,40 @@
     (function() {
       const ctx = document.getElementById('consumo-chart').getContext('2d');
       if (window._consumoChart) window._consumoChart.destroy();
+      {% if consumo_multi_ano is defined and consumo_multi_ano %}
+      {# Modo multi-ano: barras agrupadas por ano com cor distinta por ano #}
+      const _paletaAnos = ['#3b82f6','#f97316','#22c55e','#a855f7','#ef4444'];
+      const _multiAno = {{ consumo_multi_ano | tojson }};
+      window._consumoChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: _multiAno.meses,
+          datasets: _multiAno.datasets.map(function(ds, i) {
+            const cor = _paletaAnos[i % _paletaAnos.length];
+            return {
+              label: ds.ano,
+              data: ds.vazio.map(function(v, idx) {
+                const fv = ds.fora_vazio[idx];
+                if (v === null && fv === null) return null;
+                return (v || 0) + (fv || 0);
+              }),
+              backgroundColor: cor,
+              borderColor: cor,
+              borderWidth: 1
+            };
+          })
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } },
+          scales: {
+            x: { stacked: false },
+            y: { stacked: false, title: { display: true, text: 'kWh' } }
+          }
+        }
+      });
+      {% else %}
+      {# Modo normal: barras empilhadas vazio + fora de vazio #}
       window._consumoChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -33,6 +67,7 @@
           }
         }
       });
+      {% endif %}
     })();
   </script>
 </div>

@@ -173,3 +173,49 @@ def test_badge_not_in_header_outside_htmx(web_client_sqlite):
     # Verificar que nao ha duas instancias do badge fora do contexto esperado
     # (impossivel de verificar directamente sem parse HTML — verificar que badge aparece)
     assert "badge" in resp.text
+
+
+# ---------------------------------------------------------------------------
+# Testes endpoint multi-ano (Phase 11)
+# ---------------------------------------------------------------------------
+
+
+def test_multi_ano_endpoint_200(web_client_sqlite):
+    """GET /local/teste-sqlite/multi-ano retorna 200 com consumo-chart."""
+    resp = web_client_sqlite.get("/local/teste-sqlite/multi-ano")
+    assert resp.status_code == 200
+    assert 'id="consumo-chart"' in resp.text
+
+
+def test_multi_ano_endpoint_com_params(web_client_sqlite):
+    """GET /local/teste-sqlite/multi-ano?ano1=2025&ano2=2025&mes=01 retorna 200."""
+    resp = web_client_sqlite.get("/local/teste-sqlite/multi-ano?ano1=2025&ano2=2025&mes=01")
+    assert resp.status_code == 200
+    assert 'id="consumo-chart"' in resp.text
+
+
+def test_multi_ano_endpoint_invalid_local(web_client_sqlite):
+    """GET /local/inexistente/multi-ano retorna 404."""
+    resp = web_client_sqlite.get("/local/inexistente/multi-ano")
+    assert resp.status_code == 404
+
+
+def test_multi_ano_endpoint_tem_resumo_anual(web_client_sqlite):
+    """GET /local/teste-sqlite/multi-ano contem tabela de resumo anual."""
+    resp = web_client_sqlite.get("/local/teste-sqlite/multi-ano")
+    assert resp.status_code == 200
+    assert "Resumo Anual" in resp.text
+
+
+def test_multi_ano_endpoint_tem_comparacao_meses(web_client_sqlite):
+    """GET /multi-ano?ano1=&ano2=&mes= mostra seccao de comparacao mensal."""
+    resp = web_client_sqlite.get("/local/teste-sqlite/multi-ano?ano1=2025&ano2=2025&mes=01")
+    assert resp.status_code == 200
+    assert "Comparação Mensal" in resp.text or "Comparacao Mensal" in resp.text or "Mês" in resp.text
+
+
+def test_dashboard_has_multi_ano_button(web_client_sqlite):
+    """GET /local/teste-sqlite/dashboard tem botao Analise Multi-ano."""
+    resp = web_client_sqlite.get("/local/teste-sqlite/dashboard")
+    assert resp.status_code == 200
+    assert "multi-ano" in resp.text
