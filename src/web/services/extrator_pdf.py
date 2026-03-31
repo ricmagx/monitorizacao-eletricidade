@@ -1,8 +1,9 @@
 """Servico de extraccao de dados de faturas PDF de eletricidade.
 
 Suporta dois formatos de fatura:
-- Meo Energia: texto com "Total a pagar" e periodo "DD-MM-YYYY a DD-MM-YYYY"
-- Endesa: texto com "Total Eletricidade" e periodo "DD/MM/YYYY a DD/MM/YYYY"
+- Meo Energia: texto com "Total a pagar: € NNN,NN" e periodo "DD/MM/YYYY a DD/MM/YYYY"
+- Endesa: texto com "A LUZ NNN,NN €" (electricidade isolada) e periodo
+  "DD mmm YYYY a DD mmm YYYY" (nomes de mes em portugues)
 
 O gas (presente nas faturas Endesa multi-energia) e explicitamente ignorado.
 O CPE e extraido do texto e normalizado (sem espacos) para lookup na tabela locais.
@@ -31,25 +32,41 @@ from src.web.services.locais_service import get_local_by_cpe
 CPE_PATTERN = re.compile(r"(PT[\d ]+[A-Z]{2})\b")
 
 # Meo Energia — total pago
+# Formato real: "Total a pagar: € 343,92" (€ entre : e numero)
 TOTAL_MEO_PATTERNS = [
-    re.compile(r"Total\s+a\s+pagar[:\s]+(\d+[,\.]\d{2})\s*(?:EUR|€)", re.IGNORECASE),
-    re.compile(r"Total[:\s]+(\d+[,\.]\d{2})\s*(?:EUR|€)", re.IGNORECASE),
+    re.compile(r"Total\s+a\s+pagar[:\s]+(?:EUR|€)?\s*(\d+[,\.]\d{2})", re.IGNORECASE),
+    re.compile(r"Total[:\s]+(?:EUR|€)?\s*(\d+[,\.]\d{2})\s*(?:EUR|€)?", re.IGNORECASE),
 ]
 
-# Meo Energia — periodo (DD-MM-YYYY a DD-MM-YYYY)
+# Meo Energia — periodo (DD/MM/YYYY a DD/MM/YYYY ou DD-MM-YYYY a DD-MM-YYYY)
 PERIODO_MEO_PATTERNS = [
-    re.compile(r"(\d{2}-\d{2}-\d{4})\s+a\s+(\d{2}-\d{2}-\d{4})"),
+    re.compile(r"Per[ií]odo\s+de\s+fatura[çc][aã]o[:\s]+(\d{2}/\d{2}/\d{4})\s+a\s+(\d{2}/\d{2}/\d{4})", re.IGNORECASE),
     re.compile(r"(\d{2}/\d{2}/\d{4})\s+a\s+(\d{2}/\d{2}/\d{4})"),
+    re.compile(r"(\d{2}-\d{2}-\d{4})\s+a\s+(\d{2}-\d{2}-\d{4})"),
 ]
 
-# Endesa — total ELETRICIDADE (nunca "Total Fatura" nem "Total Gas")
+# Endesa — total ELETRICIDADE apenas (linha "A LUZ NNN,NN €")
+# Nunca usar "TOTAL A DEBITAR" que inclui gas
 TOTAL_ENDESA_PATTERNS = [
-    re.compile(r"Total\s+Ele[ct]ricidade[:\s]+(\d+[,\.]\d{2})\s*(?:EUR|€)", re.IGNORECASE),
+    re.compile(r"\bA\s+LUZ\s+(\d+[,\.]\d{2})\s*€", re.IGNORECASE),
+    re.compile(r"Total\s+Ele[ct]ricidade[:\s]+(?:EUR|€)?\s*(\d+[,\.]\d{2})", re.IGNORECASE),
 ]
 
-# Endesa — periodo de consumo
+# Endesa — periodo de faturacao
+# Formato real: "Período de Faturação: 23 dez 2025 a 22 jan 2026" (nomes de mes PT)
+# Fallback: "DD/MM/YYYY a DD/MM/YYYY" (formato numerico)
+_MESES_PT = {
+    "jan": "01", "fev": "02", "mar": "03", "abr": "04",
+    "mai": "05", "jun": "06", "jul": "07", "ago": "08",
+    "set": "09", "out": "10", "nov": "11", "dez": "12",
+}
+PERIODO_ENDESA_PT_PATTERN = re.compile(
+    r"Per[ií]odo\s+de\s+Fatura[çc][aã]o[:\s]+"
+    r"(\d{1,2})\s+([a-z]{3})\s+(\d{4})\s+a\s+(\d{1,2})\s+([a-z]{3})\s+(\d{4})",
+    re.IGNORECASE,
+)
 PERIODO_ENDESA_PATTERNS = [
-    re.compile(r"Per[ií]odo\s+de\s+Consumo[:\s]+(\d{2}/\d{2}/\d{4})\s+a\s+(\d{2}/\d{2}/\d{4})", re.IGNORECASE),
+    re.compile(r"Per[ií]odo\s+de\s+[Cc]onsumo[:\s]+(\d{2}/\d{2}/\d{4})\s+a\s+(\d{2}/\d{2}/\d{4})", re.IGNORECASE),
     re.compile(r"(\d{2}/\d{2}/\d{4})\s+a\s+(\d{2}/\d{2}/\d{4})"),
 ]
 
@@ -91,6 +108,24 @@ def _parse_periodo_para_year_month(data_inicio: str) -> str:
     return f"{ano}-{mes}"
 
 
+def _parse_periodo_endesa_pt(texto_norm: str) -> str | None:
+    """Extrai year_month do periodo Endesa em formato PT ('23 dez 2025 a 22 jan 2026').
+
+    Usa a data de fim do periodo para determinar o mes de faturacao.
+    Retorna 'YYYY-MM' ou None se nao encontrar.
+    """
+    m = PERIODO_ENDESA_PT_PATTERN.search(texto_norm)
+    if not m:
+        return None
+    # grupos: dia_ini, mes_ini, ano_ini, dia_fim, mes_fim, ano_fim
+    mes_fim_str = m.group(5).lower()[:3]
+    ano_fim = m.group(6)
+    mes_fim = _MESES_PT.get(mes_fim_str)
+    if not mes_fim:
+        return None
+    return f"{ano_fim}-{mes_fim}"
+
+
 # ---------------------------------------------------------------------------
 # Funcao principal de extraccao (aceita texto ja extraido)
 # ---------------------------------------------------------------------------
@@ -119,10 +154,11 @@ def extrair_fatura(texto: str) -> dict:
     cpe_match = CPE_PATTERN.search(texto_norm)
     cpe = cpe_match.group(1).replace(" ", "") if cpe_match else None
 
-    # Detectar formato por keywords no texto
-    if "Meo Energia" in texto_norm:
+    # Detectar formato por keywords no texto (case-insensitive)
+    texto_lower = texto_norm.lower()
+    if "meo energia" in texto_lower or "meoenergia" in texto_lower:
         formato = "meo_energia"
-    elif "Endesa" in texto_norm:
+    elif "endesa" in texto_lower:
         formato = "endesa"
     else:
         return {
@@ -154,16 +190,21 @@ def extrair_fatura(texto: str) -> dict:
     custo_eur = _parse_valor_eur(total_match.group(1))
 
     # Extrair periodo
-    periodo_match = _extrair_com_patterns(texto_norm, periodo_patterns)
-    if not periodo_match:
-        return {
-            "erro": f"Periodo nao encontrado na fatura {formato}.",
-            "formato": formato,
-            "cpe": cpe,
-            "year_month": None,
-            "custo_eur": custo_eur,
-        }
-    year_month = _parse_periodo_para_year_month(periodo_match.group(1))
+    year_month = None
+    if formato == "endesa":
+        # Tentar primeiro formato PT com nomes de mes (ex: "23 dez 2025 a 22 jan 2026")
+        year_month = _parse_periodo_endesa_pt(texto_norm)
+    if not year_month:
+        periodo_match = _extrair_com_patterns(texto_norm, periodo_patterns)
+        if not periodo_match:
+            return {
+                "erro": f"Periodo nao encontrado na fatura {formato}.",
+                "formato": formato,
+                "cpe": cpe,
+                "year_month": None,
+                "custo_eur": custo_eur,
+            }
+        year_month = _parse_periodo_para_year_month(periodo_match.group(1))
 
     return {
         "erro": None,

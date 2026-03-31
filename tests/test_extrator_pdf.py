@@ -49,6 +49,29 @@ Sem formato reconhecido
 Valor: 100.00 EUR
 """
 
+# Formato real MEO Energia: "MEO Energia" (caps), "€ NNN,NN" (euro antes do numero)
+TEXTO_MEO_ENERGIA_REAL = """
+.A.S ,aigrenE ed oãçazilaicremoC - aigrenE OEM
+Pág. 1 de 3
+Fatura: FA ME26/615 053 de 24/03/2026
+Período de faturação: 07/02/2026 a 20/03/2026
+CPE (Código Ponto de Entrega): PT0002000084968079SX
+Tarifa: MEO + MEO Energia FIXA MB PAPEL M4 09.25
+Total a pagar: € 343,92
+meoenergia.pt
+"""
+
+# Formato real Endesa: "A LUZ NNN,NN €", periodo com nomes de mes PT
+TEXTO_ENDESA_REAL = """
+K Luz e Gás Nº Documento: 26010310165507399
+TOTAL A DEBITAR 41,46 €
+A LUZ 16,25 €
+B GÁS 28,54 €
+A CPE (Código Ponto Entrega) PT 0002 0000 3982 2082 NT
+Endesa poupa todos os meses!
+Período de Faturação: 23 dez 2025 a 22 jan 2026
+"""
+
 TEXTO_CPE_COM_ESPACO = """
 Endesa Energia
 CPE: PT000200003982208 2NT
@@ -100,6 +123,34 @@ def test_endesa_ignora_gas():
     assert resultado["custo_eur"] == pytest.approx(38.50)
     assert resultado["custo_eur"] != pytest.approx(60.60)
     assert resultado["custo_eur"] != pytest.approx(22.10)
+
+
+def test_extrair_meo_energia_formato_real():
+    """Meo Energia: formato real — 'MEO Energia' (caps) e '€ NNN,NN' (euro antes do numero)."""
+    from src.web.services.extrator_pdf import extrair_fatura
+
+    resultado = extrair_fatura(TEXTO_MEO_ENERGIA_REAL)
+
+    assert resultado["erro"] is None
+    assert resultado["formato"] == "meo_energia"
+    assert resultado["cpe"] == "PT0002000084968079SX"
+    assert resultado["year_month"] == "2026-02"
+    assert resultado["custo_eur"] == pytest.approx(343.92)
+
+
+def test_extrair_endesa_formato_real():
+    """Endesa: formato real — 'A LUZ NNN,NN €' e periodo com nomes de mes PT."""
+    from src.web.services.extrator_pdf import extrair_fatura
+
+    resultado = extrair_fatura(TEXTO_ENDESA_REAL)
+
+    assert resultado["erro"] is None
+    assert resultado["formato"] == "endesa"
+    assert resultado["cpe"] == "PT0002000039822082NT"
+    # So eletricidade, nao total debito (41,46 inclui gas)
+    assert resultado["custo_eur"] == pytest.approx(16.25)
+    # Periodo: data de fim "22 jan 2026" -> 2026-01
+    assert resultado["year_month"] == "2026-01"
 
 
 def test_formato_desconhecido():
