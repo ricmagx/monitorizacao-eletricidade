@@ -1,9 +1,14 @@
-{% if freshness.generated_at %}
-<span class="badge {% if freshness.is_stale %}badge-stale{% else %}badge-ok{% endif %}">
-  Ultimo relatorio: {{ freshness.generated_at[:10] }}
+{% if freshness.source == "fresh" %}
+<span class="badge badge-ok">
+  Tarifarios actualizados em {{ freshness.generated_at[:10] }}
+  {% if freshness.days_ago is not none and freshness.days_ago > 0 %} (ha {{ freshness.days_ago }} dias){% endif %}
+</span>
+{% elif freshness.source == "cache" %}
+<span class="badge badge-warn">
+  Tarifarios do cache — ultima consulta: {{ freshness.generated_at[:10] }}
   {% if freshness.days_ago is not none %} (ha {{ freshness.days_ago }} dias){% endif %}
   {% if freshness.is_stale %} — Dados desactualizados{% endif %}
 </span>
 {% else %}
-<span class="badge badge-stale">Sem dados — Dados desactualizados</span>
+<span class="badge badge-stale">Sem dados de comparacao</span>
 {% endif %}

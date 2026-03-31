@@ -203,6 +203,9 @@ def build_custo_chart_data(
     return {"labels": labels, "estimativa_data": estimativa_data, "custo_real_data": custo_real_data}
 
 
+FRESH_THRESHOLD_HOURS = 48
+
+
 def get_freshness_info(status: dict | None) -> dict:
     """Calcula frescura a partir do status mensal.
 
@@ -214,11 +217,12 @@ def get_freshness_info(status: dict | None) -> dict:
           - days_ago (int|None): dias desde o ultimo relatorio
           - is_stale (bool): True se > 40 dias ou sem dados
           - generated_at (str|None): data de geracao em formato ISO
+          - source (str): "fresh" | "cache" | "none"
     """
     STALE_THRESHOLD_DAYS = 40
 
     if status is None or "generated_at" not in status:
-        return {"days_ago": None, "is_stale": True, "generated_at": None}
+        return {"days_ago": None, "is_stale": True, "generated_at": None, "source": "none"}
 
     generated_at_str = status["generated_at"]
     try:
@@ -233,14 +237,18 @@ def get_freshness_info(status: dict | None) -> dict:
         now = datetime.now(timezone.utc)
         delta = now - generated_at
         days_ago = delta.days
+        hours_ago = delta.total_seconds() / 3600
+
+        source = "fresh" if hours_ago <= FRESH_THRESHOLD_HOURS else "cache"
 
         return {
             "days_ago": days_ago,
             "is_stale": days_ago > STALE_THRESHOLD_DAYS,
             "generated_at": generated_at_str,
+            "source": source,
         }
     except (ValueError, TypeError):
-        return {"days_ago": None, "is_stale": True, "generated_at": generated_at_str}
+        return {"days_ago": None, "is_stale": True, "generated_at": generated_at_str, "source": "none"}
 
 
 # ---------------------------------------------------------------------------
@@ -373,15 +381,20 @@ def load_custos_reais_sqlite(location_id: str, engine: Engine) -> dict:
 def get_freshness_from_sqlite(location_id: str, engine: Engine) -> dict:
     """Calcula frescura a partir de MAX(cached_at) de comparacoes SQLite.
 
-    Usa o mesmo threshold de 40 dias que get_freshness_info().
+    Usa FRESH_THRESHOLD_HOURS (48h) para determinar source=fresh vs source=cache.
+    Usa o mesmo threshold de 40 dias que get_freshness_info() para is_stale.
 
     Args:
         location_id: ID do local.
         engine: SQLAlchemy engine.
 
     Returns:
-        Dict com days_ago (int|None), is_stale (bool), generated_at (str|None).
-        Se sem comparacoes: {"days_ago": None, "is_stale": True, "generated_at": None}.
+        Dict com:
+          - days_ago (int|None): dias desde cached_at
+          - is_stale (bool): True se > 40 dias ou sem dados
+          - generated_at (str|None): ISO timestamp de cached_at
+          - source (str): "fresh" | "cache" | "none"
+        Se sem comparacoes: source="none".
     """
     STALE_THRESHOLD_DAYS = 40
 
@@ -393,10 +406,10 @@ def get_freshness_from_sqlite(location_id: str, engine: Engine) -> dict:
         with engine.connect() as conn:
             max_cached_at = conn.execute(stmt).scalar()
     except Exception:
-        return {"days_ago": None, "is_stale": True, "generated_at": None}
+        return {"days_ago": None, "is_stale": True, "generated_at": None, "source": "none"}
 
     if max_cached_at is None:
-        return {"days_ago": None, "is_stale": True, "generated_at": None}
+        return {"days_ago": None, "is_stale": True, "generated_at": None, "source": "none"}
 
     try:
         # cached_at pode ser datetime ou string ISO
@@ -409,12 +422,17 @@ def get_freshness_from_sqlite(location_id: str, engine: Engine) -> dict:
             cached_at = cached_at.replace(tzinfo=timezone.utc)
 
         now = datetime.now(timezone.utc)
-        days_ago = (now - cached_at).days
+        delta = now - cached_at
+        days_ago = delta.days
+        hours_ago = delta.total_seconds() / 3600
+
+        source = "fresh" if hours_ago <= FRESH_THRESHOLD_HOURS else "cache"
 
         return {
             "days_ago": days_ago,
             "is_stale": days_ago > STALE_THRESHOLD_DAYS,
             "generated_at": cached_at.isoformat(),
+            "source": source,
         }
     except (ValueError, TypeError, AttributeError):
-        return {"days_ago": None, "is_stale": True, "generated_at": None}
+        return {"days_ago": None, "is_stale": True, "generated_at": None, "source": "none"}

@@ -21,6 +21,7 @@ h2 { font-size: 1.2rem; margin-bottom: 0.75rem; color: var(--muted); }
 .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem; font-weight: 500; }
 .badge-ok { background: #d1e7dd; color: var(--success); }
 .badge-stale { background: #fff3cd; color: #856404; }
+.badge-warn { background: #fff3cd; color: #856404; }
 .banner { padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.25rem; font-weight: 500; }
 .banner-success { background: #d1e7dd; color: var(--success); border: 1px solid #badbcc; }
 .banner-muted { background: #e9ecef; color: var(--muted); border: 1px solid var(--border); }
