@@ -43,7 +43,7 @@ Com o perfil mensal real de cada local, saber hoje qual seria o comercializador 
 - [ ] Upload XLSX via browser para cada local
 - [ ] Extracção automática de PDF de fatura (Meo Energia + Endesa)
 - [ ] SQLite para histórico multi-ano
-- [ ] Cache tiagofelicia.pt com fallback transparente
+- ✓ Cache tiagofelicia.pt com fallback transparente — Validated in Phase 10
 - [ ] Locais editáveis no UI (nome + CPE)
 - [ ] UI redesenhado com ui-phase
 - [ ] Comparações temporais multi-ano
@@ -108,4 +108,4 @@ Este documento evolui em cada transição de fase e milestone.
 4. Actualizar Context com estado actual
 
 ---
-*Last updated: 2026-03-31 — Phase 9 complete: Dashboard UI alinhado com UI-SPEC — SQLite como fonte primária com fallback CSV, gráfico custo bar+bar, ranking com poupança potencial, banner com plano, upload PDF integrado no layout. 107 testes a passar.*
+*Last updated: 2026-03-31 — Phase 10 complete: Cache tiagofelicia.pt + badge ternário de frescura — upsert actualiza cached_at, get_freshness devolve source fresh/cache/none, badge dentro de HTMX swap zone. 116 testes a passar.*
