@@ -38,3 +38,26 @@ state/launchd.stderr.log
 data/energia.db
 data/*.db-wal
 data/*.db-shm
+
+# Base de dados local
+*.db
+*.db-wal
+*.db-shm
+
+# Dados pessoais por local (contêm CPE e consumos reais)
+data/apartamento/
+data/casa/
+
+# Logs do dashboard (launchd)
+state/launchd.dashboard.stdout.log
+state/launchd.dashboard.stderr.log
+
+# Ferramentas internas (Claude Code, planeamento)
+.claude/
+.planning/
+
+# HA Addon — repositório separado (ricmagx/ha-addon-energia)
+ha-addon/
+
+# Notas de sessão internas
+util/SESSOES.md

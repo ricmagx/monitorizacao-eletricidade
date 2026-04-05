@@ -59,6 +59,7 @@
         <th>Potência €/dia</th>
         <th>Custo Anual Est.</th>
         <th>Poupança/ano</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -99,6 +100,13 @@
             <span style="color: var(--success); font-weight: 600;">{{ "%.2f" | format(r.poupanca_potencial) }} €</span>
           {% else %}
             —
+          {% endif %}
+        </td>
+        <td>
+          {% if r.source_url is defined and r.source_url %}
+            <a href="{{ r.source_url }}" target="_blank" rel="noopener noreferrer"
+               style="display:inline-block; padding:0.2rem 0.6rem; font-size:0.8rem; border:1px solid var(--primary,#0d6efd); border-radius:4px; color:var(--primary,#0d6efd); text-decoration:none; white-space:nowrap;"
+               title="Ir para o site do fornecedor">↗ Ver plano</a>
           {% endif %}
         </td>
       </tr>

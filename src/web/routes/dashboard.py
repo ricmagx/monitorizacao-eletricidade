@@ -76,6 +76,8 @@ def _build_tariff_prices_lookup(tarifarios_path: Path) -> dict:
                 prices["preco_simples"] = energy["simples"]
             if "power_contract" in fixed:
                 prices["potencia_dia"] = fixed["power_contract"]
+            if t.get("source_url"):
+                prices["source_url"] = t["source_url"]
             lookup[(t["supplier"], t["plan"])] = prices
         return lookup
     except Exception:

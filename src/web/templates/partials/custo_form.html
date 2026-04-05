@@ -1,10 +1,11 @@
 <div class="card">
-  <h2>Custos Reais das Facturas</h2>
+  <h2 style="font-size:1rem; margin-bottom:0.5rem;">Custos Reais das Facturas</h2>
   {% set meses_xlsx = consumo_data | map(attribute='year_month') | list %}
   {% set meses_custos = custos_reais | list %}
   {% set todos_meses = (meses_xlsx + meses_custos) | unique | sort %}
   {% if todos_meses %}
-  <table>
+  <div style="max-height:260px; overflow-y:auto;">
+  <table style="font-size:0.85rem;">
     <thead>
       <tr><th>Mes</th><th>Custo Real (EUR)</th><th></th></tr>
     </thead>
@@ -21,18 +22,19 @@
                   hx-target="#custo-section"
                   hx-swap="innerHTML">
               <input type="hidden" name="year_month" value="{{ ym }}">
-              <input type="number" name="custo_eur" step="0.01" min="0" placeholder="0.00" required>
-              <button type="submit">Guardar</button>
+              <input type="number" name="custo_eur" step="0.01" min="0" placeholder="0.00" required style="width:80px; padding:0.2rem 0.4rem; font-size:0.85rem;">
+              <button type="submit" style="padding:0.2rem 0.5rem; font-size:0.82rem;">Guardar</button>
             </form>
           {% else %}
-            <span style="color: var(--muted,#6c757d); font-size:0.85rem;">sem consumo XLSX</span>
+            <span style="color: var(--muted,#6c757d); font-size:0.8rem;">sem consumo XLSX</span>
           {% endif %}
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  </div>
   {% else %}
-  <p style="color: var(--muted,#6c757d);">Sem dados. Importe um XLSX ou uma fatura PDF.</p>
+  <p style="color: var(--muted,#6c757d); font-size:0.85rem;">Sem dados. Importe um XLSX ou uma fatura PDF.</p>
   {% endif %}
 </div>
