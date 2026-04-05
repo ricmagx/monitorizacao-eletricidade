@@ -8,14 +8,14 @@
     <div>
       <label style="font-size:0.75rem; color:var(--muted,#6c757d); display:block;">Vazio</label>
       <input type="number" name="preco_vazio_kwh" step="0.000001" min="0" required
-             value="{{ '%.6f'|format(selected_location.preco_vazio_kwh) if selected_location.preco_vazio_kwh else ('%.6f'|format(ha_custo_vazio) if ha_custo_vazio else '') }}"
+             value="{{ '%.6f'|format(current_prices.preco_vn) if current_prices and current_prices.preco_vn else ('%.6f'|format(selected_location.preco_vazio_kwh) if selected_location.preco_vazio_kwh else ('%.6f'|format(ha_custo_vazio) if ha_custo_vazio else '')) }}"
              placeholder="0.000000"
              style="width:100px; padding:0.2rem 0.4rem; font-size:0.85rem; border:1px solid #dee2e6; border-radius:4px;">
     </div>
     <div>
       <label style="font-size:0.75rem; color:var(--muted,#6c757d); display:block;">Fora Vazio</label>
       <input type="number" name="preco_fora_vazio_kwh" step="0.000001" min="0" required
-             value="{{ '%.6f'|format(selected_location.preco_fora_vazio_kwh) if selected_location.preco_fora_vazio_kwh else ('%.6f'|format(ha_custo_fora_vazio) if ha_custo_fora_vazio else '') }}"
+             value="{{ '%.6f'|format(current_prices.preco_fv) if current_prices and current_prices.preco_fv else ('%.6f'|format(selected_location.preco_fora_vazio_kwh) if selected_location.preco_fora_vazio_kwh else ('%.6f'|format(ha_custo_fora_vazio) if ha_custo_fora_vazio else '')) }}"
              placeholder="0.000000"
              style="width:100px; padding:0.2rem 0.4rem; font-size:0.85rem; border:1px solid #dee2e6; border-radius:4px;">
     </div>
