@@ -10,6 +10,7 @@ from src.web.services.locais_service import (
     get_local_by_id,
     update_fornecedor,
     update_local,
+    update_tarifario,
 )
 
 router = APIRouter()
@@ -184,5 +185,37 @@ async def editar_fornecedor(
             "locais": all_locais,
             "erro": None,
             "sucesso": f"Fornecedor de '{result['name']}' actualizado para '{supplier}'.",
+        },
+    )
+
+
+@router.post("/locais/{local_id}/tarifario", response_class=HTMLResponse)
+async def guardar_tarifario(
+    request: Request,
+    local_id: str,
+    preco_vazio_kwh: float = Form(...),
+    preco_fora_vazio_kwh: float = Form(...),
+):
+    """Guarda os precos de tarifario e actualiza os input_number no Home Assistant."""
+    templates = request.app.state.templates
+    engine = request.app.state.db_engine
+
+    result = update_tarifario(local_id, preco_vazio_kwh, preco_fora_vazio_kwh, engine)
+    all_locais = get_all_locais(engine)
+
+    if result is None:
+        return templates.TemplateResponse(
+            request=request,
+            name="partials/locais_form.html",
+            context={"locais": all_locais, "erro": f"Local '{local_id}' nao encontrado.", "sucesso": None},
+        )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/locais_form.html",
+        context={
+            "locais": all_locais,
+            "erro": None,
+            "sucesso": f"Tarifário de '{result['name']}' actualizado e aplicado no Home Assistant.",
         },
     )

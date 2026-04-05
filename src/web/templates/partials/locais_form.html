@@ -37,6 +37,7 @@
         <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.8rem; text-transform: uppercase; color: var(--muted, #6c757d); white-space: nowrap;">Nome</th>
         <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.8rem; text-transform: uppercase; color: var(--muted, #6c757d); white-space: nowrap;">CPE</th>
         <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.8rem; text-transform: uppercase; color: var(--muted, #6c757d); white-space: nowrap;">Fornecedor / Plano</th>
+        <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.8rem; text-transform: uppercase; color: var(--muted, #6c757d); white-space: nowrap;">Tarifário €/kWh</th>
         <th style="text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid #dee2e6; font-size: 0.8rem; text-transform: uppercase; color: var(--muted, #6c757d); white-space: nowrap;">Acções</th>
       </tr>
     </thead>
@@ -44,9 +45,8 @@
       {% for loc in locais %}
 
       {% if editing_id is defined and editing_id == loc.id %}
-      {# Linha em modo de edição #}
       <tr style="background: #fff8e1;">
-        <td colspan="4" style="padding: 0.75rem; border-bottom: 1px solid #dee2e6;">
+        <td colspan="5" style="padding: 0.75rem; border-bottom: 1px solid #dee2e6;">
           <form hx-post="/locais/{{ loc.id }}" hx-target="#locais-container" hx-swap="outerHTML"
                 style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
             <div>
@@ -70,7 +70,6 @@
       </tr>
 
       {% else %}
-      {# Linha normal #}
       <tr>
         <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #dee2e6; font-weight: 500;">{{ loc.name }}</td>
         <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #dee2e6; font-family: monospace; font-size: 0.85rem;">{{ loc.cpe }}</td>
@@ -83,6 +82,27 @@
                    style="padding: 0.3rem 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; width: 120px; font-size: 0.85rem;">
             <button type="submit"
                     style="padding: 0.3rem 0.6rem; font-size: 0.8rem; background: var(--accent, #0d6efd); color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">✓</button>
+          </form>
+        </td>
+        <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #dee2e6;">
+          <form hx-post="/locais/{{ loc.id }}/tarifario" hx-target="#locais-container" hx-swap="outerHTML"
+                style="display: flex; gap: 0.4rem; align-items: center;">
+            <div>
+              <label style="font-size: 0.75rem; color: var(--muted, #6c757d); display: block;">Vazio</label>
+              <input type="number" name="preco_vazio_kwh" step="0.000001" min="0" required
+                     value="{{ '%.6f'|format(loc.preco_vazio_kwh) if loc.preco_vazio_kwh else '' }}"
+                     placeholder="0.000000"
+                     style="padding: 0.3rem 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; width: 100px; font-size: 0.85rem;">
+            </div>
+            <div>
+              <label style="font-size: 0.75rem; color: var(--muted, #6c757d); display: block;">Fora Vazio</label>
+              <input type="number" name="preco_fora_vazio_kwh" step="0.000001" min="0" required
+                     value="{{ '%.6f'|format(loc.preco_fora_vazio_kwh) if loc.preco_fora_vazio_kwh else '' }}"
+                     placeholder="0.000000"
+                     style="padding: 0.3rem 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; width: 100px; font-size: 0.85rem;">
+            </div>
+            <button type="submit"
+                    style="padding: 0.3rem 0.6rem; font-size: 0.8rem; background: #198754; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap; margin-top: 1rem;">✓</button>
           </form>
         </td>
         <td style="padding: 0.5rem 0.75rem; border-bottom: 1px solid #dee2e6; white-space: nowrap;">

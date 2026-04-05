@@ -1,6 +1,9 @@
 """Servico CRUD de locais em SQLite."""
+import json
+import os
+import urllib.request
 from datetime import datetime, timezone
-from sqlalchemy import Engine, select, insert, update, func
+from sqlalchemy import Engine, select, insert, update
 
 from src.db.schema import locais
 
@@ -113,3 +116,57 @@ def update_fornecedor(local_id: str, supplier: str, plan_contains: str | None, e
     if result.rowcount == 0:
         return None
     return get_local_by_id(local_id, engine)
+
+
+def update_tarifario(
+    local_id: str,
+    preco_vazio_kwh: float,
+    preco_fora_vazio_kwh: float,
+    engine: Engine,
+) -> dict | None:
+    """Guarda os precos de tarifario e actualiza o Home Assistant.
+
+    preco_vazio_kwh      -> input_number.custo_noite
+    preco_fora_vazio_kwh -> input_number.custo_dia
+    """
+    with engine.begin() as conn:
+        result = conn.execute(
+            update(locais)
+            .where(locais.c.id == local_id)
+            .values(
+                preco_vazio_kwh=preco_vazio_kwh,
+                preco_fora_vazio_kwh=preco_fora_vazio_kwh,
+            )
+        )
+    if result.rowcount == 0:
+        return None
+
+    _push_tarifario_to_ha(preco_vazio_kwh, preco_fora_vazio_kwh)
+    return get_local_by_id(local_id, engine)
+
+
+def _push_tarifario_to_ha(preco_vazio: float, preco_fora_vazio: float) -> None:
+    """Envia os precos para os input_number do Home Assistant via Supervisor API."""
+    token = os.environ.get("SUPERVISOR_TOKEN")
+    if not token:
+        return
+
+    _ha_set_input_number("input_number.custo_noite", preco_vazio, token)
+    _ha_set_input_number("input_number.custo_dia", preco_fora_vazio, token)
+
+
+def _ha_set_input_number(entity_id: str, value: float, token: str) -> None:
+    payload = json.dumps({"entity_id": entity_id, "value": value}).encode()
+    req = urllib.request.Request(
+        "http://supervisor/core/api/services/input_number/set_value",
+        data=payload,
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        urllib.request.urlopen(req, timeout=5)
+    except Exception:
+        pass  # HA indisponivel nao deve bloquear o guardado

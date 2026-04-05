@@ -50,5 +50,7 @@ locais = Table(
     Column("current_supplier", String(128)),
     Column("current_plan_contains", String(128)),
     Column("power_label", String(32)),
+    Column("preco_vazio_kwh", Float, nullable=True),
+    Column("preco_fora_vazio_kwh", Float, nullable=True),
     Column("created_at", DateTime, default=lambda: datetime.now(timezone.utc)),
 )
